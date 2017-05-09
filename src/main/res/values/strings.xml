@@ -1,0 +1,6 @@
+<resources>
+    <string name="sdk_name" translatable="false">Tenor Android Core</string>
+    <string name="tenor_sdk_search_hint">Search Tenor for GIFs</string>
+    <string name="tenor_sdk_search_hint_short">Search Tenor</string>
+    <string name="no_gifs_found">No GIFs were found.</string>
+</resources>

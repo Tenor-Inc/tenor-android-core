@@ -1,0 +1,5 @@
+<resources>
+    <string name="tenor_sdk_search_hint">Buscar Tenor para GIFs</string>
+    <string name="tenor_sdk_search_hint_short">Buscar Tenor</string>
+    <string name="no_gifs_found">Nenhum GIF foi encontrado.</string>
+</resources>
