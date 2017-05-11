@@ -32,4 +32,28 @@ public abstract class WeakRefCountDownTimer<CTX> extends CountDownTimer {
     protected boolean isRefAlive() {
         return AbstractWeakReferenceUtils.isAlive(mWeakRef);
     }
+
+    @Override
+    public final void onTick(long millisUntilFinished) {
+        if (!isRefAlive()) {
+            cancel();
+            return;
+        }
+        //noinspection ConstantConditions
+        onTick(getWeakRef().get(), millisUntilFinished);
+    }
+
+    @Override
+    public final void onFinish() {
+        if (!isRefAlive()) {
+            cancel();
+            return;
+        }
+        //noinspection ConstantConditions
+        onFinish(getWeakRef().get());
+    }
+
+    public abstract void onTick(@NonNull CTX ctx, long millisUntilFinished);
+
+    public abstract void onFinish(@NonNull CTX ctx);
 }
