@@ -39,23 +39,37 @@ import retrofit2.converter.gson.GsonConverterFactory;
  * API Client to make network calls to retrieve contents
  */
 public abstract class ApiClient {
+
+    /**
+     * Connection timeout in seconds
+     */
+    public static final int TIMEOUT_SLOW_CONNECTION = 30;
+
+    /**
+     * Connection timeout in seconds
+     */
+    public static final int TIMEOUT_FAST_CONNECTION = 15;
+
     public static final String HTTP = "http";
     public static final String HTTPS = "https";
     public static final String SERVER_API = "api";
-    private static String sProtocolType = HTTPS;
-    private static String sServerName = SERVER_API;
-    private static String sApiKey = StringConstant.EMPTY;
 
-    public static final String DEFAULT_API_ENDPOINT = "https://api.tenor.co/v1/";
+    private static final String DEFAULT_API_ENDPOINT = "https://api.tenor.co/v1/";
     private static final String API_ENDPOINT_FORMATTER = "%1$s://%2$s.tenor.co/v1/";
     private static final String GSON_SKIP_PACKAGE_REALM = "io.realm.RealmObject";
 
-    public static final int TIMEOUT_SLOW_CONNECTION = 50;
-    public static final int TIMEOUT_FAST_CONNECTION = 25;
+    @NonNull
+    private static String sProtocolType = HTTPS;
+    @NonNull
+    private static String sServerName = SERVER_API;
+    @NonNull
+    private static String sApiKey = StringConstant.EMPTY;
+    @IntRange(from = 0, to = 30)
     private static int sTimeout = TIMEOUT_FAST_CONNECTION;
 
     private static volatile IApiClient sApiClient;
-    private static List<Interceptor> sInterceptors;
+    @NonNull
+    private static List<Interceptor> sInterceptors = new ArrayList<>();
     private static Gson sGson;
     private static String sEndpoint;
 
@@ -133,24 +147,51 @@ public abstract class ApiClient {
         }
     }
 
+    /**
+     * Set {@link Interceptor}
+     *
+     * @param interceptor the interceptor
+     */
     public static void setInterceptor(@Nullable final Interceptor interceptor) {
         if (interceptor != null) {
-            sInterceptors = new ArrayList<>();
             sInterceptors.add(interceptor);
         }
     }
 
+    /**
+     * Set {@link List}<{@link Interceptor}>
+     *
+     * @param interceptors the list of interceptors
+     */
     public static void setInterceptors(@Nullable final List<Interceptor> interceptors) {
         if (!AbstractListUtils.isEmpty(interceptors)) {
-            sInterceptors = interceptors;
+            sInterceptors.addAll(interceptors);
         }
     }
 
     /**
-     * Retrieve instance of the ApiClient, and create instance if not already created
+     * Remove {@link Interceptor}
+     *
+     * @param interceptor the interceptor
+     */
+    public static void removeInterceptor(@Nullable final Interceptor interceptor) {
+        if (interceptor != null) {
+            sInterceptors.remove(interceptor);
+        }
+    }
+
+    /**
+     * Clear {@link List}<{@link Interceptor}>
+     */
+    public static void clearInterceptors() {
+        sInterceptors.clear();
+    }
+
+    /**
+     * Retrieve instance of the {@link ApiClient}, and create instance if not already created
      *
      * @param context the context
-     * @return ApiClient instance
+     * @return the {@link ApiClient} instance
      */
     public static synchronized IApiClient getInstance(@NonNull Context context) {
         if (sApiClient == null) {
