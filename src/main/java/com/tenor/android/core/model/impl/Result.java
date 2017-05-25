@@ -163,9 +163,9 @@ public class Result implements IGif {
         return featuredInfo != null;
     }
 
-    @Nullable
+    @NonNull
     public String getSourceId() {
-        return sourceId;
+        return hasSourceId() ? sourceId : StringConstant.EMPTY;
     }
 
     public boolean hasSourceId() {

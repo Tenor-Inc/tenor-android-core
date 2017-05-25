@@ -29,19 +29,15 @@ public abstract class AbstractGlideUtils {
                         super.onLoadFailed(e, errorDrawable);
                         if (payload.getCurrentRetry() < payload.getMaxRetry()) {
                             load(requestBuilder, payload.incrementCurrentRetry());
-                            return;
-                        }
-                        if (payload.hasListener()) {
-                            payload.getListener().onLoadImageFailed();
+                        } else {
+                            payload.getListener().onLoadImageFailed(errorDrawable);
                         }
                     }
 
                     @Override
                     public void onResourceReady(GlideDrawable resource, GlideAnimation<? super GlideDrawable> animation) {
                         super.onResourceReady(resource, animation);
-                        if (payload.hasListener()) {
-                            payload.getListener().onLoadImageSucceeded();
-                        }
+                        payload.getListener().onLoadImageSucceeded(resource);
                     }
                 });
     }

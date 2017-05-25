@@ -48,9 +48,16 @@ public class GlidePayload implements Serializable {
     private int mWidth = Target.SIZE_ORIGINAL;
     private int mHeight = Target.SIZE_ORIGINAL;
 
-    @Nullable
-    private ILoadImageListener mListener;
+    @NonNull
+    private ILoadImageListener mListener = new ILoadImageListener() {
+        @Override
+        public void onLoadImageSucceeded(@Nullable Drawable drawable) {
+        }
 
+        @Override
+        public void onLoadImageFailed(@Nullable Drawable errorDrawable) {
+        }
+    };
 
     public GlidePayload(@NonNull final ImageView imageView,
                         @NonNull final String path) {
@@ -145,20 +152,18 @@ public class GlidePayload implements Serializable {
         return this;
     }
 
-    public boolean hasListener() {
-        return mListener != null;
-    }
-
-    @Nullable
+    @NonNull
     public ILoadImageListener getListener() {
         return mListener;
     }
 
     /**
-     * default is null
+     * default is do nothing
      */
     public GlidePayload setListener(@Nullable final ILoadImageListener listener) {
-        mListener = listener;
+        if (listener != null) {
+            mListener = listener;
+        }
         return this;
     }
 
