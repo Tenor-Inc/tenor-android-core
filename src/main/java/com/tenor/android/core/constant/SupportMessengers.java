@@ -4,7 +4,7 @@ package com.tenor.android.core.constant;
  * Contains package name of all supported messengers are sdk can work with.
  * Additional apps may be added if needed or desired.
  */
-public abstract class SupportMessengers {
+public class SupportMessengers {
 
     /**
      * Empty string, ""
@@ -142,4 +142,9 @@ public abstract class SupportMessengers {
      * AOSP Messages
      */
     public static final String AOSP_MESSAGES = "com.android.messaging";
+
+    /**
+     * Samsung Messaging
+     */
+    public static final String SAMSUNG_MESSAGING = "com.samsung.android.messaging";
 }
