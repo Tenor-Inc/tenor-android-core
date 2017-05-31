@@ -1,4 +1,4 @@
-package com.tenor.android.core.network;
+package com.tenor.android.core.network.impl;
 
 import android.os.Build;
 import android.support.annotation.NonNull;

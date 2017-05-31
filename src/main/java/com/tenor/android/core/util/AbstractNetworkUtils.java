@@ -10,7 +10,7 @@ import android.text.TextUtils;
 
 import com.tenor.android.core.BuildConfig;
 import com.tenor.android.core.constant.StringConstant;
-import com.tenor.android.core.network.CustomUserAgent;
+import com.tenor.android.core.network.impl.CustomUserAgent;
 
 import java.net.InetAddress;
 import java.net.NetworkInterface;
@@ -107,27 +107,6 @@ public abstract class AbstractNetworkUtils {
             batchSize = 6;
         }
         sBatchSize = batchSize;
-    }
-
-    /**
-     * Gets the network info of the device
-     *
-     * @param context the context
-     * @return true if the device is connected to internet
-     */
-    public static boolean isOnline(@Nullable final Context context) {
-        if (context == null) {
-            return false;
-        }
-
-        ConnectivityManager connectivityManager = (ConnectivityManager) context
-                .getSystemService(Context.CONNECTIVITY_SERVICE);
-        if (connectivityManager == null) {
-            return false;
-        }
-
-        NetworkInfo activeNetwork = connectivityManager.getActiveNetworkInfo();
-        return activeNetwork != null && activeNetwork.isConnectedOrConnecting();
     }
 
     /**
