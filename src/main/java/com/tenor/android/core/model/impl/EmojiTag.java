@@ -26,7 +26,7 @@ public class EmojiTag implements Serializable {
      */
     @NonNull
     public String getUnicodeChars() {
-        return StringConstant.parse(unicodeChars);
+        return StringConstant.getOrEmpty(unicodeChars);
     }
 
     /**
@@ -34,7 +34,7 @@ public class EmojiTag implements Serializable {
      */
     @NonNull
     public String getSearchName() {
-        return StringConstant.parse(searchName);
+        return StringConstant.getOrEmpty(searchName);
     }
 
     /**
@@ -42,7 +42,7 @@ public class EmojiTag implements Serializable {
      */
     @NonNull
     public String getImgUrl() {
-        return StringConstant.parse(imgUrl);
+        return StringConstant.getOrEmpty(imgUrl);
     }
 
     /**
@@ -50,6 +50,6 @@ public class EmojiTag implements Serializable {
      */
     @NonNull
     public String getSearchTerm() {
-        return StringConstant.parse(searchTerm);
+        return StringConstant.getOrEmpty(searchTerm);
     }
 }

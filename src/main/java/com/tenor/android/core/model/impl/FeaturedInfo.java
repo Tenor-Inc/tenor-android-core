@@ -2,6 +2,7 @@ package com.tenor.android.core.model.impl;
 
 
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 
 import com.google.gson.annotations.SerializedName;
 import com.tenor.android.core.constant.StringConstant;
@@ -12,26 +13,34 @@ public class FeaturedInfo implements Serializable {
     private static final long serialVersionUID = -1486902705491791354L;
 
     @SerializedName("feature_text")
-    private String featureText;
+    private String mFeatureText;
 
     @SerializedName("button_link")
-    private String buttonLink;
+    private String mButtonLink;
 
     @SerializedName("button_text")
-    private String buttonText;
+    private String mButtonText;
+
+    @SerializedName("ad_badge_info")
+    private AdBadgeInfo mAdBadgeInfo;
 
     @NonNull
     public String getFeatureText() {
-        return StringConstant.parse(featureText);
+        return StringConstant.getOrEmpty(mFeatureText);
     }
 
     @NonNull
     public String getButtonLink() {
-        return StringConstant.parse(buttonLink);
+        return StringConstant.getOrEmpty(mButtonLink);
     }
 
     @NonNull
     public String getButtonText() {
-        return StringConstant.parse(buttonText);
+        return StringConstant.getOrEmpty(mButtonText);
+    }
+
+    @Nullable
+    public AdBadgeInfo getAdBadgeInfo() {
+        return mAdBadgeInfo;
     }
 }

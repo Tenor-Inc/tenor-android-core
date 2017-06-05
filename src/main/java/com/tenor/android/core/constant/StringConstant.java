@@ -196,7 +196,7 @@ public abstract class StringConstant {
         });
     }
 
-    public static String parse(@Nullable final String str) {
+    public static String getOrEmpty(@Nullable final String str) {
         return parse(str, EMPTY);
     }
 

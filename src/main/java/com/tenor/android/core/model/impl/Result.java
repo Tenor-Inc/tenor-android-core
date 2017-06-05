@@ -79,13 +79,13 @@ public class Result implements IGif {
      */
     @NonNull
     public String getId() {
-        return StringConstant.parse(id);
+        return StringConstant.getOrEmpty(id);
     }
 
     @Override
     @NonNull
     public String getName() {
-        return StringConstant.parse(title);
+        return StringConstant.getOrEmpty(title);
     }
 
     /**
