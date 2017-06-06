@@ -21,9 +21,6 @@ public class FeaturedInfo implements Serializable {
     @SerializedName("button_text")
     private String mButtonText;
 
-    @SerializedName("ad_badge_info")
-    private AdBadgeInfo mAdBadgeInfo;
-
     @NonNull
     public String getFeatureText() {
         return StringConstant.getOrEmpty(mFeatureText);
@@ -37,10 +34,5 @@ public class FeaturedInfo implements Serializable {
     @NonNull
     public String getButtonText() {
         return StringConstant.getOrEmpty(mButtonText);
-    }
-
-    @Nullable
-    public AdBadgeInfo getAdBadgeInfo() {
-        return mAdBadgeInfo;
     }
 }
