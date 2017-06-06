@@ -7,4 +7,10 @@
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_CONTACTS" />
     <uses-permission android:name="android.permission.GET_ACCOUNTS" />
+
+    <application>
+        <service
+            android:name="com.tenor.android.core.service.AaidService"
+            android:exported="false" />
+    </application>
 </manifest>

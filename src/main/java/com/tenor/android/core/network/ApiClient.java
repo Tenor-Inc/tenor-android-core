@@ -2,6 +2,7 @@ package com.tenor.android.core.network;
 
 import android.app.Application;
 import android.content.Context;
+import android.content.Intent;
 import android.support.annotation.FloatRange;
 import android.support.annotation.IntRange;
 import android.support.annotation.NonNull;
@@ -12,6 +13,8 @@ import com.google.gson.ExclusionStrategy;
 import com.google.gson.FieldAttributes;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.tenor.android.core.concurrency.WeakRefHandler;
+import com.tenor.android.core.concurrency.WeakRefHandlerThread;
 import com.tenor.android.core.constant.StringConstant;
 import com.tenor.android.core.listener.IKeyboardIdListener;
 import com.tenor.android.core.model.impl.Result;
@@ -19,6 +22,7 @@ import com.tenor.android.core.response.BaseCallback;
 import com.tenor.android.core.response.BaseError;
 import com.tenor.android.core.response.impl.GifsResponse;
 import com.tenor.android.core.response.impl.KeyboardIdResponse;
+import com.tenor.android.core.service.AaidService;
 import com.tenor.android.core.util.AbstractListUtils;
 import com.tenor.android.core.util.AbstractLocaleUtils;
 import com.tenor.android.core.util.AbstractSessionUtils;
@@ -328,6 +332,12 @@ public abstract class ApiClient {
                 }
             }
         });
+
+        // request for aaid
+        Intent mServiceIntent = new Intent(context, AaidService.class);
+        mServiceIntent.setAction(AaidService.ACTION_GET_AAID);
+        context.startService(mServiceIntent);
+
         return call;
     }
 
