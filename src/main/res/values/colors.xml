@@ -6,4 +6,6 @@
 
     <color name="white">@android:color/white</color>
     <color name="black">@android:color/black</color>
+
+    <color name="white_75p">#BFFFFFFF</color>
 </resources>
