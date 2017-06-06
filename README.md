@@ -7,6 +7,7 @@ This documentation is for `tenor-android-core` module.
   * [Customized User-Agent](#customized-user-agent)
   * [Customized Interceptor](#customized-interceptor)
 * [Use Tenor Service](#use-tenor-service)
+* [File Provider](#file-provider)
 
 ## Include `tenor-android-core` in your project
 Copy `tenor-android-core.aar` into your app's `libs` folder, then add the following setup to your app's `build.gradle` file:
@@ -207,3 +208,21 @@ public class MainActivity extends Activity implements ITenorGifView {
     public void onReceiveTrendingFailed(BaseError error) {}
 }
 ```
+
+
+## File Provider
+In order to properly access the file on Android 24+, we need to configure and utilize the `FileProvider` provided by the support library.  Copy and paste the following code snippet into your app's manifest file.
+
+```xml
+<provider
+    android:name="android.support.v4.content.FileProvider"
+    android:authorities="${applicationId}.provider"
+    android:exported="false"
+    android:grantUriPermissions="true">
+    <meta-data
+        android:name="android.support.FILE_PROVIDER_PATHS"
+        android:resource="@xml/tenor_android_core_file_provider_paths"/>
+</provider>
+```
+
+Also make sure you have `applicationId` defined on your `build.gradle` file.
