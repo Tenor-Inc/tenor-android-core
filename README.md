@@ -225,4 +225,9 @@ In order to properly access the file on Android 24+, we need to configure and ut
 </provider>
 ```
 
+You should then be able to retrieve a `Uri` of a given `File` class object in a API 24+ compatible manner using `com.tenor.android.core.util.LocalStorageUtils.getUriForFileCompat()`.
+
 Also make sure you have `applicationId` defined on your `build.gradle` file.
+
+
+
