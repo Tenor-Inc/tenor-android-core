@@ -11,6 +11,7 @@ import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodInfo;
 import android.view.inputmethod.InputMethodManager;
 
+import com.tenor.android.core.constant.ContentFormat;
 import com.tenor.android.core.constant.ContentFormats;
 
 import java.util.ArrayList;
@@ -41,13 +42,13 @@ public abstract class AbstractKeyboardUtils {
      * Check if a given {@link EditorInfo} supports given mime type commit
      *
      * @param editorInfo the {@link EditorInfo}
-     * @param mimeType   the given mime type in {@link String}
+     * @param mimeType   the given mime type in {@link ContentFormats}
      * @return true if rich content commit API is supported
      */
     @RequiresApi(13)
     @TargetApi(13)
     public static boolean isRichMimeTypeSupported(@Nullable final EditorInfo editorInfo,
-                                                  @Nullable final String mimeType) {
+                                                  @ContentFormat final String mimeType) {
         if (editorInfo == null || TextUtils.isEmpty(mimeType)) {
             return false;
         }

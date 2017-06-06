@@ -14,7 +14,7 @@ import static java.lang.annotation.ElementType.PARAMETER;
 
 @Retention(RetentionPolicy.CLASS)
 @StringDef({ContentFormats.IMAGE_GIF, ContentFormats.IMAGE_MP4,
-        ContentFormats.IMAGE_JPEG})
+        ContentFormats.IMAGE_JPEG, ContentFormats.IMAGE_PNG})
 @Target({METHOD, PARAMETER, FIELD, ANNOTATION_TYPE, PACKAGE})
 public @interface ContentFormat {
 }
