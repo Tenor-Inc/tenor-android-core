@@ -3,6 +3,7 @@ package com.tenor.android.core.constant;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.content.res.Resources;
+import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
@@ -209,5 +210,37 @@ public abstract class StringConstant {
             return defVal;
         }
         return EMPTY;
+    }
+
+    public static boolean copy(@Nullable final Context context,
+                               @Nullable final String label,
+                               @Nullable final String content) {
+        if (context == null || isEmpty(label) || isEmpty(content)) {
+            return false;
+        }
+
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB) {
+            //noinspection deprecation
+            android.text.ClipboardManager clipboard =
+                    (android.text.ClipboardManager) context.getSystemService(Context.CLIPBOARD_SERVICE);
+            clipboard.setText(content);
+        } else {
+            android.content.ClipboardManager clipboard =
+                    (android.content.ClipboardManager) context.getSystemService(Context.CLIPBOARD_SERVICE);
+            android.content.ClipData clip = android.content.ClipData.newPlainText(label, content);
+            clipboard.setPrimaryClip(clip);
+        }
+        return true;
+    }
+
+    /**
+     * Mirror of TextUtils.isEmpty() to avoid mocking on unit tests
+     * Returns true if the string is null or 0-length.
+     *
+     * @param str the string to be examined
+     * @return true if str is null or zero length
+     */
+    public static boolean isEmpty(@Nullable CharSequence str) {
+        return str == null || str.length() == 0;
     }
 }
