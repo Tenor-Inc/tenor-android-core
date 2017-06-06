@@ -1,6 +1,6 @@
 package com.tenor.android.core.response.impl;
 
-import com.tenor.android.core.model.impl.SimilarResults;
+import com.tenor.android.core.model.impl.PivotResult;
 import com.tenor.android.core.response.AbstractResponse;
 
 /**
@@ -9,9 +9,9 @@ import com.tenor.android.core.response.AbstractResponse;
 public class PivotResponse extends AbstractResponse {
 
     private static final long serialVersionUID = -962133554919000759L;
-    private SimilarResults results;
+    private PivotResult results;
 
-    public SimilarResults getResults() {
+    public PivotResult getResults() {
         return results;
     }
 }

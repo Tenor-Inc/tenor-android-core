@@ -11,15 +11,15 @@ import java.util.List;
 /**
  * The response model of similar results, used for auto-suggestion and auto-correction features
  */
-public class SimilarResults implements Serializable {
+public class PivotResult implements Serializable {
     private static final long serialVersionUID = -2732692251223305342L;
 
-    private List<Pivot> similar;
+    private List<Pivot> similars;
     private List<Pivot> corrections;
 
     @NonNull
-    public List<Pivot> getSimilar() {
-        return !AbstractListUtils.isEmpty(similar) ? similar : Collections.<Pivot>emptyList();
+    public List<Pivot> getSuggestions() {
+        return !AbstractListUtils.isEmpty(similars) ? similars : Collections.<Pivot>emptyList();
     }
 
     @NonNull
