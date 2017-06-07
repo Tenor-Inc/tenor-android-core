@@ -21,7 +21,15 @@ public abstract class AbstractSessionUtils {
     private static final String DEVICE_PREF = "device_preferences";
 
     private static final String KEY_INSTALLED_PACKAGES_SET_ID = "KEY_INSTALLED_PACKAGES_SET_ID";
+
+    /**
+     * Use {@link #KEY_ANON_ID} instead
+     *
+     * @deprecated
+     */
     private static final String KEY_KEYBOARD_ID = "KEY_KEYBOARD_ID";
+
+    private static final String KEY_ANON_ID = "KEY_ANON_ID";
     private static final String KEY_GOOGLE_CLOUD_MESSAGING_ID = "KEY_GOOGLE_CLOUD_MESSAGING_ID";
     private static final String KEY_ANDROID_ADVERTISE_ID = "KEY_ANDROID_ADVERTISE_ID";
 
@@ -62,19 +70,31 @@ public abstract class AbstractSessionUtils {
         getPreferences(context).edit().putString(KEY_INSTALLED_PACKAGES_SET_ID, json).apply();
     }
 
-    public static synchronized void setKeyboardId(@NonNull final Context context, @Nullable final String keyboardId) {
+    public static synchronized void setAnonId(@NonNull final Context context, @Nullable final String keyboardId) {
         if (TextUtils.isEmpty(keyboardId)) {
             return;
         }
-        getPreferences(context).edit().putString(KEY_KEYBOARD_ID, keyboardId).apply();
+        getPreferences(context).edit().putString(KEY_ANON_ID, keyboardId).apply();
     }
 
-    public static synchronized String getKeyboardId(@NonNull final Context context) {
-        return getPreferences(context).getString(KEY_KEYBOARD_ID, StringConstant.EMPTY);
+    public static synchronized String getAnonId(@NonNull final Context context) {
+
+        final String id = getPreferences(context).getString(KEY_ANON_ID, StringConstant.EMPTY);
+        if (!TextUtils.isEmpty(id)) {
+            return id;
+        }
+
+        final String keyboardId = getPreferences(context).getString(KEY_KEYBOARD_ID, StringConstant.EMPTY);
+        if (!TextUtils.isEmpty(keyboardId)) {
+            // migrate keyboard id to anon id
+            getPreferences(context).edit().putString(KEY_ANON_ID, keyboardId).apply();
+            getPreferences(context).edit().remove(KEY_KEYBOARD_ID).apply();
+        }
+        return keyboardId;
     }
 
-    public static boolean hasKeyboardId(@NonNull final Context context) {
-        return !TextUtils.isEmpty(getKeyboardId(context));
+    public static boolean hasAnonId(@NonNull final Context context) {
+        return !TextUtils.isEmpty(getAnonId(context));
     }
 
     public static void setGoogleCloudMessagingId(@NonNull final Context context,

@@ -7,21 +7,20 @@ import android.support.annotation.FloatRange;
 import android.support.annotation.IntRange;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.util.ArrayMap;
 import android.text.TextUtils;
 
 import com.google.gson.ExclusionStrategy;
 import com.google.gson.FieldAttributes;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.tenor.android.core.concurrency.WeakRefHandler;
-import com.tenor.android.core.concurrency.WeakRefHandlerThread;
 import com.tenor.android.core.constant.StringConstant;
-import com.tenor.android.core.listener.IKeyboardIdListener;
+import com.tenor.android.core.listener.IAnonIdListener;
 import com.tenor.android.core.model.impl.Result;
 import com.tenor.android.core.response.BaseCallback;
 import com.tenor.android.core.response.BaseError;
 import com.tenor.android.core.response.impl.GifsResponse;
-import com.tenor.android.core.response.impl.KeyboardIdResponse;
+import com.tenor.android.core.response.impl.AnonIdResponse;
 import com.tenor.android.core.service.AaidService;
 import com.tenor.android.core.util.AbstractListUtils;
 import com.tenor.android.core.util.AbstractLocaleUtils;
@@ -30,6 +29,7 @@ import com.tenor.android.core.util.AbstractSessionUtils;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import okhttp3.Cache;
@@ -146,8 +146,8 @@ public abstract class ApiClient {
     public static synchronized void init(@NonNull final Context context) {
         sApiClient = createApiClient(context.getApplicationContext(), IApiClient.class);
 
-        if (!AbstractSessionUtils.hasKeyboardId(context)) {
-            getKeyboardId(context, null);
+        if (!AbstractSessionUtils.hasAnonId(context)) {
+            getAnonId(context, null);
         }
     }
 
@@ -299,36 +299,36 @@ public abstract class ApiClient {
      *
      * @param context  the application context
      * @param listener the callback when the asynchronous keyboard id API request is done
-     * @return {@link Call}<{@link KeyboardIdResponse}>
+     * @return {@link Call}<{@link AnonIdResponse}>
      */
-    public static Call<KeyboardIdResponse> getKeyboardId(@NonNull final Context context,
-                                                         @Nullable final IKeyboardIdListener listener) {
+    public static Call<AnonIdResponse> getAnonId(@NonNull final Context context,
+                                                 @Nullable final IAnonIdListener listener) {
         // request for new keyboard id
-        Call<KeyboardIdResponse> call = ApiClient.getInstance(context)
-                .getKeyboardId(ApiClient.getApiKey(), AbstractLocaleUtils.getCurrentLocaleName(context));
+        Call<AnonIdResponse> call = ApiClient.getInstance(context)
+                .getAnonId(ApiClient.getApiKey(), AbstractLocaleUtils.getCurrentLocaleName(context));
 
-        call.enqueue(new BaseCallback<KeyboardIdResponse>() {
+        call.enqueue(new BaseCallback<AnonIdResponse>() {
             @Override
-            public void success(KeyboardIdResponse response) {
+            public void success(AnonIdResponse response) {
                 if (response != null && !TextUtils.isEmpty(response.getId())) {
-                    AbstractSessionUtils.setKeyboardId(context, response.getId());
+                    AbstractSessionUtils.setAnonId(context, response.getId());
 
                     if (listener == null) {
                         return;
                     }
 
                     if (TextUtils.isEmpty(response.getId())) {
-                        listener.onReceiveKeyboardIdFailed(
+                        listener.onReceiveAnonIdFailed(
                                 new BaseError("keyboard id cannot be " + response.getId()));
                     }
-                    listener.onReceiveKeyboardIdSucceeded(response.getId());
+                    listener.onReceiveAnonIdSucceeded(response.getId());
                 }
             }
 
             @Override
             public void failure(BaseError error) {
                 if (listener != null) {
-                    listener.onReceiveKeyboardIdFailed(error);
+                    listener.onReceiveAnonIdFailed(error);
                 }
             }
         });
@@ -339,6 +339,13 @@ public abstract class ApiClient {
         context.startService(mServiceIntent);
 
         return call;
+    }
+
+    public static Map<String, String> getAnonId(@NonNull final Context context) {
+        final ArrayMap<String, String> map = new ArrayMap<>(1);
+        final String id = AbstractSessionUtils.getAnonId(context);
+        map.put(id.length() <= 20 ? "keyboardid" : "anon_id", id);
+        return map;
     }
 
     /**
@@ -353,7 +360,7 @@ public abstract class ApiClient {
         Call<GifsResponse> call = ApiClient.getInstance(context)
                 .registerShare(ApiClient.getApiKey(), Integer.valueOf(id),
                         AbstractLocaleUtils.getCurrentLocaleName(context),
-                        AbstractSessionUtils.getKeyboardId(context));
+                        getAnonId(context));
 
         call.enqueue(new BaseCallback<GifsResponse>() {
             @Override
@@ -388,7 +395,7 @@ public abstract class ApiClient {
         Call<Void> call = ApiClient.getInstance(context)
                 .registerView(ApiClient.getApiKey(),
                         sourceId,
-                        AbstractSessionUtils.getKeyboardId(context),
+                        AbstractSessionUtils.getAnonId(context),
                         AbstractSessionUtils.getAndroidAdvertiseId(context),
                         visualPosition,
                         count,
@@ -421,7 +428,7 @@ public abstract class ApiClient {
                                               @NonNull final String data) {
         Call<Void> call = ApiClient.getInstance(context)
                 .registerActions(ApiClient.getApiKey(),
-                        AbstractSessionUtils.getKeyboardId(context),
+                        AbstractSessionUtils.getAnonId(context),
                         AbstractSessionUtils.getAndroidAdvertiseId(context),
                         data);
 
@@ -452,7 +459,7 @@ public abstract class ApiClient {
         Call<Void> call = ApiClient.getInstance(context)
                 .registerAction(ApiClient.getApiKey(),
                         sourceId,
-                        AbstractSessionUtils.getKeyboardId(context),
+                        AbstractSessionUtils.getAnonId(context),
                         AbstractSessionUtils.getAndroidAdvertiseId(context),
                         visualPosition,
                         action,

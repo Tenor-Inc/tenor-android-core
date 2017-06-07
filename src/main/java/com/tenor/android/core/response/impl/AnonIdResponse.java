@@ -4,9 +4,9 @@ import com.google.gson.annotations.SerializedName;
 import com.tenor.android.core.response.AbstractResponse;
 
 /**
- * The keyboard id response
+ * The anon id response
  */
-public class KeyboardIdResponse extends AbstractResponse {
+public class AnonIdResponse extends AbstractResponse {
 
     private static final long serialVersionUID = -1814022099833831972L;
     @SerializedName("anonid")
