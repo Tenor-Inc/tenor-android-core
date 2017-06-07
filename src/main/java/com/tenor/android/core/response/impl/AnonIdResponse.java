@@ -9,7 +9,7 @@ import com.tenor.android.core.response.AbstractResponse;
 public class AnonIdResponse extends AbstractResponse {
 
     private static final long serialVersionUID = -1814022099833831972L;
-    @SerializedName("anonid")
+    @SerializedName(value = "anonid", alternate = {"anon_id"})
     private String id;
     @SerializedName("localid")
     private int localId;
