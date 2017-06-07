@@ -210,6 +210,20 @@ public class MainActivity extends Activity implements ITenorGifView {
 ```
 
 
+## Commit Gif using RCS
+You can use `AbstractKeyboardUtils.commitGif();` methods to commit a gif or other supported `@ContentFormat`; the `ContentFormats.java` listed the supported formats.
+
+```java
+public static void commitGif(@NonNull final InputMethodService inputMethodService,
+                             @NonNull final Uri uri);
+
+public static void commitContent(@NonNull final InputMethodService inputMethodService,
+                                 @NonNull final Uri uri,
+                                 @Nullable @ContentFormat final String... mimeTypes)
+```
+
+
+
 ## File Provider
 In order to properly access the file on Android 24+, we need to configure and utilize the `FileProvider` provided by the support library.  Copy and paste the following code snippet into your app's manifest file.
 
