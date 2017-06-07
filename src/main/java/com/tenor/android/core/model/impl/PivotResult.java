@@ -14,12 +14,12 @@ import java.util.List;
 public class PivotResult implements Serializable {
     private static final long serialVersionUID = -2732692251223305342L;
 
-    private List<Pivot> similars;
+    private List<Pivot> similar;
     private List<Pivot> corrections;
 
     @NonNull
     public List<Pivot> getSuggestions() {
-        return !AbstractListUtils.isEmpty(similars) ? similars : Collections.<Pivot>emptyList();
+        return !AbstractListUtils.isEmpty(similar) ? similar : Collections.<Pivot>emptyList();
     }
 
     @NonNull
