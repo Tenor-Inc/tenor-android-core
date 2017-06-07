@@ -5,8 +5,8 @@ import android.support.annotation.NonNull;
 /**
  * Handles actions after on write completed in local storage
  */
-public interface OnWriteCompletedListener {
-    void onWriteSucceeded(@NonNull String path);
+public interface OnDownloadToLocalStorageListener {
+    void success(@NonNull String path);
 
-    void onWriteFailed(@NonNull Throwable throwable);
+    void failure(@NonNull Throwable throwable);
 }

@@ -16,7 +16,7 @@ import com.bumptech.glide.request.animation.GlideAnimation;
 import com.bumptech.glide.request.target.SimpleTarget;
 import com.tenor.android.core.constant.MediaFormats;
 import com.tenor.android.core.constant.StringConstant;
-import com.tenor.android.core.listener.OnWriteCompletedListener;
+import com.tenor.android.core.listener.OnDownloadToLocalStorageListener;
 import com.thin.downloadmanager.DownloadRequest;
 import com.thin.downloadmanager.DownloadStatusListener;
 import com.thin.downloadmanager.ThinDownloadManager;
@@ -73,14 +73,14 @@ public abstract class AbstractLocalStorageHelper {
      * @param hasAudio                 if true, file should be written as an mp4; mp4 is also always load from network
      * @param applicationId            application id for accessing the FilerProvider
      * @param destinationFile          where the local copy of the gif or mp4 will write to
-     * @param onWriteCompletedListener callbacks for if the file was successfully or unsuccessfully created
+     * @param onDownloadToLocalStorageListener callbacks for if the file was successfully or unsuccessfully created
      */
     public void getLocalUriForUrl(@NonNull final Context applicationContext,
                                   String url,
                                   boolean hasAudio,
                                   String applicationId,
                                   File destinationFile,
-                                  @NonNull final OnWriteCompletedListener onWriteCompletedListener) {
+                                  @NonNull final OnDownloadToLocalStorageListener onDownloadToLocalStorageListener) {
         if (url == null) {
             return;
         }
@@ -92,9 +92,9 @@ public abstract class AbstractLocalStorageHelper {
         }
 
         if (hasAudio) {
-            getFromNetwork(applicationContext, destinationFile, onWriteCompletedListener, url, applicationId);
+            getFromNetwork(applicationContext, destinationFile, onDownloadToLocalStorageListener, url, applicationId);
         } else {
-            getFromCache(applicationContext, destinationFile, onWriteCompletedListener, url, applicationId);
+            getFromCache(applicationContext, destinationFile, onDownloadToLocalStorageListener, url, applicationId);
         }
     }
 
@@ -105,7 +105,7 @@ public abstract class AbstractLocalStorageHelper {
      */
     protected void getFromNetwork(@Nullable final Context applicationContext,
                                   @NonNull final File output,
-                                  @NonNull final OnWriteCompletedListener listener,
+                                  @NonNull final OnDownloadToLocalStorageListener listener,
                                   @NonNull final String url,
                                   @Nullable final String applicationId) {
 
@@ -117,12 +117,12 @@ public abstract class AbstractLocalStorageHelper {
 
         final DownloadStatusListener l = new AbstractDownloadStatusListener(listener) {
             @Override
-            public void onDownloadComplete(int id, @NonNull OnWriteCompletedListener listener) {
+            public void onDownloadComplete(int id, @NonNull OnDownloadToLocalStorageListener listener) {
                 if (!MediaFormats.MP4.equals(mMediaType)) {
                     return;
                 }
 
-                listener.onWriteSucceeded(output.getPath());
+                listener.success(output.getPath());
             }
         };
 
@@ -135,7 +135,7 @@ public abstract class AbstractLocalStorageHelper {
 
     private static IllegalArgumentException checkIllegalArguments(@Nullable final Context applicationContext,
                                                                   @NonNull final File output,
-                                                                  @NonNull final OnWriteCompletedListener listener,
+                                                                  @NonNull final OnDownloadToLocalStorageListener listener,
                                                                   @NonNull final String url,
                                                                   @Nullable final String applicationId) {
         if (TextUtils.isEmpty(url) || !URLUtil.isValidUrl(url)) {
@@ -164,7 +164,7 @@ public abstract class AbstractLocalStorageHelper {
 
     protected void getFromCache(@Nullable final Context applicationContext,
                                 @NonNull final File output,
-                                @NonNull final OnWriteCompletedListener listener,
+                                @NonNull final OnDownloadToLocalStorageListener listener,
                                 @NonNull final String url,
                                 @Nullable final String applicationId) {
 
@@ -176,7 +176,7 @@ public abstract class AbstractLocalStorageHelper {
 
         final SimpleTarget<byte[]> target = new AbstractSimpleTarget(listener, url) {
             @Override
-            public void onResourceReady(byte[] resource, GlideAnimation<? super byte[]> glideAnimation, @NonNull OnWriteCompletedListener listener) {
+            public void onResourceReady(byte[] resource, GlideAnimation<? super byte[]> glideAnimation, @NonNull OnDownloadToLocalStorageListener listener) {
                 try {
                     FileOutputStream outputStream = new FileOutputStream(output);
                     outputStream.write(resource);
@@ -187,7 +187,7 @@ public abstract class AbstractLocalStorageHelper {
                 }
 
                 if (MediaFormats.GIF.equals(mMediaType)) {
-                    listener.onWriteSucceeded(output.getPath());
+                    listener.success(output.getPath());
                 }
             }
         };
@@ -201,20 +201,20 @@ public abstract class AbstractLocalStorageHelper {
 
     private abstract class AbstractDownloadStatusListener implements DownloadStatusListener {
 
-        private final OnWriteCompletedListener mOnWriteCompletedListener;
+        private final OnDownloadToLocalStorageListener mOnDownloadToLocalStorageListener;
 
-        public AbstractDownloadStatusListener(@NonNull final OnWriteCompletedListener listener) {
+        public AbstractDownloadStatusListener(@NonNull final OnDownloadToLocalStorageListener listener) {
             if (listener == null) {
                 throw new IllegalArgumentException("OnWriteCompletedListener cannot be null");
             }
-            mOnWriteCompletedListener = listener;
+            mOnDownloadToLocalStorageListener = listener;
         }
 
-        public abstract void onDownloadComplete(int id, @NonNull OnWriteCompletedListener listener);
+        public abstract void onDownloadComplete(int id, @NonNull OnDownloadToLocalStorageListener listener);
 
         @Override
         public final void onDownloadComplete(int id) {
-            onDownloadComplete(id, mOnWriteCompletedListener);
+            onDownloadComplete(id, mOnDownloadToLocalStorageListener);
         }
 
         @Override
@@ -225,7 +225,7 @@ public abstract class AbstractLocalStorageHelper {
             } else {
                 throwable = new Throwable("onDownloadFailed() with errorCode: " + errorCode);
             }
-            mOnWriteCompletedListener.onWriteFailed(throwable);
+            mOnDownloadToLocalStorageListener.failure(throwable);
         }
 
         @Override
@@ -234,29 +234,29 @@ public abstract class AbstractLocalStorageHelper {
     }
 
     private abstract class AbstractSimpleTarget extends SimpleTarget<byte[]> {
-        private final OnWriteCompletedListener mOnWriteCompletedListener;
+        private final OnDownloadToLocalStorageListener mOnDownloadToLocalStorageListener;
         private final String mUrl;
 
-        public AbstractSimpleTarget(@NonNull final OnWriteCompletedListener listener,
+        public AbstractSimpleTarget(@NonNull final OnDownloadToLocalStorageListener listener,
                                     @NonNull final String url) {
             if (listener == null) {
                 throw new IllegalArgumentException("OnWriteCompletedListener cannot be null");
             }
-            mOnWriteCompletedListener = listener;
+            mOnDownloadToLocalStorageListener = listener;
             mUrl = url;
         }
 
         public abstract void onResourceReady(byte[] resource, GlideAnimation<? super byte[]> glideAnimation,
-                                             @NonNull OnWriteCompletedListener listener);
+                                             @NonNull OnDownloadToLocalStorageListener listener);
 
         @Override
         public final void onResourceReady(byte[] resource, GlideAnimation<? super byte[]> glideAnimation) {
-            onResourceReady(resource, glideAnimation, mOnWriteCompletedListener);
+            onResourceReady(resource, glideAnimation, mOnDownloadToLocalStorageListener);
         }
 
         @Override
         public void onLoadFailed(Exception e, Drawable errorDrawable) {
-            mOnWriteCompletedListener.onWriteFailed(e != null ?
+            mOnDownloadToLocalStorageListener.failure(e != null ?
                     e : new Throwable(AbstractSimpleTarget.class.getName()
                     + " failed, unable to load url:" + mUrl));
         }
