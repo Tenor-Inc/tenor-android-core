@@ -395,14 +395,14 @@ public abstract class ApiClient {
         Call<Void> call = ApiClient.getInstance(context)
                 .registerView(ApiClient.getApiKey(),
                         sourceId,
-                        AbstractSessionUtils.getAnonId(context),
                         AbstractSessionUtils.getAndroidAdvertiseId(context),
                         visualPosition,
                         count,
                         System.currentTimeMillis() / 1000f,
                         AbstractLocaleUtils.getCurrentUtcOffset(context),
                         duration,
-                        visibleFraction);
+                        visibleFraction,
+                        getAnonId(context));
 
         call.enqueue(new BaseCallback<Void>() {
             @Override
@@ -428,9 +428,9 @@ public abstract class ApiClient {
                                               @NonNull final String data) {
         Call<Void> call = ApiClient.getInstance(context)
                 .registerActions(ApiClient.getApiKey(),
-                        AbstractSessionUtils.getAnonId(context),
                         AbstractSessionUtils.getAndroidAdvertiseId(context),
-                        data);
+                        data,
+                        getAnonId(context));
 
         call.enqueue(new BaseCallback<Void>() {
             @Override
@@ -459,12 +459,12 @@ public abstract class ApiClient {
         Call<Void> call = ApiClient.getInstance(context)
                 .registerAction(ApiClient.getApiKey(),
                         sourceId,
-                        AbstractSessionUtils.getAnonId(context),
                         AbstractSessionUtils.getAndroidAdvertiseId(context),
                         visualPosition,
                         action,
                         System.currentTimeMillis() / 1000f,
-                        AbstractLocaleUtils.getCurrentUtcOffset(context));
+                        AbstractLocaleUtils.getCurrentUtcOffset(context),
+                        getAnonId(context));
 
         call.enqueue(new BaseCallback<Void>() {
             @Override

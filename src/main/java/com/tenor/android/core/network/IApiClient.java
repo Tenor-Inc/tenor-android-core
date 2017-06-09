@@ -16,6 +16,7 @@ import java.util.Map;
 
 import retrofit2.Call;
 import retrofit2.http.Field;
+import retrofit2.http.FieldMap;
 import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
 import retrofit2.http.HEAD;
@@ -274,14 +275,14 @@ public interface IApiClient {
     @NonNull
     Call<Void> registerView(@Field("key") @NonNull String apiKey,
                             @Field("source_id") @NonNull String sourceId,
-                            @Field("anon_id") String anonId,
                             @Field("aaid") @NonNull String aaid,
                             @Field("visual_pos") String visualPos,
                             @Field("count") int count,
                             @Field("timestamp") float timestamp,
                             @Field("timezone") @NonNull String utcOffset,
                             @Field("elapsed_ms") int duration,
-                            @Field("visible_fraction") float visibleFraction);
+                            @Field("visible_fraction") float visibleFraction,
+                            @FieldMap Map<String, String> anonId);
 
     /**
      * Register batch action
@@ -295,9 +296,9 @@ public interface IApiClient {
     @FormUrlEncoded
     @NonNull
     Call<Void> registerActions(@Field("key") @NonNull String apiKey,
-                               @Field("anon_id") String anonId,
                                @Field("aaid") @NonNull String aaid,
-                               @Field("data") @NonNull String data);
+                               @Field("data") @NonNull String data,
+                               @FieldMap Map<String, String> anonId);
 
     /**
      * Register action
@@ -315,10 +316,10 @@ public interface IApiClient {
     @NonNull
     Call<Void> registerAction(@Field("key") @NonNull String apiKey,
                               @Field("source_id") @NonNull String sourceId,
-                              @Field("anon_id") String anonId,
                               @Field("aaid") @NonNull String aaid,
                               @Field("visual_pos") String visualPos,
                               @Field("action") @NonNull String action,
                               @Field("timestamp") float timestamp,
-                              @Field("timezone") @NonNull String utcOffset);
+                              @Field("timezone") @NonNull String utcOffset,
+                              @FieldMap Map<String, String> anonId);
 }
