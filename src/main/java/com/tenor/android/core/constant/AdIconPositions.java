@@ -36,4 +36,28 @@ public class AdIconPositions {
                 return NONE;
         }
     }
+
+    public static boolean isExterior(@AdIconPosition int position) {
+        switch (position) {
+            case EXTERIOR_TOP_LEFT:
+            case EXTERIOR_TOP_RIGHT:
+            case EXTERIOR_BOTTOM_RIGHT:
+            case EXTERIOR_BOTTOM_LEFT:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    public static boolean isInterior(@AdIconPosition int position) {
+        switch (position) {
+            case AdIconPositions.INTERIOR_TOP_LEFT:
+            case AdIconPositions.INTERIOR_TOP_RIGHT:
+            case AdIconPositions.INTERIOR_BOTTOM_RIGHT:
+            case AdIconPositions.INTERIOR_BOTTOM_LEFT:
+                return true;
+            default:
+                return false;
+        }
+    }
 }
