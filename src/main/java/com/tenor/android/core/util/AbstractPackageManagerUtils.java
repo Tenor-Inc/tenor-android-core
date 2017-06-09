@@ -5,6 +5,7 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.annotation.WorkerThread;
 import android.support.v4.view.accessibility.AccessibilityNodeInfoCompat;
 import android.text.TextUtils;
 import android.view.inputmethod.InputMethodInfo;
@@ -69,7 +70,7 @@ public abstract class AbstractPackageManagerUtils {
             return false;
         }
 
-        Set<String> installedPackageNames = getInstalledPackages();
+        Set<String> installedPackageNames = AbstractSessionUtils.getInstalledPackages(context);
 
         // check if there is exact match on package name
         for (String packageName : packageNames) {
@@ -93,7 +94,7 @@ public abstract class AbstractPackageManagerUtils {
             return false;
         }
 
-        Set<String> installedPackageNames = getInstalledPackages();
+        Set<String> installedPackageNames = AbstractSessionUtils.getInstalledPackages(context);
 
         // check if there is exact match on package name
         for (String packageName : packageNames) {
@@ -104,7 +105,12 @@ public abstract class AbstractPackageManagerUtils {
         return false;
     }
 
-
+    /**
+     * Get all packages that are installed into the device
+     * <p>
+     * This method needs to be called before any other methods in the class
+     */
+    @WorkerThread
     public static Set<String> getInstalledPackages() {
 //        final PackageManager packageManager = context.getPackageManager();
 //        try {
@@ -153,7 +159,7 @@ public abstract class AbstractPackageManagerUtils {
 
         ArrayList<String> result = new ArrayList<>();
 
-        Set<String> installedPackageNames = getInstalledPackages();
+        Set<String> installedPackageNames = AbstractSessionUtils.getInstalledPackages(context);
         /*
          * the reason to use double for loop here is to take care cases,
          * such as package name "com.abc.def" and prefix "com.abc"
@@ -232,7 +238,7 @@ public abstract class AbstractPackageManagerUtils {
      */
     @NonNull
     protected static AccessibilityNodeInfoCompat findJustOnceButton(@NonNull final Context context,
-                                                                  @NonNull final List<AccessibilityNodeInfoCompat> buttons) {
+                                                                    @NonNull final List<AccessibilityNodeInfoCompat> buttons) {
         /*
          * It utilizes the "activity_resolver_use_once" field of the string resources in android
          * system, and therefore, taking care of localization as well.
