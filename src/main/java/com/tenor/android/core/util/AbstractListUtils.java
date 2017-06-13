@@ -7,11 +7,13 @@ import com.tenor.android.core.model.ICollection;
 import com.tenor.android.core.model.IGif;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
 import java.util.Set;
+import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * Contains helper methods to manipulate {@link List}
@@ -38,6 +40,42 @@ public abstract class AbstractListUtils {
             items.add(item);
         }
         return items;
+    }
+
+    /**
+     * Shuffle a given {@link int}[]
+     * <p>
+     * A implementation of Fisher–Yates shuffle
+     *
+     * @param array given {@link int}[] to be shuffled
+     * @return a shuffled {@link int}[]
+     */
+    @NonNull
+    public static int[] shuffle(@NonNull int[] array) {
+        if (array.length <= 0) {
+            return array;
+        }
+        Random random = getRandomCompat();
+        int randInt;
+        int temp;
+        for (int i = array.length - 1; i > 0; i--) {
+            randInt = random.nextInt(i + 1);
+            temp = array[randInt];
+            array[randInt] = array[i];
+            array[i] = temp;
+        }
+        return array;
+    }
+
+    /**
+     * Get the better perform or backward compatible {@link Random} base on API version
+     */
+    public static Random getRandomCompat() {
+        if (android.os.Build.VERSION.SDK_INT >= 21) {
+            return ThreadLocalRandom.current();
+        } else {
+            return new Random();
+        }
     }
 
     /**
