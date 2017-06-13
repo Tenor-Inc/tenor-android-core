@@ -9,7 +9,6 @@ import com.tenor.android.core.response.impl.AnonIdResponse;
 import com.tenor.android.core.response.impl.EmojiResponse;
 import com.tenor.android.core.response.impl.GifsResponse;
 import com.tenor.android.core.response.impl.PackResponse;
-import com.tenor.android.core.response.impl.PivotResponse;
 import com.tenor.android.core.response.impl.SearchSuggestionResponse;
 import com.tenor.android.core.response.impl.TagsResponse;
 
@@ -24,7 +23,6 @@ import retrofit2.http.HEAD;
 import retrofit2.http.POST;
 import retrofit2.http.Query;
 import retrofit2.http.QueryMap;
-import retrofit2.http.QueryName;
 import retrofit2.http.Url;
 
 /**

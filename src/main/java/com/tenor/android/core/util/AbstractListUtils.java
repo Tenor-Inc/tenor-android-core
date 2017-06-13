@@ -74,7 +74,12 @@ public abstract class AbstractListUtils {
         if (android.os.Build.VERSION.SDK_INT >= 21) {
             return ThreadLocalRandom.current();
         } else {
-            return new Random();
+            return new ThreadLocal<Random>() {
+                @Override
+                protected Random initialValue() {
+                    return new Random();
+                }
+            }.get();
         }
     }
 
