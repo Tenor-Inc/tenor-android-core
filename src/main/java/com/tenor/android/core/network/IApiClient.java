@@ -10,6 +10,7 @@ import com.tenor.android.core.response.impl.EmojiResponse;
 import com.tenor.android.core.response.impl.GifsResponse;
 import com.tenor.android.core.response.impl.PackResponse;
 import com.tenor.android.core.response.impl.PivotResponse;
+import com.tenor.android.core.response.impl.SearchSuggestionResponse;
 import com.tenor.android.core.response.impl.TagsResponse;
 
 import java.util.Map;
@@ -140,38 +141,22 @@ public interface IApiClient {
                                @QueryMap Map<String, String> anonId);
 
     /**
+     * Search
      * Takes in a tag, and a set of related and similar tags, represented as a Pivot object
      *
      * @param apiKey api key to access the endpoint
      * @param tag    initial term
+     * @param limit  <b>bucket</b> size of each response
      * @param locale <b>current language</b> set by the user
      * @param anonId a non id
-     * @return {@link Call}<{@link PivotResponse}>
+     * @return {@link Call}<{@link SearchSuggestionResponse}>
      */
-    @GET("similar")
-    Call<PivotResponse> getSimilar(@Query("key") String apiKey,
-                                   @Query("tag") String tag,
-                                   @Query("locale") String locale,
-                                   @QueryMap Map<String, String> anonId);
-
-    /**
-     * Takes in a tag, and a set of related and similar tags, represented as a Pivot object.
-     * includeCorrections allows the users to find corrected spellings or uses of tag.
-     *
-     * @param apiKey             api key to access the endpoint
-     * @param tag                initial term
-     * @param includeCorrections whether to include corrections
-     * @param locale             <b>current language</b> set by the user
-     * @param anonId             a non id
-     * @return {@link Call}<{@link PivotResponse}>
-     */
-    @GET("similar")
-    Call<PivotResponse> getSimilar(@Query("key") String apiKey,
-                                   @Query("tag") String tag,
-                                   @Query("include_corrections") boolean includeCorrections,
-                                   @Query("standardize") boolean standardize,
-                                   @Query("locale") String locale,
-                                   @QueryMap Map<String, String> anonId);
+    @GET("search_suggestions?platform=android")
+    Call<SearchSuggestionResponse> getSearchSuggestions(@Query("key") String apiKey,
+                                                        @Query("tag") String tag,
+                                                        @Query("limit") Integer limit,
+                                                        @Query("locale") String locale,
+                                                        @QueryMap Map<String, String> anonId);
 
     /**
      * Returns a set of gifs that fall into the category of two related tags.

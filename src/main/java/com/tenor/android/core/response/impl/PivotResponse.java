@@ -5,6 +5,8 @@ import com.tenor.android.core.response.AbstractResponse;
 
 /**
  * The pivot response
+ *
+ * @deprecated
  */
 public class PivotResponse extends AbstractResponse {
 
