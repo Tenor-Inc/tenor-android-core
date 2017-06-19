@@ -12,6 +12,7 @@ import com.tenor.android.core.constant.StringConstant;
 import java.lang.reflect.Type;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -36,6 +37,9 @@ public abstract class AbstractSessionUtils {
     private static final String KEY_KEYBOARD_RESPONSE_CACHE_SIZE = "KEY_KEYBOARD_RESPONSE_CACHE_SIZE";
     private static final String KEY_KEYBOARD_RESPONSE_CACHE_TIMEOUT = "KEY_KEYBOARD_RESPONSE_CACHE_TIMEOUT";
     private static final String KEY_KEYBOARD_REQUEST_DELAY = "KEY_KEYBOARD_REQUEST_DELAY";
+
+    private static final String KEY_SESSION_ID = "KEY_SESSION_ID";
+    private static final String KEY_SESSION_ID_EXPIRATION = "KEY_SESSION_ID_EXPIRATION";
 
     protected static SharedPreferences getPreferences(@NonNull final Context context) {
         return context.getSharedPreferences(DEVICE_PREF, Context.MODE_PRIVATE);
@@ -151,5 +155,33 @@ public abstract class AbstractSessionUtils {
     public static long getKeyboardRequestDelay(@NonNull final Context context) {
         // default 100 ms
         return getPreferences(context).getLong(KEY_KEYBOARD_REQUEST_DELAY, 100);
+    }
+
+    private static String getSessionId(@NonNull final Context context, boolean reset) {
+
+        long expiration = getPreferences(context).getLong(KEY_SESSION_ID_EXPIRATION, 0);
+        String sessionId = getPreferences(context).getString(KEY_SESSION_ID, StringConstant.EMPTY);
+        final long now = System.currentTimeMillis();
+
+        if (!TextUtils.isEmpty(sessionId) // no session id
+                || now >= expiration // session id expired
+                || reset) { // explicitly request to reset session id
+
+            // update expiration to an hour later
+            expiration = now + TimeUnit.HOURS.toMillis(1);
+            sessionId = UUID.randomUUID().toString();
+
+            getPreferences(context).edit().putLong(KEY_SESSION_ID_EXPIRATION, expiration).apply();
+            getPreferences(context).edit().putString(KEY_SESSION_ID, sessionId).apply();
+        }
+        return sessionId;
+    }
+
+    public static String getSessionId(@NonNull final Context context) {
+        return getSessionId(context, false);
+    }
+
+    public static String resetSessionId(@NonNull final Context context) {
+        return getSessionId(context, true);
     }
 }
