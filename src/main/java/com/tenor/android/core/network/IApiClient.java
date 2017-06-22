@@ -1,6 +1,7 @@
 package com.tenor.android.core.network;
 
 
+import android.support.annotation.IntRange;
 import android.support.annotation.NonNull;
 
 import com.tenor.android.core.model.impl.Result;
@@ -152,7 +153,7 @@ public interface IApiClient {
     @GET("search_suggestions?platform=android")
     Call<SearchSuggestionResponse> getSearchSuggestions(@Query("key") String apiKey,
                                                         @Query("tag") String tag,
-                                                        @Query("limit") Integer limit,
+                                                        @Query("limit") @IntRange(from = 1, to = 50) Integer limit,
                                                         @Query("locale") String locale,
                                                         @QueryMap Map<String, String> anonId);
 

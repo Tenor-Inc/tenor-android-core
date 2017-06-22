@@ -163,12 +163,18 @@ public abstract class AbstractSessionUtils {
         String sessionId = getPreferences(context).getString(KEY_SESSION_ID, StringConstant.EMPTY);
         final long now = System.currentTimeMillis();
 
-        if (!TextUtils.isEmpty(sessionId) // no session id
+        if (TextUtils.isEmpty(sessionId) // no session id
                 || now >= expiration // session id expired
                 || reset) { // explicitly request to reset session id
 
             // update expiration to an hour later
             expiration = now + TimeUnit.HOURS.toMillis(1);
+
+            /*
+             * GUID
+             *
+             * https://developer.android.com/training/articles/user-data-ids.html#working_with_instance_ids_&_guids
+             */
             sessionId = UUID.randomUUID().toString();
 
             getPreferences(context).edit().putLong(KEY_SESSION_ID_EXPIRATION, expiration).apply();

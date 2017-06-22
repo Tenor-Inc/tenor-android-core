@@ -75,6 +75,11 @@ public abstract class AbstractLocaleUtils {
     @NonNull
     public static Locale getEnUsLocale() {
         if (sEnUsLocale == null) {
+            /*
+             * Use constructor instead of builder pattern to keep compatibility with API 21 and below
+             *
+             * See AbstractStringUtilsUT#test_locale_supports() for test cases
+             */
             sEnUsLocale = new Locale("en", "US");
         }
         return sEnUsLocale;
