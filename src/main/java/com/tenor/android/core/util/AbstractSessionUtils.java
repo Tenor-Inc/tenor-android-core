@@ -170,12 +170,7 @@ public abstract class AbstractSessionUtils {
             // update expiration to an hour later
             expiration = now + TimeUnit.HOURS.toMillis(1);
 
-            /*
-             * GUID
-             *
-             * https://developer.android.com/training/articles/user-data-ids.html#working_with_instance_ids_&_guids
-             */
-            sessionId = UUID.randomUUID().toString();
+            sessionId = AbstractUuidUtils.createUuid();
 
             getPreferences(context).edit().putLong(KEY_SESSION_ID_EXPIRATION, expiration).apply();
             getPreferences(context).edit().putString(KEY_SESSION_ID, sessionId).apply();
