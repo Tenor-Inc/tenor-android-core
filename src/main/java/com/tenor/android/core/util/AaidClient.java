@@ -14,7 +14,6 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.WorkerThread;
 import android.text.TextUtils;
-import android.util.Log;
 
 import com.tenor.android.core.constant.StringConstant;
 
@@ -22,14 +21,32 @@ import java.util.concurrent.LinkedBlockingQueue;
 
 public class AaidClient {
 
+    public interface OnInitAaidListener {
+        void onReceiveAaidSucceeded(@NonNull String aaid);
+
+        void onReceiveAaidFaileded();
+    }
+
     @WorkerThread
     public static void init(@NonNull Context context) {
+        init(context, null);
+    }
+
+    @WorkerThread
+    public static void init(@NonNull Context context, @Nullable final OnInitAaidListener listener) {
         if (context == null) {
             throw new IllegalStateException("context cannot be null");
         }
         final String aaid = getAdvertisingId(context);
         AbstractSessionUtils.setAndroidAdvertiseId(context, aaid);
-        Log.e("==> ", "==> getAdvertisingId: " + aaid);
+
+        if (listener != null) {
+            if (!TextUtils.isEmpty(aaid)) {
+                listener.onReceiveAaidSucceeded(aaid);
+            } else {
+                listener.onReceiveAaidFaileded();
+            }
+        }
     }
 
     @WorkerThread
