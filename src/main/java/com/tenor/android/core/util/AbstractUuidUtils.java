@@ -26,9 +26,10 @@ public abstract class AbstractUuidUtils {
      * <p> The UUID string representation is as described by this BNF:
      * <blockquote><pre>
      * {@code
-     * UUID                   = <time_low> "-" <time_mid> "-"
-     *                          <time_high_and_version> "-"
-     *                          <variant_and_sequence> "-"
+     * UUID                   = <time_low>
+     *                          <time_mid>
+     *                          <time_high_and_version>
+     *                          <variant_and_sequence>
      *                          <node>
      * time_low               = 4*<hexOctet>
      * time_mid               = 2*<hexOctet>

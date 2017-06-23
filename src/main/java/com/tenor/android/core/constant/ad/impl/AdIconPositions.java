@@ -1,4 +1,6 @@
-package com.tenor.android.core.constant;
+package com.tenor.android.core.constant.ad.impl;
+
+import com.tenor.android.core.constant.ad.AdIconPosition;
 
 public class AdIconPositions {
 

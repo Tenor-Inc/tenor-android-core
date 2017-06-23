@@ -1,6 +1,8 @@
-package com.tenor.android.core.constant;
+package com.tenor.android.core.constant.ad;
 
 import android.support.annotation.IntDef;
+
+import com.tenor.android.core.constant.ad.impl.AdIconPositions;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;

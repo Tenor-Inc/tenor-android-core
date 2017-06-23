@@ -4,8 +4,8 @@ package com.tenor.android.core.model.impl;
 import android.support.annotation.NonNull;
 
 import com.google.gson.annotations.SerializedName;
-import com.tenor.android.core.constant.AdIconPosition;
-import com.tenor.android.core.constant.AdIconPositions;
+import com.tenor.android.core.constant.ad.AdIconPosition;
+import com.tenor.android.core.constant.ad.impl.AdIconPositions;
 import com.tenor.android.core.constant.StringConstant;
 
 import java.io.Serializable;
