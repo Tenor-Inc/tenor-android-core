@@ -5,6 +5,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
 
+import com.tenor.android.core.listener.IWeakRefObject;
 import com.tenor.android.core.util.AbstractWeakReferenceUtils;
 import com.tenor.android.core.view.IBaseView;
 
@@ -16,7 +17,8 @@ import java.lang.ref.WeakReference;
  * @param <CTX> the referenced context
  * @param <VH>  the view holder type extending from {@link RecyclerView.ViewHolder}
  */
-public abstract class AbstractRVAdapter<CTX extends IBaseView, VH extends RecyclerView.ViewHolder> extends RecyclerView.Adapter<VH> {
+public abstract class AbstractRVAdapter<CTX extends IBaseView, VH extends RecyclerView.ViewHolder>
+        extends RecyclerView.Adapter<VH> implements IWeakRefObject<CTX> {
 
     private final WeakReference<CTX> mWeakRef;
 
@@ -33,11 +35,11 @@ public abstract class AbstractRVAdapter<CTX extends IBaseView, VH extends Recycl
      */
     @Nullable
     protected Context getContext() {
-        return getCTX().getContext();
+        return getRef().getContext();
     }
 
     protected boolean hasContext() {
-        return hasCTX() && getContext() != null;
+        return hasRef() && getContext() != null;
     }
 
     /**
@@ -45,16 +47,19 @@ public abstract class AbstractRVAdapter<CTX extends IBaseView, VH extends Recycl
      * use hasWeakRef() to check its existence first
      */
     @Nullable
-    protected CTX getCTX() {
+    @Override
+    public CTX getRef() {
         return mWeakRef.get();
     }
 
-    protected boolean hasCTX() {
-        return AbstractWeakReferenceUtils.isAlive(mWeakRef);
+    @NonNull
+    @Override
+    public WeakReference<CTX> getWeakRef() {
+        return mWeakRef;
     }
 
-    @NonNull
-    protected WeakReference<CTX> getWeakRef() {
-        return mWeakRef;
+    @Override
+    public boolean hasRef() {
+        return AbstractWeakReferenceUtils.isAlive(mWeakRef);
     }
 }

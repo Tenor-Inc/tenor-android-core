@@ -10,6 +10,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.net.ConnectivityManagerCompat;
 import android.support.v4.util.ArrayMap;
 
+import com.tenor.android.core.listener.IWeakRefObject;
 import com.tenor.android.core.network.IConnectivityChangeReceiver;
 import com.tenor.android.core.util.AbstractNetworkUtils;
 import com.tenor.android.core.util.AbstractWeakReferenceUtils;
@@ -17,7 +18,7 @@ import com.tenor.android.core.util.AbstractWeakReferenceUtils;
 import java.lang.ref.WeakReference;
 
 public class ConnectivityChangeReceiver<CTX extends IConnectivityChangeReceiver>
-        extends BroadcastReceiver {
+        extends BroadcastReceiver implements IWeakRefObject<CTX> {
 
     private static IntentFilter sIntentFilter;
     private static NetworkStatus sNetworkStatus;
@@ -34,17 +35,26 @@ public class ConnectivityChangeReceiver<CTX extends IConnectivityChangeReceiver>
         this(new WeakReference<>(context));
     }
 
+    @Nullable
+    @Override
+    public CTX getRef() {
+        return mWeakRef.get();
+    }
+
+    @NonNull
+    @Override
     public WeakReference<CTX> getWeakRef() {
         return mWeakRef;
+    }
+
+    @Override
+    public boolean hasRef() {
+        return AbstractWeakReferenceUtils.isAlive(mWeakRef);
     }
 
     public <T extends IConnectivityChangeReceiver> boolean isRegisterChanged(@Nullable final T context) {
         return context == null || context.getClass() == null
                 || !mRegisterName.equals(context.getClass().getName());
-    }
-
-    public boolean isRefAlive() {
-        return AbstractWeakReferenceUtils.isAlive(mWeakRef);
     }
 
     @Override
@@ -78,7 +88,7 @@ public class ConnectivityChangeReceiver<CTX extends IConnectivityChangeReceiver>
         getHistory().put(mRegisterName, networkStatus);
         sNetworkStatus = networkStatus;
 
-        if (!isRefAlive()) {
+        if (!hasRef()) {
             return;
         }
 

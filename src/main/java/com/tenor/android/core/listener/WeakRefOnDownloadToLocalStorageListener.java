@@ -2,31 +2,22 @@ package com.tenor.android.core.listener;
 
 import android.support.annotation.NonNull;
 
-import com.tenor.android.core.util.AbstractWeakReferenceUtils;
+import com.tenor.android.core.concurrency.WeakRefObject;
 
 import java.lang.ref.WeakReference;
 
 /**
  * Abstract class to handle action on write completed in local storage
  */
-public abstract class WeakRefOnDownloadToLocalStorageListener<CTX> implements OnDownloadToLocalStorageListener {
-
-    private final WeakReference<CTX> mWeakRef;
+public abstract class WeakRefOnDownloadToLocalStorageListener<CTX> extends WeakRefObject<CTX>
+        implements OnDownloadToLocalStorageListener {
 
     public WeakRefOnDownloadToLocalStorageListener(CTX ctx) {
         this(new WeakReference<>(ctx));
     }
 
     public WeakRefOnDownloadToLocalStorageListener(WeakReference<CTX> weakRef) {
-        mWeakRef = weakRef;
-    }
-
-    public CTX getCTX() {
-        return mWeakRef.get();
-    }
-
-    public boolean hasCTX() {
-        return AbstractWeakReferenceUtils.isAlive(mWeakRef);
+        super(weakRef);
     }
 
     /**
@@ -46,19 +37,21 @@ public abstract class WeakRefOnDownloadToLocalStorageListener<CTX> implements On
 
     @Override
     public final void success(@NonNull String path) {
-        if (!hasCTX()) {
+        if (!hasRef()) {
             return;
         }
-        onProcessCompleted(getCTX());
-        success(getCTX(), path);
+        //noinspection ConstantConditions
+        onProcessCompleted(getRef());
+        success(getRef(), path);
     }
 
     @Override
     public final void failure(@NonNull Throwable throwable) {
-        if (!hasCTX()) {
+        if (!hasRef()) {
             return;
         }
-        onProcessCompleted(getCTX());
-        failure(getCTX(), throwable);
+        //noinspection ConstantConditions
+        onProcessCompleted(getRef());
+        failure(getRef(), throwable);
     }
 }

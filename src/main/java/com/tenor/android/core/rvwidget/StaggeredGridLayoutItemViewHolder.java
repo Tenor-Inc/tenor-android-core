@@ -2,6 +2,7 @@ package com.tenor.android.core.rvwidget;
 
 import android.app.Activity;
 import android.content.Context;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.RecyclerView;
@@ -9,6 +10,7 @@ import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.tenor.android.core.listener.IWeakRefObject;
 import com.tenor.android.core.util.AbstractUIUtils;
 import com.tenor.android.core.util.AbstractWeakReferenceUtils;
 import com.tenor.android.core.view.IBaseView;
@@ -20,7 +22,8 @@ import java.lang.ref.WeakReference;
  *
  * @param <CTX> the referenced context
  */
-public abstract class StaggeredGridLayoutItemViewHolder<CTX extends IBaseView> extends RecyclerView.ViewHolder {
+public class StaggeredGridLayoutItemViewHolder<CTX extends IBaseView> extends RecyclerView.ViewHolder
+        implements IWeakRefObject<CTX> {
 
     /**
      * Interface used to communicate info between adapter and view holder
@@ -39,11 +42,20 @@ public abstract class StaggeredGridLayoutItemViewHolder<CTX extends IBaseView> e
         mWeakRef = new WeakReference<>(context);
     }
 
-    protected CTX getCTX() {
+    @Nullable
+    @Override
+    public CTX getRef() {
         return mWeakRef.get();
     }
 
-    protected boolean hasCTX() {
+    @NonNull
+    @Override
+    public WeakReference<CTX> getWeakRef() {
+        return mWeakRef;
+    }
+
+    @Override
+    public boolean hasRef() {
         return AbstractWeakReferenceUtils.isAlive(mWeakRef);
     }
 
@@ -52,18 +64,18 @@ public abstract class StaggeredGridLayoutItemViewHolder<CTX extends IBaseView> e
      */
     @Nullable
     protected Context getContext() {
-        if (getCTX() instanceof Activity) {
-            return (Activity) getCTX();
+        if (getRef() instanceof Activity) {
+            return (Activity) getRef();
         }
 
-        if (getCTX() instanceof Fragment) {
-            return ((Fragment) getCTX()).getActivity();
+        if (getRef() instanceof Fragment) {
+            return ((Fragment) getRef()).getActivity();
         }
-        return getCTX().getContext();
+        return getRef().getContext();
     }
 
     protected boolean hasContext() {
-        return hasCTX() && getContext() != null;
+        return hasRef() && getContext() != null;
     }
 
     /**

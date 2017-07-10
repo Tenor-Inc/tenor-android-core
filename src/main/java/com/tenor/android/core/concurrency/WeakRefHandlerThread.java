@@ -7,6 +7,7 @@ import android.os.Looper;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
+import com.tenor.android.core.listener.IWeakRefObject;
 import com.tenor.android.core.util.AbstractWeakReferenceUtils;
 
 import java.lang.ref.WeakReference;
@@ -16,7 +17,8 @@ import java.lang.ref.WeakReference;
  * <p/>
  * This is intended to avoid unintentional leakage on {@link Activity} and {@link android.app.Fragment}
  */
-public abstract class WeakRefHandlerThread<CTX, H extends Handler> extends HandlerThread {
+public abstract class WeakRefHandlerThread<CTX, H extends Handler> extends HandlerThread
+        implements IWeakRefObject<CTX> {
 
     private H mHandler;
     private final WeakReference<CTX> mWeakRef;
@@ -79,11 +81,19 @@ public abstract class WeakRefHandlerThread<CTX, H extends Handler> extends Handl
     public abstract H initHandler(@NonNull Looper looper, @NonNull WeakReference<CTX> weakRef);
 
     @Nullable
-    protected WeakReference<CTX> getWeakRef() {
+    @Override
+    public CTX getRef() {
+        return mWeakRef.get();
+    }
+
+    @NonNull
+    @Override
+    public WeakReference<CTX> getWeakRef() {
         return mWeakRef;
     }
 
-    protected boolean isRefAlive() {
+    @Override
+    public boolean hasRef() {
         return AbstractWeakReferenceUtils.isAlive(mWeakRef);
     }
 

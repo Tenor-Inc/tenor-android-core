@@ -4,11 +4,12 @@ import android.os.CountDownTimer;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
+import com.tenor.android.core.listener.IWeakRefObject;
 import com.tenor.android.core.util.AbstractWeakReferenceUtils;
 
 import java.lang.ref.WeakReference;
 
-public abstract class WeakRefCountDownTimer<CTX> extends CountDownTimer {
+public abstract class WeakRefCountDownTimer<CTX> extends CountDownTimer implements IWeakRefObject<CTX> {
 
     private final WeakReference<CTX> mWeakRef;
 
@@ -25,17 +26,25 @@ public abstract class WeakRefCountDownTimer<CTX> extends CountDownTimer {
     }
 
     @Nullable
-    protected WeakReference<CTX> getWeakRef() {
+    @Override
+    public CTX getRef() {
+        return mWeakRef.get();
+    }
+
+    @NonNull
+    @Override
+    public WeakReference<CTX> getWeakRef() {
         return mWeakRef;
     }
 
-    protected boolean isRefAlive() {
+    @Override
+    public boolean hasRef() {
         return AbstractWeakReferenceUtils.isAlive(mWeakRef);
     }
 
     @Override
     public final void onTick(long millisUntilFinished) {
-        if (!isRefAlive()) {
+        if (!hasRef()) {
             cancel();
             return;
         }
@@ -45,7 +54,7 @@ public abstract class WeakRefCountDownTimer<CTX> extends CountDownTimer {
 
     @Override
     public final void onFinish() {
-        if (!isRefAlive()) {
+        if (!hasRef()) {
             cancel();
             return;
         }

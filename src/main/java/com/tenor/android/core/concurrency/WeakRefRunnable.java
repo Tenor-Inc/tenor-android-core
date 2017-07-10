@@ -5,8 +5,6 @@ import android.support.annotation.CallSuper;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
-import com.tenor.android.core.util.AbstractWeakReferenceUtils;
-
 import java.lang.ref.WeakReference;
 
 /**
@@ -14,37 +12,28 @@ import java.lang.ref.WeakReference;
  * <p/>
  * This is intended to avoid unintentional leakage on {@link Activity} and {@link android.app.Fragment}
  */
-public abstract class WeakRefRunnable<T> implements Runnable {
+public abstract class WeakRefRunnable<T> extends WeakRefObject<T> implements Runnable {
 
-    private final WeakReference<T> mWeakRef;
     private boolean mConsumed;
 
     /**
      * @param t the type of caller
      */
     public WeakRefRunnable(@Nullable final T t) {
-        mWeakRef = new WeakReference<>(t);
+        this(new WeakReference<>(t));
     }
 
     public WeakRefRunnable(@NonNull final WeakReference<T> weakRef) {
-        mWeakRef = weakRef;
+        super(weakRef);
     }
 
     @Override
     public void run() {
-        if (isRefAlive()) {
-            run(mWeakRef.get());
+        if (hasRef()) {
+            //noinspection ConstantConditions
+            run(getRef());
             onRunCompleted();
         }
-    }
-
-    @Nullable
-    protected WeakReference<T> getWeakRef() {
-        return mWeakRef;
-    }
-
-    protected boolean isRefAlive() {
-        return AbstractWeakReferenceUtils.isAlive(mWeakRef);
     }
 
     public boolean isConsumed() {
