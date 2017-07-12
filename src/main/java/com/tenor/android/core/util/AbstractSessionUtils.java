@@ -12,7 +12,6 @@ import com.tenor.android.core.constant.StringConstant;
 import java.lang.reflect.Type;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 /**

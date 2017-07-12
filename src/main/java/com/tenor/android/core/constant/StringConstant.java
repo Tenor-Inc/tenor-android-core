@@ -59,6 +59,10 @@ public abstract class StringConstant {
      */
     public static final String SLASH = "/";
     /**
+     * "|"
+     */
+    public static final String PIPE = "|";
+    /**
      * \n
      */
     public static final String NEW_LINE = "\n";
@@ -91,7 +95,6 @@ public abstract class StringConstant {
             }
         } catch (Exception ignored) {
         }
-
         return EMPTY;
     }
 
@@ -198,18 +201,25 @@ public abstract class StringConstant {
     }
 
     public static String getOrEmpty(@Nullable final String str) {
-        return parse(str, EMPTY);
+        return !isEmpty(str) ? str : EMPTY;
     }
 
-    public static String parse(@Nullable final String str, @Nullable final String defVal) {
-        if (str != null) {
-            return str;
-        }
-
-        if (defVal != null) {
+    /**
+     * Parse the given {@link String} into int
+     *
+     * @param str    the string
+     * @param defVal the default value
+     */
+    public static int parse(@Nullable final String str, final int defVal) {
+        if (TextUtils.isEmpty(str) || !TextUtils.isDigitsOnly(str)) {
             return defVal;
         }
-        return EMPTY;
+
+        try {
+            return Integer.parseInt(str);
+        } catch (NumberFormatException ignored) {
+            return defVal;
+        }
     }
 
     public static boolean copy(@Nullable final Context context,
