@@ -54,17 +54,33 @@ public abstract class AbstractLocaleUtils {
     }
 
     /**
-     * Get current UTC offset, such as "-0700"
+     * Get current UTC offset, such as "-0700" using the {@link Locale#US}
      *
      * @param context the given context
      * @return the current UTC offset, such as "-0700"
      */
     @NonNull
-    public static String getCurrentUtcOffset(@Nullable final Context context) {
+    public static String getUtcOffset(@Nullable final Context context) {
+        return getUtcOffset(context, Locale.US);
+    }
+
+    /**
+     * Get current UTC offset, such as "-0700"
+     *
+     * @param context the given context
+     * @param locale  the {@link Locale}
+     * @return the current UTC offset, such as "-0700"
+     */
+    @NonNull
+    public static String getUtcOffset(@Nullable final Context context, @Nullable final Locale locale) {
         if (context == null) {
             return StringConstant.EMPTY;
         }
-        return new SimpleDateFormat("ZZZ", getCurrentLocale(context)).format(System.currentTimeMillis());
+
+        if (locale == null) {
+            return getUtcOffset(context, Locale.US);
+        }
+        return new SimpleDateFormat("ZZZ", locale).format(System.currentTimeMillis());
     }
 
     /**

@@ -399,7 +399,7 @@ public abstract class ApiClient {
                         visualPosition,
                         count,
                         System.currentTimeMillis() / 1000f,
-                        AbstractLocaleUtils.getCurrentUtcOffset(context),
+                        AbstractLocaleUtils.getUtcOffset(context),
                         duration,
                         visibleFraction,
                         getAnonId(context));
@@ -463,7 +463,7 @@ public abstract class ApiClient {
                         visualPosition,
                         action,
                         System.currentTimeMillis() / 1000f,
-                        AbstractLocaleUtils.getCurrentUtcOffset(context),
+                        AbstractLocaleUtils.getUtcOffset(context),
                         getAnonId(context));
 
         call.enqueue(new BaseCallback<Void>() {
