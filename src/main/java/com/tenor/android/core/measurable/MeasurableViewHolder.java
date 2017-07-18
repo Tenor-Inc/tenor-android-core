@@ -63,7 +63,7 @@ public abstract class MeasurableViewHolder<CTX extends IBaseView> extends WeakRe
 
     @CallSuper
     @Override
-    public synchronized void attachTimer(@NonNull RecyclerView recyclerView) {
+    public synchronized void attachMeasurer(@NonNull RecyclerView recyclerView) {
         mRecyclerView = recyclerView;
         mMeasurable = false;
         mMeasurableViewHolderData.clear();
@@ -72,7 +72,7 @@ public abstract class MeasurableViewHolder<CTX extends IBaseView> extends WeakRe
 
     @CallSuper
     @Override
-    public synchronized void resumeTimer(@NonNull RecyclerView recyclerView) {
+    public synchronized void resumeMeasurer(@NonNull RecyclerView recyclerView) {
         if (isMeasurable()) {
             mMeasurableViewHolderData.resume();
         }
@@ -80,7 +80,7 @@ public abstract class MeasurableViewHolder<CTX extends IBaseView> extends WeakRe
 
     @CallSuper
     @Override
-    public synchronized void pauseTimer() {
+    public synchronized void pauseMeasurer(@NonNull RecyclerView recyclerView) {
         if (isMeasurable()) {
             mMeasurableViewHolderData.pause();
         }
@@ -88,7 +88,7 @@ public abstract class MeasurableViewHolder<CTX extends IBaseView> extends WeakRe
 
     @CallSuper
     @Override
-    public synchronized void detachTimer() {
+    public synchronized void detachMeasurer() {
         mRecyclerView = null;
         mMeasurable = false;
         mMeasurableViewHolderData.destroy(getContext());

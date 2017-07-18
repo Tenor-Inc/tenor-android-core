@@ -22,7 +22,7 @@ public class MeasurableRecyclerViewHelper {
                 RecyclerView.ViewHolder vh = recyclerView.findContainingViewHolder(view);
                 if (vh instanceof IMeasurableViewHolder) {
                     IMeasurableViewHolder holder = (IMeasurableViewHolder) vh;
-                    holder.attachTimer(recyclerView);
+                    holder.attachMeasurer(recyclerView);
                 }
             }
 
@@ -31,7 +31,7 @@ public class MeasurableRecyclerViewHelper {
                 RecyclerView.ViewHolder vh = recyclerView.findContainingViewHolder(view);
                 if (vh instanceof IMeasurableViewHolder) {
                     IMeasurableViewHolder holder = (IMeasurableViewHolder) vh;
-                    holder.detachTimer();
+                    holder.detachMeasurer();
                 }
             }
         });

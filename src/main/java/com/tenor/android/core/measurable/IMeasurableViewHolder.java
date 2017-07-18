@@ -20,20 +20,23 @@ public interface IMeasurableViewHolder extends IViewHolder {
     @FloatRange(from = 0f, to = 1f)
     float measure(@NonNull RecyclerView recyclerView);
 
+    void attachMeasurer(@NonNull RecyclerView recyclerView);
+
     /**
-     * Enable timer
+     * Resume the measurer to collect {@link MeasurableViewHolderData} on referenced view resumed
      */
-    void attachTimer(@NonNull RecyclerView recyclerView);
+    void resumeMeasurer(@NonNull RecyclerView recyclerView);
 
-    void resumeTimer(@NonNull RecyclerView recyclerView);
-
-    void pauseTimer();
+    /**
+     * Pause the measurer to collect {@link MeasurableViewHolderData} on referenced view paused
+     */
+    void pauseMeasurer(@NonNull RecyclerView recyclerView);
 
     /**
      * Destroy {@link MeasurableViewHolderData} on the itemView of a
      * {@link RecyclerView.ViewHolder} detached from window
      */
-    void detachTimer();
+    void detachMeasurer();
 
     void flush();
 }
