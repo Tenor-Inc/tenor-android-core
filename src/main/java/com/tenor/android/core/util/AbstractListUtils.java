@@ -7,7 +7,6 @@ import com.tenor.android.core.model.ICollection;
 import com.tenor.android.core.model.IGif;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;

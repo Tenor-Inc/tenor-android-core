@@ -3,8 +3,10 @@ package com.tenor.android.core.util;
 import com.tenor.android.core.constant.StringConstant;
 
 import org.junit.Test;
+
 import java.util.ArrayList;
 import java.util.List;
+
 import static org.junit.Assert.assertEquals;
 
 public class StringConstantUT {

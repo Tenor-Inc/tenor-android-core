@@ -2,7 +2,6 @@ package com.tenor.android.core.model.impl;
 
 
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 
 import com.google.gson.annotations.SerializedName;
 import com.tenor.android.core.constant.StringConstant;

@@ -2,7 +2,6 @@ package com.tenor.android.core.util;
 
 import android.annotation.TargetApi;
 import android.content.ClipDescription;
-import android.content.Context;
 import android.content.Intent;
 import android.inputmethodservice.InputMethodService;
 import android.net.Uri;
@@ -14,19 +13,10 @@ import android.support.v13.view.inputmethod.InputConnectionCompat;
 import android.support.v13.view.inputmethod.InputContentInfoCompat;
 import android.text.TextUtils;
 import android.view.inputmethod.EditorInfo;
-import android.view.inputmethod.ExtractedText;
-import android.view.inputmethod.ExtractedTextRequest;
 import android.view.inputmethod.InputConnection;
-import android.view.inputmethod.InputMethodInfo;
-import android.view.inputmethod.InputMethodManager;
 
 import com.tenor.android.core.constant.ContentFormat;
 import com.tenor.android.core.constant.ContentFormats;
-import com.tenor.android.core.constant.StringConstant;
-import com.tenor.android.core.network.ApiClient;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Determine keyboard related information
