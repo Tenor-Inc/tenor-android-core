@@ -15,7 +15,6 @@ public abstract class MeasurableViewHolder<CTX extends IBaseView> extends WeakRe
     @NonNull
     private final MeasurableViewHolderData<? extends MeasurableViewHolder<CTX>> mMeasurableViewHolderData;
     private RecyclerView mRecyclerView;
-    private boolean mMeasurable;
 
     public MeasurableViewHolder(View itemView, CTX context) {
         super(itemView, context);
@@ -42,30 +41,24 @@ public abstract class MeasurableViewHolder<CTX extends IBaseView> extends WeakRe
     }
 
     @Override
-    public final boolean isMeasurable() {
-        return mMeasurable;
-    }
-
-    @Override
-    public void setMeasurable(boolean measurable) {
-        mMeasurable = measurable;
-    }
-
-    @Override
     public synchronized float measure(@NonNull RecyclerView recyclerView) {
-        if (!isMeasurable()) {
-            return 0f;
-        }
         float visibleFraction = MeasurableViewHolderHelper.calculateVisibleFraction(recyclerView, itemView, getThreshold());
         mMeasurableViewHolderData.setVisibleFraction(visibleFraction);
         return visibleFraction;
+    }
+
+    @Override
+    public synchronized void onContentReady() {
+        if (getRecyclerView() != null) {
+            float visibleFraction = MeasurableViewHolderHelper.calculateVisibleFraction(getRecyclerView(), itemView, getThreshold());
+            mMeasurableViewHolderData.onContentReady(visibleFraction);
+        }
     }
 
     @CallSuper
     @Override
     public synchronized void attachMeasurer(@NonNull RecyclerView recyclerView) {
         mRecyclerView = recyclerView;
-        mMeasurable = false;
         mMeasurableViewHolderData.clear();
         measure(recyclerView);
     }
@@ -73,32 +66,25 @@ public abstract class MeasurableViewHolder<CTX extends IBaseView> extends WeakRe
     @CallSuper
     @Override
     public synchronized void resumeMeasurer(@NonNull RecyclerView recyclerView) {
-        if (isMeasurable()) {
-            mMeasurableViewHolderData.resume();
-        }
+        mMeasurableViewHolderData.resume();
     }
 
     @CallSuper
     @Override
     public synchronized void pauseMeasurer(@NonNull RecyclerView recyclerView) {
-        if (isMeasurable()) {
-            mMeasurableViewHolderData.pause();
-        }
+        mMeasurableViewHolderData.pause();
     }
 
     @CallSuper
     @Override
     public synchronized void detachMeasurer() {
         mRecyclerView = null;
-        mMeasurable = false;
         mMeasurableViewHolderData.destroy(getContext());
     }
 
     @CallSuper
     @Override
     public void flush() {
-        if (isMeasurable()) {
-            mMeasurableViewHolderData.flush(getContext());
-        }
+        mMeasurableViewHolderData.flush(getContext());
     }
 }

@@ -47,6 +47,12 @@ public class MeasurableViewHolderData<VH extends IMeasurableViewHolder> extends 
         mVisibleFraction = 0f;
     }
 
+    public synchronized void onContentReady(@FloatRange(from = 0f, to = 1f) float visibleFraction) {
+        updateTimestamp();
+        setVisibleFraction(visibleFraction);
+        mAccumulatedVisibleCount++;
+    }
+
     private synchronized void resetCounts() {
         mAccumulatedVisibleDuration = 0;
         mAccumulatedVisibleCount = 0;
@@ -56,7 +62,7 @@ public class MeasurableViewHolderData<VH extends IMeasurableViewHolder> extends 
         mTimestampOnVisible = -1;
     }
 
-    private synchronized void updateTimestamp() {
+    public synchronized void updateTimestamp() {
         mTimestampOnVisible = System.currentTimeMillis();
     }
 
@@ -69,7 +75,7 @@ public class MeasurableViewHolderData<VH extends IMeasurableViewHolder> extends 
         return mVisibility == View.VISIBLE;
     }
 
-    public synchronized int getAccumulatedVisibleTime() {
+    public synchronized int getAccumulatedVisibleDuration() {
         return mAccumulatedVisibleDuration;
     }
 
@@ -106,10 +112,10 @@ public class MeasurableViewHolderData<VH extends IMeasurableViewHolder> extends 
         setVisibleFraction(0f);
         // TODO: to be implemented, schedule a call to registerAction
         // ViewHolderDataManager.push(context, AbstractGsonUtils.getInstance().toJson(this));
-        if (getAccumulatedVisibleTime() > 0 || getAccumulatedVisibleCount() > 0) {
+        if (getAccumulatedVisibleDuration() > 0 || getAccumulatedVisibleCount() > 0) {
             Log.e("===>", "======> item[" + getAdapterPosition()
-                    + "], flushed, viewed for: " + getAccumulatedVisibleTime()
-                    + "], counted for: " + getAccumulatedVisibleCount());
+                    + "], flushed, viewed for: " + getAccumulatedVisibleDuration()
+                    + ", counted for: " + getAccumulatedVisibleCount());
         }
         clear();
     }

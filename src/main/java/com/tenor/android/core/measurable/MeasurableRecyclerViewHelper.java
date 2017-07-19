@@ -127,7 +127,7 @@ public class MeasurableRecyclerViewHelper {
         RecyclerView.ViewHolder holder;
         for (int i = start; i <= end; i++) {
             holder = recyclerView.findViewHolderForAdapterPosition(i);
-            if (holder instanceof IViewHolder) {
+            if (cls.isInstance(holder)) {
                 //noinspection unchecked
                 list.add((T) holder);
             }

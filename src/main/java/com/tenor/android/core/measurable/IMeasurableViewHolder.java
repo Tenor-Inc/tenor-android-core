@@ -13,9 +13,7 @@ import android.support.v7.widget.RecyclerView;
  */
 public interface IMeasurableViewHolder extends IViewHolder {
 
-    boolean isMeasurable();
-
-    void setMeasurable(boolean measurable);
+    void onContentReady();
 
     @FloatRange(from = 0f, to = 1f)
     float measure(@NonNull RecyclerView recyclerView);
