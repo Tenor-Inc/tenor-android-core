@@ -1,8 +1,8 @@
-package com.tenor.android.core.constant.ad.impl;
+package com.tenor.android.core.sponsorable.impl;
 
-import com.tenor.android.core.constant.ad.AdIconPosition;
+import com.tenor.android.core.sponsorable.ItemBadgePosition;
 
-public class AdIconPositions {
+public class ItemBadgePositions {
 
     public static final int NONE = 0;
     public static final int INTERIOR_TOP_LEFT = 1;
@@ -14,7 +14,7 @@ public class AdIconPositions {
     public static final int EXTERIOR_BOTTOM_RIGHT = 7;
     public static final int EXTERIOR_BOTTOM_LEFT = 8;
 
-    @AdIconPosition
+    @ItemBadgePosition
     public static int parse(int position) {
         switch (position) {
             case INTERIOR_TOP_LEFT:
@@ -39,7 +39,7 @@ public class AdIconPositions {
         }
     }
 
-    public static boolean isExterior(@AdIconPosition int position) {
+    public static boolean isExterior(@ItemBadgePosition int position) {
         switch (position) {
             case EXTERIOR_TOP_LEFT:
             case EXTERIOR_TOP_RIGHT:
@@ -51,12 +51,12 @@ public class AdIconPositions {
         }
     }
 
-    public static boolean isInterior(@AdIconPosition int position) {
+    public static boolean isInterior(@ItemBadgePosition int position) {
         switch (position) {
-            case AdIconPositions.INTERIOR_TOP_LEFT:
-            case AdIconPositions.INTERIOR_TOP_RIGHT:
-            case AdIconPositions.INTERIOR_BOTTOM_RIGHT:
-            case AdIconPositions.INTERIOR_BOTTOM_LEFT:
+            case ItemBadgePositions.INTERIOR_TOP_LEFT:
+            case ItemBadgePositions.INTERIOR_TOP_RIGHT:
+            case ItemBadgePositions.INTERIOR_BOTTOM_RIGHT:
+            case ItemBadgePositions.INTERIOR_BOTTOM_LEFT:
                 return true;
             default:
                 return false;

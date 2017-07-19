@@ -53,7 +53,7 @@ public class Result implements IGif {
     private FeaturedInfo featuredInfo;
 
     @SerializedName("ad_badge_info")
-    private AdBadgeInfo mAdBadgeInfo;
+    private ItemBadge itemBadge;
 
     @SerializedName("source_id")
     private String sourceId;
@@ -166,13 +166,13 @@ public class Result implements IGif {
         return featuredInfo != null;
     }
 
-    public boolean hasAdBadgeInfo() {
-        return mAdBadgeInfo != null;
+    public boolean hasItemBadge() {
+        return itemBadge != null;
     }
 
     @Nullable
-    public AdBadgeInfo getAdBadgeInfo() {
-        return mAdBadgeInfo;
+    public ItemBadge getItemBadge() {
+        return itemBadge;
     }
 
     @NonNull
