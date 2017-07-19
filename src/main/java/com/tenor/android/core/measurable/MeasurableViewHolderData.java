@@ -18,34 +18,46 @@ public class MeasurableViewHolderData<VH extends IMeasurableViewHolder> extends 
     private int mVisibility = View.INVISIBLE;
 
     @IntRange(from = 0)
-    private int mAccumulatedVisibleTime = 0;
+    private int mAccumulatedVisibleDuration = 0;
 
     @IntRange(from = 0)
     private int mAccumulatedVisibleCount = 0;
 
     @IntRange(from = -1)
-    private long mLastVisibleStartTime = -1;
+    private long mTimestampOnVisible = -1;
 
     @FloatRange(from = 0f, to = 1f)
     private float mVisibleFraction = 0f;
 
-    @FloatRange(from = 0f, to = 1f)
+    @FloatRange(from = 0.01f, to = 1f)
     private final float mThreshold;
 
-    public MeasurableViewHolderData(@NonNull final VH viewHolder, float threshold) {
+    public MeasurableViewHolderData(@NonNull final VH viewHolder,
+                                    @FloatRange(from = 0.01f, to = 1f) float threshold) {
         super(viewHolder);
-        mLastVisibleStartTime = -1;
-        mAccumulatedVisibleTime = 0;
-        mAccumulatedVisibleCount = 0;
+        resetTimestamp();
+        resetCounts();
         mThreshold = threshold;
     }
 
-    public void clear() {
+    public synchronized void clear() {
         mVisibility = View.INVISIBLE;
-        mLastVisibleStartTime = -1;
-        mAccumulatedVisibleTime = 0;
-        mAccumulatedVisibleCount = 0;
+        resetTimestamp();
+        resetCounts();
         mVisibleFraction = 0f;
+    }
+
+    private synchronized void resetCounts() {
+        mAccumulatedVisibleDuration = 0;
+        mAccumulatedVisibleCount = 0;
+    }
+
+    private synchronized void resetTimestamp() {
+        mTimestampOnVisible = -1;
+    }
+
+    private synchronized void updateTimestamp() {
+        mTimestampOnVisible = System.currentTimeMillis();
     }
 
     public int getAdapterPosition() {
@@ -57,11 +69,11 @@ public class MeasurableViewHolderData<VH extends IMeasurableViewHolder> extends 
         return mVisibility == View.VISIBLE;
     }
 
-    public int getAccumulatedVisibleTime() {
-        return mAccumulatedVisibleTime;
+    public synchronized int getAccumulatedVisibleTime() {
+        return mAccumulatedVisibleDuration;
     }
 
-    public int getAccumulatedVisibleCount() {
+    public synchronized int getAccumulatedVisibleCount() {
         return mAccumulatedVisibleCount;
     }
 
@@ -70,29 +82,29 @@ public class MeasurableViewHolderData<VH extends IMeasurableViewHolder> extends 
         return mVisibleFraction;
     }
 
-    public void pause() {
+    public synchronized void pause() {
         // becomes invisible
-        if (mLastVisibleStartTime < 0) {
+        if (mTimestampOnVisible < 0) {
             return;
         }
-        final long duration = System.currentTimeMillis() - mLastVisibleStartTime;
-        mAccumulatedVisibleTime += duration;
-        mLastVisibleStartTime = -1;
+        final long duration = System.currentTimeMillis() - mTimestampOnVisible;
+        mAccumulatedVisibleDuration += duration;
+        resetTimestamp();
     }
 
-    public void resume() {
+    public synchronized void resume() {
         // update the timestamp
-        mLastVisibleStartTime = System.currentTimeMillis();
+        updateTimestamp();
     }
 
-    public void destroy(@NonNull Context context) {
+    public synchronized void destroy(@NonNull Context context) {
         Log.e("===>", "======> item[" + getAdapterPosition() + "], destroy !!!");
         flush(context);
     }
 
-    public void flush(@NonNull Context context) {
+    public synchronized void flush(@NonNull Context context) {
         setVisibleFraction(0f);
-        // TODO: to be implemented
+        // TODO: to be implemented, schedule a call to registerAction
         // ViewHolderDataManager.push(context, AbstractGsonUtils.getInstance().toJson(this));
         if (getAccumulatedVisibleTime() > 0 || getAccumulatedVisibleCount() > 0) {
             Log.e("===>", "======> item[" + getAdapterPosition()
@@ -102,7 +114,7 @@ public class MeasurableViewHolderData<VH extends IMeasurableViewHolder> extends 
         clear();
     }
 
-    public void setVisibleFraction(float visibleFraction) {
+    public synchronized void setVisibleFraction(@FloatRange(from = 0f, to = 1f) float visibleFraction) {
         mVisibleFraction = visibleFraction;
 
         final boolean wasVisible = isVisible();
@@ -127,18 +139,18 @@ public class MeasurableViewHolderData<VH extends IMeasurableViewHolder> extends 
     }
 
     private void becomesVisible() {
-        mLastVisibleStartTime = System.currentTimeMillis();
+        updateTimestamp();
         Log.e("===>", "======> item[" + getAdapterPosition() + "] becomes Visible !!!");
     }
 
     private void becomesInvisible() {
-        if (mLastVisibleStartTime < 0) {
+        if (mTimestampOnVisible < 0) {
             return;
         }
-        final long duration = System.currentTimeMillis() - mLastVisibleStartTime;
-        mAccumulatedVisibleTime += duration;
+        final long duration = System.currentTimeMillis() - mTimestampOnVisible;
+        mAccumulatedVisibleDuration += duration;
         mAccumulatedVisibleCount++;
-        mLastVisibleStartTime = -1;
+        resetTimestamp();
         Log.e("===>", "======> item[" + getAdapterPosition() + "] becomes Invisible !!!");
     }
 }

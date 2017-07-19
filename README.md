@@ -22,6 +22,9 @@ dependencies {
   compile(name: 'tenor-android-core', ext: 'aar') {
       transitive = true
   }
+  compile 'com.android.support:recyclerview-v7:25.3.1'
+  compile 'com.squareup.retrofit2:converter-gson:2.3.0'
+  compile 'com.github.bumptech.glide:glide:3.8.0'
 }
 ```
 
