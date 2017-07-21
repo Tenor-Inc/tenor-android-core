@@ -6,6 +6,7 @@ import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 
+import com.tenor.android.core.constant.StringConstant;
 import com.tenor.android.core.rvwidget.WeakRefViewHolder;
 import com.tenor.android.core.view.IBaseView;
 
@@ -18,7 +19,7 @@ public abstract class MeasurableViewHolder<CTX extends IBaseView> extends WeakRe
 
     public MeasurableViewHolder(View itemView, CTX context) {
         super(itemView, context);
-        mMeasurableViewHolderData = new MeasurableViewHolderData<>(this, getThreshold());
+        mMeasurableViewHolderData = new MeasurableViewHolderData<>(this, getViewAcceptanceThreshold());
     }
 
     @Nullable
@@ -26,12 +27,21 @@ public abstract class MeasurableViewHolder<CTX extends IBaseView> extends WeakRe
         return mRecyclerView;
     }
 
-    protected MeasurableViewHolderData<? extends MeasurableViewHolder<CTX>> getMeasurableViewHolderData() {
+    protected MeasurableViewHolderData<? extends MeasurableViewHolder<CTX>> getMeasurableData() {
         return mMeasurableViewHolderData;
     }
 
-    protected float getThreshold() {
+    protected float getViewAcceptanceThreshold() {
         return 1.0f;
+    }
+
+    /**
+     * Get the unique identifier of this view holder
+     * */
+    @NonNull
+    @Override
+    public String getId() {
+        return StringConstant.EMPTY;
     }
 
     public synchronized void measure() {
@@ -42,7 +52,7 @@ public abstract class MeasurableViewHolder<CTX extends IBaseView> extends WeakRe
 
     @Override
     public synchronized float measure(@NonNull RecyclerView recyclerView) {
-        float visibleFraction = MeasurableViewHolderHelper.calculateVisibleFraction(recyclerView, itemView, getThreshold());
+        float visibleFraction = MeasurableViewHolderHelper.calculateVisibleFraction(recyclerView, itemView, getViewAcceptanceThreshold());
         mMeasurableViewHolderData.setVisibleFraction(visibleFraction);
         return visibleFraction;
     }
@@ -50,7 +60,7 @@ public abstract class MeasurableViewHolder<CTX extends IBaseView> extends WeakRe
     @Override
     public synchronized void onContentReady() {
         if (getRecyclerView() != null) {
-            float visibleFraction = MeasurableViewHolderHelper.calculateVisibleFraction(getRecyclerView(), itemView, getThreshold());
+            float visibleFraction = MeasurableViewHolderHelper.calculateVisibleFraction(getRecyclerView(), itemView, getViewAcceptanceThreshold());
             mMeasurableViewHolderData.onContentReady(visibleFraction);
         }
     }
@@ -79,12 +89,12 @@ public abstract class MeasurableViewHolder<CTX extends IBaseView> extends WeakRe
     @Override
     public synchronized void detachMeasurer() {
         mRecyclerView = null;
-        mMeasurableViewHolderData.destroy(getContext());
+        mMeasurableViewHolderData.destroy(getContext(), getId());
     }
 
     @CallSuper
     @Override
     public void flush() {
-        mMeasurableViewHolderData.flush(getContext());
+        mMeasurableViewHolderData.flush(getContext(), getId());
     }
 }

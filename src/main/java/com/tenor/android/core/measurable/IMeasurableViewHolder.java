@@ -13,6 +13,12 @@ import android.support.v7.widget.RecyclerView;
  */
 public interface IMeasurableViewHolder extends IViewHolder {
 
+    /**
+     * Get the unique identifier of this {@link IMeasurableViewHolder}
+     */
+    @NonNull
+    String getId();
+
     void onContentReady();
 
     @FloatRange(from = 0f, to = 1f)

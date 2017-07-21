@@ -302,7 +302,7 @@ public abstract class ApiClient {
      * @return {@link Call}<{@link AnonIdResponse}>
      */
     public static Call<AnonIdResponse> getAnonId(@NonNull final Context context,
-                                                     @Nullable final IAnonIdListener listener) {
+                                                 @Nullable final IAnonIdListener listener) {
         // request for new keyboard id
         Call<AnonIdResponse> call = ApiClient.getInstance(context)
                 .getAnonId(ApiClient.getApiKey(), AbstractLocaleUtils.getCurrentLocaleName(context));

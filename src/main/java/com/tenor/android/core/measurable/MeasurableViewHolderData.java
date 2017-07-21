@@ -103,15 +103,15 @@ public class MeasurableViewHolderData<VH extends IMeasurableViewHolder> extends 
         updateTimestamp();
     }
 
-    public synchronized void destroy(@NonNull Context context) {
+    public synchronized void destroy(@NonNull Context context, @NonNull String id) {
         Log.e("===>", "======> item[" + getAdapterPosition() + "], destroy !!!");
-        flush(context);
+        flush(context, id);
     }
 
-    public synchronized void flush(@NonNull Context context) {
+    public synchronized void flush(@NonNull Context context, @NonNull String id) {
         setVisibleFraction(0f);
         // TODO: to be implemented, schedule a call to registerAction
-        // ViewHolderDataManager.push(context, AbstractGsonUtils.getInstance().toJson(this));
+         ViewHolderDataManager.push(context, id, this);
         if (getAccumulatedVisibleDuration() > 0 || getAccumulatedVisibleCount() > 0) {
             Log.e("===>", "======> item[" + getAdapterPosition()
                     + "], flushed, viewed for: " + getAccumulatedVisibleDuration()

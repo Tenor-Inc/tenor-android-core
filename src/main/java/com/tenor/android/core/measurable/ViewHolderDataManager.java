@@ -3,8 +3,10 @@ package com.tenor.android.core.measurable;
 import android.content.Context;
 import android.support.annotation.NonNull;
 
-import com.tenor.android.core.util.AbstractGsonUtils;
+import com.tenor.android.core.network.ApiClient;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
@@ -18,7 +20,7 @@ public class ViewHolderDataManager {
     /**
      * Always call sQueue through using {@link #getInstance()}
      */
-    private static Queue<String> sQueue;
+    private static Queue<MeasurableViewHolderEvent> sQueue;
 
     /**
      * Use explicit size counter to compensate the non-constant-time size() operation in {@link ConcurrentLinkedQueue}
@@ -32,7 +34,7 @@ public class ViewHolderDataManager {
         getInstance();
     }
 
-    private static Queue<String> getInstance() {
+    private static Queue<MeasurableViewHolderEvent> getInstance() {
         if (sQueue == null) {
             sQueue = new ConcurrentLinkedQueue<>();
             sQueueSize = 0;
@@ -41,14 +43,41 @@ public class ViewHolderDataManager {
     }
 
     /**
-     * Push a analytic event to queue
+     * Push a view event to queue
      *
      * @param context the context
+     * @param id      the unique identifier of the view holder
      * @param data    the serialized {@link MeasurableViewHolderData}
      */
-    public synchronized static void push(@NonNull final Context context, String data) {
+    public synchronized static void push(@NonNull final Context context,
+                                         @NonNull final String id,
+                                         @NonNull final MeasurableViewHolderData data) {
+        push(context, new MeasurableViewHolderEvent(id, data));
+    }
+
+    /**
+     * Push an action event to queue
+     *
+     * @param context the context
+     * @param id      the unique identifier of the view holder
+     * @param action  the action {share|tap}
+     */
+    public synchronized static void push(@NonNull final Context context,
+                                         @NonNull final String id,
+                                         @NonNull final String action) {
+        push(context, new MeasurableViewHolderEvent(id, action));
+    }
+
+    /**
+     * Push a {@link MeasurableViewHolderEvent} to queue
+     *
+     * @param context the context
+     * @param event   the serialized {@link MeasurableViewHolderEvent}
+     */
+    private synchronized static void push(@NonNull final Context context,
+                                          @NonNull final MeasurableViewHolderEvent event) {
         try {
-            getInstance().add(data);
+            getInstance().add(event);
             sQueueSize++;
         } catch (Throwable ignored) {
         }
@@ -60,18 +89,6 @@ public class ViewHolderDataManager {
         if (sQueueSize >= BATCH_SIZE) {
             send(context);
         }
-
-    }
-
-    /**
-     * Push a analytic event to queue
-     *
-     * @param context the context
-     * @param data    the {@link MeasurableViewHolderData}
-     */
-    public synchronized static void push(@NonNull final Context context, MeasurableViewHolderData data) {
-        push(context, AbstractGsonUtils.getInstance().toJson(data));
-
     }
 
     /**
@@ -90,7 +107,7 @@ public class ViewHolderDataManager {
      * @param sendWithoutKeyboardId force sending the analytic data when there is no keyboard id
      */
     public synchronized static void flush(@NonNull final Context context, boolean sendWithoutKeyboardId) {
-        send(context, Integer.MAX_VALUE, sendWithoutKeyboardId);
+        send(context, Integer.MAX_VALUE);
     }
 
     /**
@@ -99,7 +116,7 @@ public class ViewHolderDataManager {
      * @param context the context
      */
     public synchronized static void send(@NonNull final Context context) {
-        send(context, BATCH_SIZE, false);
+        send(context, BATCH_SIZE);
     }
 
     /**
@@ -107,10 +124,18 @@ public class ViewHolderDataManager {
      *
      * @param context               the context
      * @param batchSize             the size of the analytic data batch
-     * @param sendWithoutKeyboardId force sending the analytic data when there is no keyboard id
      */
-    private synchronized static void send(@NonNull final Context context, int batchSize,
-                                          boolean sendWithoutKeyboardId) {
-        // TODO: to be implemented
+    private synchronized static void send(@NonNull final Context context, int batchSize) {
+
+        List<MeasurableViewHolderEvent> list = new ArrayList<>();
+        try {
+            while (sQueueSize > 0 && list.size() < batchSize) {
+                list.add(getInstance().poll());
+                sQueueSize--;
+            }
+            // TODO: make this a schedule task
+            ApiClient.getInstance(context).registerActions(ApiClient.getServiceIds(context), list);
+        } catch (Throwable throwable) {
+        }
     }
 }
