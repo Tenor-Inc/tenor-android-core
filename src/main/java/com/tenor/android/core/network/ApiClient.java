@@ -295,14 +295,14 @@ public abstract class ApiClient {
     }
 
     /**
-     * Get keyboard id for better search experience
+     * Get a non-id to roughly identify a user for a better content delivery experience
      *
      * @param context  the application context
      * @param listener the callback when the asynchronous keyboard id API request is done
      * @return {@link Call}<{@link AnonIdResponse}>
      */
     public static Call<AnonIdResponse> getAnonId(@NonNull final Context context,
-                                                 @Nullable final IAnonIdListener listener) {
+                                                     @Nullable final IAnonIdListener listener) {
         // request for new keyboard id
         Call<AnonIdResponse> call = ApiClient.getInstance(context)
                 .getAnonId(ApiClient.getApiKey(), AbstractLocaleUtils.getCurrentLocaleName(context));
@@ -341,10 +341,30 @@ public abstract class ApiClient {
         return call;
     }
 
-    public static Map<String, String> getAnonId(@NonNull final Context context) {
-        final ArrayMap<String, String> map = new ArrayMap<>(1);
+    /**
+     * Get service ids that can delivery a more accurate and better experience
+     *
+     * @return a {@link Map} with {@code key} (API Key), {@code anon_id},
+     * {@code aaid} (Android Advertise Id) and {@code locale } for authentication and better
+     * content delivery experience
+     */
+    public static Map<String, String> getServiceIds(@NonNull final Context context) {
+        final ArrayMap<String, String> map = new ArrayMap<>(4);
+
+        // API Key
+        map.put("key", getApiKey());
+
+        /*
+         * The following fields work together to delivery a more accurate and better experience
+         *
+         * a non-id is used to roughly identify a user;
+         * an aaid, Android Advertise Id, is used in case "keyboardid" or "anon_id" mutates
+         * a locales is used to deliver curated language/regional specific contents to users
+         */
         final String id = AbstractSessionUtils.getAnonId(context);
         map.put(id.length() <= 20 ? "keyboardid" : "anon_id", id);
+        map.put("aaid", AbstractSessionUtils.getAndroidAdvertiseId(context));
+        map.put("locale", AbstractLocaleUtils.getCurrentLocaleName(context));
         return map;
     }
 
@@ -358,9 +378,7 @@ public abstract class ApiClient {
     public static Call<GifsResponse> registerShare(@NonNull final Context context,
                                                    @NonNull final String id) {
         Call<GifsResponse> call = ApiClient.getInstance(context)
-                .registerShare(ApiClient.getApiKey(), Integer.valueOf(id),
-                        AbstractLocaleUtils.getCurrentLocaleName(context),
-                        getAnonId(context));
+                .registerShare(getServiceIds(context), Integer.valueOf(id));
 
         call.enqueue(new BaseCallback<GifsResponse>() {
             @Override
@@ -393,16 +411,14 @@ public abstract class ApiClient {
                                              @IntRange(from = 0, to = Integer.MAX_VALUE) final int duration,
                                              @FloatRange(from = 0f, to = 1f) final float visibleFraction) {
         Call<Void> call = ApiClient.getInstance(context)
-                .registerView(ApiClient.getApiKey(),
+                .registerView(getServiceIds(context),
                         sourceId,
-                        AbstractSessionUtils.getAndroidAdvertiseId(context),
                         visualPosition,
                         count,
                         System.currentTimeMillis() / 1000f,
                         AbstractLocaleUtils.getUtcOffset(context),
                         duration,
-                        visibleFraction,
-                        getAnonId(context));
+                        visibleFraction);
 
         call.enqueue(new BaseCallback<Void>() {
             @Override
@@ -426,11 +442,7 @@ public abstract class ApiClient {
      */
     public static Call<Void> registerGmeViews(@NonNull final Context context,
                                               @NonNull final String data) {
-        Call<Void> call = ApiClient.getInstance(context)
-                .registerActions(ApiClient.getApiKey(),
-                        AbstractSessionUtils.getAndroidAdvertiseId(context),
-                        data,
-                        getAnonId(context));
+        Call<Void> call = ApiClient.getInstance(context).registerActions(getServiceIds(context), data);
 
         call.enqueue(new BaseCallback<Void>() {
             @Override
@@ -457,14 +469,12 @@ public abstract class ApiClient {
                                                @NonNull String visualPosition,
                                                @NonNull final String action) {
         Call<Void> call = ApiClient.getInstance(context)
-                .registerAction(ApiClient.getApiKey(),
+                .registerAction(getServiceIds(context),
                         sourceId,
-                        AbstractSessionUtils.getAndroidAdvertiseId(context),
                         visualPosition,
                         action,
                         System.currentTimeMillis() / 1000f,
-                        AbstractLocaleUtils.getUtcOffset(context),
-                        getAnonId(context));
+                        AbstractLocaleUtils.getUtcOffset(context));
 
         call.enqueue(new BaseCallback<Void>() {
             @Override
