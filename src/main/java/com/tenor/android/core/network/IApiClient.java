@@ -158,38 +158,6 @@ public interface IApiClient {
                                                         @QueryMap Map<String, String> anonId);
 
     /**
-     * Returns a set of gifs that fall into the category of two related tags.
-     *
-     * @param apiKey api key to access the endpoint
-     * @param tag1   original tag term used in the search
-     * @param tag2   selected pivot
-     * @param locale <b>current language</b> set by the user
-     * @param anonId a non id
-     * @return {@link Call}<{@link GifsResponse}>
-     */
-    @GET("intersection")
-    Call<GifsResponse> getIntersections(@Query("key") String apiKey,
-                                        @Query("tags") String tag1,
-                                        @Query("tag2") String tag2,
-                                        @Query("locale") String locale,
-                                        @QueryMap Map<String, String> anonId);
-
-    /**
-     * Returns a set of gifs that fall into the category of two related tags.
-     *
-     * @param apiKey api key to access the endpoint
-     * @param tags   comma separated string of the original tag and pivot tag
-     * @param locale <b>current language</b> set by the user
-     * @param anonId a non id
-     * @return {@link Call}<{@link GifsResponse}>
-     */
-    @GET("intersection")
-    Call<GifsResponse> getIntersections(@Query("key") String apiKey,
-                                        @Query("tags") String tags,
-                                        @Query("locale") String locale,
-                                        @QueryMap Map<String, String> anonId);
-
-    /**
      * Returns the set of gifs uploaded by the current user
      *
      * @param apiKey      api key to access the endpoint
