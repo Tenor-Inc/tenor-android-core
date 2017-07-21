@@ -16,6 +16,8 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.tenor.android.core.constant.StringConstant;
 import com.tenor.android.core.listener.IAnonIdListener;
+import com.tenor.android.core.measurable.MeasurableViewHolderData;
+import com.tenor.android.core.measurable.MeasurableViewHolderEvent;
 import com.tenor.android.core.model.impl.Result;
 import com.tenor.android.core.response.BaseCallback;
 import com.tenor.android.core.response.BaseError;
@@ -395,70 +397,6 @@ public abstract class ApiClient {
     }
 
     /**
-     * Report shared gif id for better search experience in the future
-     *
-     * @param context         the application context
-     * @param sourceId        the source id of a {@link Result}
-     * @param count           number of times a GIF has been viewed within a short time span (~5 minutes)
-     * @param duration        the total time in milliseconds that the featured GIF has been visible
-     * @param visibleFraction the fraction of the GIF visible, range between 0f and 1f
-     * @return {@link Call}<{@link Void}>
-     */
-    public static Call<Void> registerGmeView(@NonNull final Context context,
-                                             @NonNull final String sourceId,
-                                             @NonNull final String visualPosition,
-                                             @IntRange(from = 0, to = Integer.MAX_VALUE) final int count,
-                                             @IntRange(from = 0, to = Integer.MAX_VALUE) final int duration,
-                                             @FloatRange(from = 0f, to = 1f) final float visibleFraction) {
-        Call<Void> call = ApiClient.getInstance(context)
-                .registerView(getServiceIds(context),
-                        sourceId,
-                        visualPosition,
-                        count,
-                        System.currentTimeMillis() / 1000f,
-                        AbstractLocaleUtils.getUtcOffset(context),
-                        duration,
-                        visibleFraction);
-
-        call.enqueue(new BaseCallback<Void>() {
-            @Override
-            public void success(Void response) {
-                // do nothing
-            }
-
-            @Override
-            public void failure(BaseError error) {
-                // do nothing
-            }
-        });
-        return call;
-    }
-
-    /**
-     * Report shared gif id for better search experience in the future
-     *
-     * @param context the application context
-     * @return {@link Call}<{@link Void}>
-     */
-    public static Call<Void> registerGmeViews(@NonNull final Context context,
-                                              @NonNull final String data) {
-        Call<Void> call = ApiClient.getInstance(context).registerActions(getServiceIds(context), data);
-
-        call.enqueue(new BaseCallback<Void>() {
-            @Override
-            public void success(Void response) {
-                // do nothing
-            }
-
-            @Override
-            public void failure(BaseError error) {
-                // do nothing
-            }
-        });
-        return call;
-    }
-
-    /**
      * @param context  the application context
      * @param sourceId the source id of a {@link Result}
      * @param action   the action {share|tap}
@@ -468,13 +406,11 @@ public abstract class ApiClient {
                                                @NonNull String sourceId,
                                                @NonNull String visualPosition,
                                                @NonNull final String action) {
+
+        final MeasurableViewHolderEvent event = new MeasurableViewHolderEvent(sourceId, action, AbstractLocaleUtils.getUtcOffset(context), visualPosition);
+
         Call<Void> call = ApiClient.getInstance(context)
-                .registerAction(getServiceIds(context),
-                        sourceId,
-                        visualPosition,
-                        action,
-                        System.currentTimeMillis() / 1000f,
-                        AbstractLocaleUtils.getUtcOffset(context));
+                .registerAction(getServiceIds(context), event);
 
         call.enqueue(new BaseCallback<Void>() {
             @Override

@@ -4,6 +4,7 @@ package com.tenor.android.core.network;
 import android.support.annotation.IntRange;
 import android.support.annotation.NonNull;
 
+import com.tenor.android.core.measurable.MeasurableViewHolderEvent;
 import com.tenor.android.core.model.impl.Result;
 import com.tenor.android.core.model.impl.Suggestions;
 import com.tenor.android.core.response.impl.AnonIdResponse;
@@ -13,6 +14,7 @@ import com.tenor.android.core.response.impl.PackResponse;
 import com.tenor.android.core.response.impl.SearchSuggestionResponse;
 import com.tenor.android.core.response.impl.TagsResponse;
 
+import java.util.List;
 import java.util.Map;
 
 import retrofit2.Call;
@@ -171,59 +173,28 @@ public interface IApiClient {
                                @Query("publicid") String publicId);
 
     /**
-     * Register view
-     *
-     * @param serviceIds      a {@link Map} of a collection of ids for better content delivery experience
-     * @param sourceId        the source id of a {@link Result}
-     * @param count           number of times a GIF has been viewed within a short time span (~5 minutes)
-     * @param timestamp       the client time when a GIF was initially viewed
-     * @param utcOffset       the client utc offset for the given timestamp when a GIF was initially viewed
-     * @param duration        the total time in milliseconds that the featured GIF has been visible
-     * @param visibleFraction the fraction of the GIF visible, range between 0f and 1f
-     * @return {@link Call}<{@link Void}>
-     */
-    @POST("registerview")
-    @FormUrlEncoded
-    @NonNull
-    Call<Void> registerView(@FieldMap Map<String, String> serviceIds,
-                            @Field("source_id") @NonNull String sourceId,
-                            @Field("visual_pos") String visualPos,
-                            @Field("count") int count,
-                            @Field("timestamp") float timestamp,
-                            @Field("timezone") @NonNull String utcOffset,
-                            @Field("elapsed_ms") int duration,
-                            @Field("visible_fraction") float visibleFraction);
-
-    /**
      * Register batch action
      *
      * @param serviceIds a {@link Map} of a collection of ids for better content delivery experience
-     * @param data       the serialized data
+     * @param data       a list of {@link MeasurableViewHolderEvent}
      * @return {@link Call}<{@link Void}>
      */
     @POST("registeraction")
     @FormUrlEncoded
     @NonNull
     Call<Void> registerActions(@FieldMap Map<String, String> serviceIds,
-                               @Field("data") @NonNull String data);
+                               @Field("data") @NonNull List<MeasurableViewHolderEvent> data);
 
     /**
      * Register action
      *
      * @param serviceIds a {@link Map} of a collection of ids for better content delivery experience
-     * @param sourceId   the source id of a {@link Result}
-     * @param action     the action
-     * @param timestamp  the time stamp for wehn the action was registered
-     * @param utcOffset  the client utc offset for the given timestamp when a GIF was initially viewed
+     * @param data       a {@link MeasurableViewHolderEvent}
      * @return {@link Call}<{@link Void}>
      */
     @POST("registeraction")
     @FormUrlEncoded
     @NonNull
     Call<Void> registerAction(@FieldMap Map<String, String> serviceIds,
-                              @Field("source_id") @NonNull String sourceId,
-                              @Field("visual_pos") String visualPos,
-                              @Field("action") @NonNull String action,
-                              @Field("timestamp") float timestamp,
-                              @Field("timezone") @NonNull String utcOffset);
+                              @Field("data") @NonNull MeasurableViewHolderEvent data);
 }

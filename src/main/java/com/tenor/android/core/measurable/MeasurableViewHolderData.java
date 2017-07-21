@@ -9,6 +9,9 @@ import android.util.Log;
 import android.view.View;
 
 import com.tenor.android.core.concurrency.WeakRefObject;
+import com.tenor.android.core.constant.ItemVisualPosition;
+import com.tenor.android.core.constant.ItemVisualPositions;
+import com.tenor.android.core.util.AbstractLocaleUtils;
 
 import java.io.Serializable;
 
@@ -29,15 +32,32 @@ public class MeasurableViewHolderData<VH extends IMeasurableViewHolder> extends 
     @FloatRange(from = 0f, to = 1f)
     private float mVisibleFraction = 0f;
 
+    @ItemVisualPosition
+    private String mVisualPosition = ItemVisualPositions.UNKNOWN;
+
+    private final String mId;
+
     @FloatRange(from = 0.01f, to = 1f)
     private final float mThreshold;
 
-    public MeasurableViewHolderData(@NonNull final VH viewHolder,
+    public MeasurableViewHolderData(@NonNull VH viewHolder,
+                                    @NonNull String id,
                                     @FloatRange(from = 0.01f, to = 1f) float threshold) {
         super(viewHolder);
         resetTimestamp();
         resetCounts();
+        mId = id;
         mThreshold = threshold;
+    }
+
+    @NonNull
+    public String getId() {
+        return mId;
+    }
+
+    @ItemVisualPosition
+    public String getVisualPosition() {
+        return mVisualPosition;
     }
 
     public synchronized void clear() {
@@ -47,9 +67,11 @@ public class MeasurableViewHolderData<VH extends IMeasurableViewHolder> extends 
         mVisibleFraction = 0f;
     }
 
-    public synchronized void onContentReady(@FloatRange(from = 0f, to = 1f) float visibleFraction) {
+    public synchronized void onContentReady(@FloatRange(from = 0f, to = 1f) float visibleFraction,
+                                            @ItemVisualPosition String visualPosition) {
         updateTimestamp();
         setVisibleFraction(visibleFraction);
+        mVisualPosition = visualPosition;
         mAccumulatedVisibleCount++;
     }
 
@@ -103,20 +125,19 @@ public class MeasurableViewHolderData<VH extends IMeasurableViewHolder> extends 
         updateTimestamp();
     }
 
-    public synchronized void destroy(@NonNull Context context, @NonNull String id) {
+    public synchronized void destroy(@NonNull Context context) {
         Log.e("===>", "======> item[" + getAdapterPosition() + "], destroy !!!");
-        flush(context, id);
+        flush(context);
     }
 
-    public synchronized void flush(@NonNull Context context, @NonNull String id) {
+    public synchronized void flush(@NonNull Context context) {
         setVisibleFraction(0f);
-        // TODO: to be implemented, schedule a call to registerAction
-         ViewHolderDataManager.push(context, id, this);
         if (getAccumulatedVisibleDuration() > 0 || getAccumulatedVisibleCount() > 0) {
             Log.e("===>", "======> item[" + getAdapterPosition()
                     + "], flushed, viewed for: " + getAccumulatedVisibleDuration()
                     + ", counted for: " + getAccumulatedVisibleCount());
         }
+        ViewHolderDataManager.push(context, this, AbstractLocaleUtils.getUtcOffset(context));
         clear();
     }
 

@@ -4,6 +4,8 @@ import android.support.annotation.FloatRange;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 
+import com.tenor.android.core.constant.ItemVisualPosition;
+
 /**
  * Interface of a {@link RecyclerView.ViewHolder}, measure {@link MeasurableViewHolderData} of a {@link RecyclerView.ViewHolder}
  * <p>
@@ -12,12 +14,6 @@ import android.support.v7.widget.RecyclerView;
  * (2) {@link MeasurableViewHolderData} must be initialized on constructor
  */
 public interface IMeasurableViewHolder extends IViewHolder {
-
-    /**
-     * Get the unique identifier of this {@link IMeasurableViewHolder}
-     */
-    @NonNull
-    String getId();
 
     void onContentReady();
 

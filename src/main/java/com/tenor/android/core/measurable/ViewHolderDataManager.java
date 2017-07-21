@@ -46,13 +46,12 @@ public class ViewHolderDataManager {
      * Push a view event to queue
      *
      * @param context the context
-     * @param id      the unique identifier of the view holder
      * @param data    the serialized {@link MeasurableViewHolderData}
      */
     public synchronized static void push(@NonNull final Context context,
-                                         @NonNull final String id,
-                                         @NonNull final MeasurableViewHolderData data) {
-        push(context, new MeasurableViewHolderEvent(id, data));
+                                         @NonNull final MeasurableViewHolderData data,
+                                         @NonNull String utcOffset) {
+        push(context, new MeasurableViewHolderEvent(data, utcOffset));
     }
 
     /**
@@ -64,8 +63,10 @@ public class ViewHolderDataManager {
      */
     public synchronized static void push(@NonNull final Context context,
                                          @NonNull final String id,
-                                         @NonNull final String action) {
-        push(context, new MeasurableViewHolderEvent(id, action));
+                                         @NonNull final String action,
+                                         @NonNull String utcOffset,
+                                         @NonNull String visualPosition) {
+        push(context, new MeasurableViewHolderEvent(id, action, utcOffset, visualPosition));
     }
 
     /**

@@ -7,6 +7,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.OrientationHelper;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
+import android.view.ViewGroup;
 
 
 public abstract class AbstractLayoutManagerUtils {
@@ -34,6 +35,20 @@ public abstract class AbstractLayoutManagerUtils {
             return ((GridLayoutManager) layoutManager).getSpanCount();
         } else {
             return 1;
+        }
+    }
+
+    /**
+     * @return the span index of {@link StaggeredGridLayoutManager.LayoutParams} and {@link GridLayoutManager.LayoutParams},
+     * otherwise 1 for all other {@link ViewGroup.LayoutParams}
+     */
+    public static <T extends ViewGroup.LayoutParams> int getSpanIndex(@Nullable final T layoutParams) {
+        if (layoutParams instanceof StaggeredGridLayoutManager.LayoutParams) {
+            return ((StaggeredGridLayoutManager.LayoutParams) layoutParams).getSpanIndex();
+        } else if (layoutParams instanceof GridLayoutManager.LayoutParams) {
+            return ((GridLayoutManager.LayoutParams) layoutParams).getSpanIndex();
+        } else {
+            return -1;
         }
     }
 
