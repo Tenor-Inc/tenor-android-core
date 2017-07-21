@@ -1,6 +1,9 @@
 package com.tenor.android.core.model.impl;
 
+import android.support.annotation.NonNull;
+
 import com.google.gson.annotations.SerializedName;
+import com.tenor.android.core.constant.StringConstant;
 
 import java.io.Serializable;
 
@@ -17,8 +20,9 @@ public class Image implements Serializable {
     /**
      * @return url of the raw asset
      */
+    @NonNull
     public String getUrl() {
-        return url;
+        return StringConstant.getOrEmpty(url);
     }
 
     public int getWidth() {
