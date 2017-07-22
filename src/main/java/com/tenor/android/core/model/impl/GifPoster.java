@@ -23,7 +23,7 @@ public class GifPoster implements Serializable {
 
     @NonNull
     public String getUsername() {
-        return !TextUtils.isEmpty(username) ? username : StringConstant.EMPTY;
+        return StringConstant.getOrEmpty(username);
     }
 
     public boolean isUser() {
@@ -31,7 +31,7 @@ public class GifPoster implements Serializable {
     }
 
     public String getUserIconUrl() {
-        return !TextUtils.isEmpty(usericonurl) ? usericonurl : StringConstant.EMPTY;
+        return StringConstant.getOrEmpty(usericonurl);
     }
 
     public boolean hasUserIcon() {

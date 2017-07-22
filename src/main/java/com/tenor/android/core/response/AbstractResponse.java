@@ -17,7 +17,7 @@ public abstract class AbstractResponse implements Serializable {
 
     @NonNull
     public String getError() {
-        return hasError() ? error : StringConstant.EMPTY;
+        return StringConstant.getOrEmpty(error);
     }
 
     public boolean hasError() {

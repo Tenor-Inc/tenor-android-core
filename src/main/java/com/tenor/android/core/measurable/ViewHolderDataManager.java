@@ -135,7 +135,7 @@ public class ViewHolderDataManager {
                 sQueueSize--;
             }
             // TODO: make this a schedule task
-            ApiClient.getInstance(context).registerActions(ApiClient.getServiceIds(context), list);
+            ApiClient.registerActions(context, list);
         } catch (Throwable throwable) {
         }
     }

@@ -177,7 +177,7 @@ public class Result implements IGif {
 
     @NonNull
     public String getSourceId() {
-        return hasSourceId() ? sourceId : StringConstant.EMPTY;
+        return StringConstant.getOrEmpty(sourceId);
     }
 
     public boolean hasSourceId() {

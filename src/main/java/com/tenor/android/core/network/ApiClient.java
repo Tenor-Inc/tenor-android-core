@@ -425,4 +425,22 @@ public abstract class ApiClient {
         });
         return call;
     }
+
+    public static Call<Void> registerActions(@NonNull final Context context,
+                                             @NonNull List<MeasurableViewHolderEvent> list) {
+
+        Call<Void> call = ApiClient.getInstance(context).registerActions(ApiClient.getServiceIds(context), list);
+        call.enqueue(new BaseCallback<Void>() {
+            @Override
+            public void success(Void response) {
+                // do nothing
+            }
+
+            @Override
+            public void failure(BaseError error) {
+                // do nothing
+            }
+        });
+        return call;
+    }
 }
