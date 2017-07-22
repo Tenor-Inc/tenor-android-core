@@ -7,7 +7,6 @@ import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 
-import com.tenor.android.core.constant.ItemVisualPositions;
 import com.tenor.android.core.constant.StringConstant;
 import com.tenor.android.core.rvwidget.WeakRefViewHolder;
 import com.tenor.android.core.util.AbstractLayoutManagerUtils;
@@ -23,12 +22,14 @@ public abstract class MeasurableViewHolder<CTX extends IBaseView> extends WeakRe
     @NonNull
     private String mId = StringConstant.EMPTY;
 
-    @FloatRange(from = 0.01f, to = 1f)
-    private float mViewAcceptanceThreshold = 1f;
-
+    /**
+     * Lifecycle fo MeasurableViewHolder:
+     * <p>
+     * attachMeasurer() -> onViewHolderFullyReady() -> measure() -> detachMeasurer()
+     */
     public MeasurableViewHolder(View itemView, CTX context) {
         super(itemView, context);
-        mMeasurableViewHolderData = new MeasurableViewHolderData<>(this, mId, mViewAcceptanceThreshold);
+        mMeasurableViewHolderData = new MeasurableViewHolderData<>(this);
     }
 
     @Nullable
@@ -40,37 +41,29 @@ public abstract class MeasurableViewHolder<CTX extends IBaseView> extends WeakRe
         return mMeasurableViewHolderData;
     }
 
-    public void setViewAcceptanceThreshold(@FloatRange(from = 0.01f, to = 1f) float threshold) {
-        mViewAcceptanceThreshold = threshold;
-    }
-
-    /**
-     * Set the unique identifier of this view holder, MUST OVERWRITE
-     */
-    public void setId(@NonNull String id) {
-        mId = id;
-    }
-
     public synchronized void measure() {
-        if (getRecyclerView() != null) {
-            measure(getRecyclerView());
+        if (getRecyclerView() == null) {
+            throw new IllegalStateException("measure() cannot be called before attachMeasurer() or after detachMeasurer() is called");
         }
+        measure(getRecyclerView());
     }
 
     @Override
     public synchronized float measure(@NonNull RecyclerView recyclerView) {
-        float visibleFraction = MeasurableViewHolderHelper.calculateVisibleFraction(recyclerView, itemView, mViewAcceptanceThreshold);
+        float visibleFraction = MeasurableViewHolderHelper.calculateVisibleFraction(recyclerView, itemView, mMeasurableViewHolderData.getThreshold());
         mMeasurableViewHolderData.setVisibleFraction(visibleFraction);
         return visibleFraction;
     }
 
     @Override
-    public synchronized void onContentReady() {
-        if (getRecyclerView() != null) {
-            float visibleFraction = MeasurableViewHolderHelper.calculateVisibleFraction(getRecyclerView(), itemView, mViewAcceptanceThreshold);
-            final int spanIndex = AbstractLayoutManagerUtils.getSpanIndex(itemView.getLayoutParams());
-            mMeasurableViewHolderData.onContentReady(visibleFraction, ItemVisualPositions.parse(getContext(), spanIndex));
+    public synchronized void onContentReady(@NonNull String id, @FloatRange(from = 0.01f, to = 1f) float threshold) {
+        if (getRecyclerView() == null) {
+            throw new IllegalStateException("ViewHolder must be attached to a non-null RecyclerView");
         }
+
+        float visibleFraction = MeasurableViewHolderHelper.calculateVisibleFraction(getRecyclerView(), itemView, threshold);
+        final String visualPosition = AbstractLayoutManagerUtils.getVisualPosition(getContext(), itemView);
+        mMeasurableViewHolderData.onViewHolderFullyReady(id, threshold, visibleFraction, visualPosition);
     }
 
     @CallSuper

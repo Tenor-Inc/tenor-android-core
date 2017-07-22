@@ -1,5 +1,6 @@
 package com.tenor.android.core.util;
 
+import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.GridLayoutManager;
@@ -7,8 +8,11 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.OrientationHelper;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
+import android.view.View;
 import android.view.ViewGroup;
 
+import com.tenor.android.core.constant.ItemVisualPosition;
+import com.tenor.android.core.constant.ItemVisualPositions;
 
 public abstract class AbstractLayoutManagerUtils {
 
@@ -50,6 +54,15 @@ public abstract class AbstractLayoutManagerUtils {
         } else {
             return -1;
         }
+    }
+
+    @ItemVisualPosition
+    public static String getVisualPosition(@NonNull Context context, @Nullable final View view) {
+        if (view == null) {
+            return ItemVisualPositions.UNKNOWN;
+        }
+        final int spanIndex = getSpanIndex(view.getLayoutParams());
+        return ItemVisualPositions.parse(context, spanIndex);
     }
 
     /**

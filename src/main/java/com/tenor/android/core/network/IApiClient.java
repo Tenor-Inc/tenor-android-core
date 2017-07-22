@@ -183,7 +183,7 @@ public interface IApiClient {
     @FormUrlEncoded
     @NonNull
     Call<Void> registerActions(@FieldMap Map<String, String> serviceIds,
-                               @Field("data") @NonNull List<MeasurableViewHolderEvent> data);
+                               @Field("data") @NonNull String data);
 
     /**
      * Register action

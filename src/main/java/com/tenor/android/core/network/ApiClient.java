@@ -24,6 +24,7 @@ import com.tenor.android.core.response.BaseError;
 import com.tenor.android.core.response.impl.AnonIdResponse;
 import com.tenor.android.core.response.impl.GifsResponse;
 import com.tenor.android.core.service.AaidService;
+import com.tenor.android.core.util.AbstractGsonUtils;
 import com.tenor.android.core.util.AbstractListUtils;
 import com.tenor.android.core.util.AbstractLocaleUtils;
 import com.tenor.android.core.util.AbstractSessionUtils;
@@ -429,7 +430,8 @@ public abstract class ApiClient {
     public static Call<Void> registerActions(@NonNull final Context context,
                                              @NonNull List<MeasurableViewHolderEvent> list) {
 
-        Call<Void> call = ApiClient.getInstance(context).registerActions(ApiClient.getServiceIds(context), list);
+        final String data = AbstractGsonUtils.getInstance().toJson(list);
+        Call<Void> call = ApiClient.getInstance(context).registerActions(ApiClient.getServiceIds(context), data);
         call.enqueue(new BaseCallback<Void>() {
             @Override
             public void success(Void response) {

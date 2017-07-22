@@ -11,6 +11,7 @@ import android.view.View;
 import com.tenor.android.core.concurrency.WeakRefObject;
 import com.tenor.android.core.constant.ItemVisualPosition;
 import com.tenor.android.core.constant.ItemVisualPositions;
+import com.tenor.android.core.constant.StringConstant;
 import com.tenor.android.core.util.AbstractLocaleUtils;
 
 import java.io.Serializable;
@@ -35,19 +36,15 @@ public class MeasurableViewHolderData<VH extends IMeasurableViewHolder> extends 
     @ItemVisualPosition
     private String mVisualPosition = ItemVisualPositions.UNKNOWN;
 
-    private final String mId;
+    private String mId = StringConstant.EMPTY;
 
     @FloatRange(from = 0.01f, to = 1f)
-    private final float mThreshold;
+    private float mThreshold = 1f;
 
-    public MeasurableViewHolderData(@NonNull VH viewHolder,
-                                    @NonNull String id,
-                                    @FloatRange(from = 0.01f, to = 1f) float threshold) {
+    public MeasurableViewHolderData(@NonNull VH viewHolder) {
         super(viewHolder);
         resetTimestamp();
         resetCounts();
-        mId = id;
-        mThreshold = threshold;
     }
 
     @NonNull
@@ -55,9 +52,26 @@ public class MeasurableViewHolderData<VH extends IMeasurableViewHolder> extends 
         return mId;
     }
 
+    public void setId(@NonNull String id) {
+        mId = StringConstant.getOrEmpty(id);
+    }
+
+    public void setThreshold(@FloatRange(from = 0.01f, to = 1f) float threshold) {
+        mThreshold = threshold;
+    }
+
+    @FloatRange(from = 0.01f, to = 1f)
+    public float getThreshold() {
+        return mThreshold;
+    }
+
     @ItemVisualPosition
     public String getVisualPosition() {
         return mVisualPosition;
+    }
+
+    public void setVisualPosition(@ItemVisualPosition String visualPosition) {
+        mVisualPosition = visualPosition;
     }
 
     public synchronized void clear() {
@@ -67,12 +81,22 @@ public class MeasurableViewHolderData<VH extends IMeasurableViewHolder> extends 
         mVisibleFraction = 0f;
     }
 
-    public synchronized void onContentReady(@FloatRange(from = 0f, to = 1f) float visibleFraction,
-                                            @ItemVisualPosition String visualPosition) {
+    /**
+     * Notify {@link MeasurableViewHolderData} that the view and content of this view holder has been
+     * finalized and all facts should be gathered and stored on {@link MeasurableViewHolderData}
+     * <p>
+     * This method should be called on the {@link IMeasurableViewHolder#onContentReady(String, float)},
+     * or the similar corresponding method on the subclass of {@link IMeasurableViewHolder}.
+     */
+    public synchronized void onViewHolderFullyReady(@NonNull String id,
+                                                    @FloatRange(from = 0.01f, to = 1f) float threshold,
+                                                    @FloatRange(from = 0f, to = 1f) float visibleFraction,
+                                                    @ItemVisualPosition String visualPosition) {
         updateTimestamp();
+        setId(id);
+        setThreshold(threshold);
         setVisibleFraction(visibleFraction);
-        mVisualPosition = visualPosition;
-        mAccumulatedVisibleCount++;
+        setVisualPosition(visualPosition);
     }
 
     private synchronized void resetCounts() {
@@ -167,6 +191,7 @@ public class MeasurableViewHolderData<VH extends IMeasurableViewHolder> extends 
 
     private void becomesVisible() {
         updateTimestamp();
+        mAccumulatedVisibleCount++;
         Log.e("===>", "======> item[" + getAdapterPosition() + "] becomes Visible !!!");
     }
 
@@ -176,7 +201,6 @@ public class MeasurableViewHolderData<VH extends IMeasurableViewHolder> extends 
         }
         final long duration = System.currentTimeMillis() - mTimestampOnVisible;
         mAccumulatedVisibleDuration += duration;
-        mAccumulatedVisibleCount++;
         resetTimestamp();
         Log.e("===>", "======> item[" + getAdapterPosition() + "] becomes Invisible !!!");
     }

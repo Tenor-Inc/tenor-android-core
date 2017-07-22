@@ -15,7 +15,11 @@ import com.tenor.android.core.constant.ItemVisualPosition;
  */
 public interface IMeasurableViewHolder extends IViewHolder {
 
-    void onContentReady();
+    /**
+     * Notify {@link MeasurableViewHolderData} that the view and content of this view holder has been
+     * finalized and all facts should be gathered and stored on {@link MeasurableViewHolderData}
+     */
+    void onContentReady(@NonNull String id, @FloatRange(from = 0.01f, to = 1f) float threshold);
 
     @FloatRange(from = 0f, to = 1f)
     float measure(@NonNull RecyclerView recyclerView);
