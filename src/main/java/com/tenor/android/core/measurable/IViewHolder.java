@@ -1,11 +1,16 @@
 package com.tenor.android.core.measurable;
 
+import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
+import android.view.View;
 
 /**
  * Interface of a {@link android.support.v7.widget.RecyclerView.ViewHolder}
  */
 public interface IViewHolder {
+
+    @NonNull
+    View getItemView();
 
     /**
      * Returns the position of the ViewHolder in terms of the latest layout pass.

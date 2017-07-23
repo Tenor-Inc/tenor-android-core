@@ -2,6 +2,7 @@ package com.tenor.android.core.rvwidget;
 
 import android.app.Activity;
 import android.content.Context;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.StaggeredGridLayoutManager;
@@ -31,6 +32,12 @@ public class StaggeredGridLayoutItemViewHolder<CTX extends IBaseView> extends Me
 
     public StaggeredGridLayoutItemViewHolder(View itemView, CTX context) {
         super(itemView, context);
+    }
+
+    @NonNull
+    @Override
+    public View getItemView() {
+        return itemView;
     }
 
     /**
