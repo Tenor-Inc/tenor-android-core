@@ -7,7 +7,6 @@ import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 
-import com.tenor.android.core.constant.StringConstant;
 import com.tenor.android.core.rvwidget.WeakRefViewHolder;
 import com.tenor.android.core.util.AbstractLayoutManagerUtils;
 import com.tenor.android.core.view.IBaseView;
@@ -18,9 +17,9 @@ public abstract class MeasurableViewHolder<CTX extends IBaseView> extends WeakRe
     @NonNull
     private final MeasurableViewHolderData<? extends MeasurableViewHolder<CTX>> mMeasurableViewHolderData;
     private RecyclerView mRecyclerView;
+    private boolean mAttached;
+    private boolean mDetached;
 
-    @NonNull
-    private String mId = StringConstant.EMPTY;
 
     /**
      * Lifecycle fo MeasurableViewHolder:
@@ -41,6 +40,16 @@ public abstract class MeasurableViewHolder<CTX extends IBaseView> extends WeakRe
         return mMeasurableViewHolderData;
     }
 
+    @Override
+    public boolean isAttached() {
+        return mAttached;
+    }
+
+    @Override
+    public boolean isDetached() {
+        return mDetached;
+    }
+
     public synchronized void measure() {
         if (getRecyclerView() == null) {
             throw new IllegalStateException("measure() cannot be called before attachMeasurer() or after detachMeasurer() is called");
@@ -57,6 +66,10 @@ public abstract class MeasurableViewHolder<CTX extends IBaseView> extends WeakRe
 
     @Override
     public synchronized void onContentReady(@NonNull String id, @FloatRange(from = 0.01f, to = 1f) float threshold) {
+        if (!isAttached() || isDetached()) {
+            return;
+        }
+
         if (getRecyclerView() == null) {
             throw new IllegalStateException("ViewHolder must be attached to a non-null RecyclerView");
         }
@@ -70,6 +83,8 @@ public abstract class MeasurableViewHolder<CTX extends IBaseView> extends WeakRe
     @Override
     public synchronized void attachMeasurer(@NonNull RecyclerView recyclerView) {
         mRecyclerView = recyclerView;
+        mAttached = true;
+        mDetached = false;
         mMeasurableViewHolderData.clear();
         measure(recyclerView);
     }
@@ -89,7 +104,8 @@ public abstract class MeasurableViewHolder<CTX extends IBaseView> extends WeakRe
     @CallSuper
     @Override
     public synchronized void detachMeasurer() {
-        mRecyclerView = null;
+        mAttached = false;
+        mDetached = true;
         mMeasurableViewHolderData.destroy(getContext());
     }
 

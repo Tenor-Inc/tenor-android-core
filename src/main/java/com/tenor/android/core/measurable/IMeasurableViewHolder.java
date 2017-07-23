@@ -42,6 +42,16 @@ public interface IMeasurableViewHolder extends IViewHolder {
      */
     void detachMeasurer();
 
+    /**
+     * Return true if the {@link RecyclerView.ViewHolder} has been attached from the {@link RecyclerView}
+     */
+    boolean isAttached();
+
+    /**
+     * Return true if the {@link RecyclerView.ViewHolder} has been detached from the {@link RecyclerView}
+     */
+    boolean isDetached();
+
     void flush();
 }
 
