@@ -49,9 +49,9 @@ public class MeasurableRecyclerViewHelper {
      *
      * @param recyclerView the given {@link RecyclerView}
      */
-    public static void notifyViewHolderDataSetChanged(@NonNull RecyclerView recyclerView) {
+    public static void notifyMeasurableViewHolderDataSetChanged(@NonNull RecyclerView recyclerView) {
         final int end = recyclerView.getAdapter().getItemCount() - 1;
-        notifyViewHolderDataRangeChanged(recyclerView, 0, end);
+        notifyMeasurableViewHolderDataRangeChanged(recyclerView, 0, end);
     }
 
     /**
@@ -68,7 +68,7 @@ public class MeasurableRecyclerViewHelper {
      * @param start        the start position
      * @param end          the end position
      */
-    public static void notifyViewHolderDataRangeChanged(@NonNull RecyclerView recyclerView, int start, int end) {
+    public static void notifyMeasurableViewHolderDataRangeChanged(@NonNull RecyclerView recyclerView, int start, int end) {
 
         if (start == RecyclerView.NO_POSITION || end == RecyclerView.NO_POSITION) {
             return;
@@ -83,6 +83,40 @@ public class MeasurableRecyclerViewHelper {
          */
         for (IMeasurableViewHolder holder : holders) {
             holder.measure(recyclerView);
+        }
+    }
+
+    public static void notifyViewHoldersOnPause(@NonNull RecyclerView recyclerView) {
+        // handle pause
+        List<IMeasurableViewHolder> holders =
+                MeasurableRecyclerViewHelper.getViewHolders(recyclerView, IMeasurableViewHolder.class);
+        for (IMeasurableViewHolder holder : holders) {
+            holder.pauseMeasurer(recyclerView);
+        }
+    }
+
+    public static void notifyViewHoldersOnResume(@NonNull RecyclerView recyclerView) {
+        // handle resume
+        List<IMeasurableViewHolder> holders =
+                MeasurableRecyclerViewHelper.getViewHolders(recyclerView, IMeasurableViewHolder.class);
+        for (IMeasurableViewHolder holder : holders) {
+            holder.resumeMeasurer(recyclerView);
+        }
+    }
+
+    public static void notifyMeasurableViewHoldersOnRefresh(@NonNull RecyclerView recyclerView) {
+        flushMeasurableViewHolderDataSet(recyclerView);
+    }
+
+    public static void flushMeasurableViewHolderDataSet(@NonNull RecyclerView recyclerView) {
+        /*
+         * for all views those are still visible, mark them all as invisible, update the time,
+         * and calculate the time accumulation
+         */
+        List<IMeasurableViewHolder> holders =
+                MeasurableRecyclerViewHelper.getViewHolders(recyclerView, IMeasurableViewHolder.class);
+        for (IMeasurableViewHolder holder : holders) {
+            holder.flush();
         }
     }
 

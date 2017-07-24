@@ -20,7 +20,6 @@ public abstract class MeasurableViewHolder<CTX extends IBaseView> extends WeakRe
     private boolean mAttached;
     private boolean mDetached;
 
-
     /**
      * Lifecycle fo MeasurableViewHolder:
      * <p>

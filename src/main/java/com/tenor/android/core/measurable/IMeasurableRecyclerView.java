@@ -7,13 +7,25 @@ import android.support.v7.widget.RecyclerView;
  */
 public interface IMeasurableRecyclerView {
 
-    void notifyViewHoldersOnPause();
+    /**
+     * Method to be called on the referenced view, activity, or fragment is paused
+     */
+    void notifyMeasurableViewHoldersOnPause();
 
-    void notifyViewHoldersOnResume();
+    /**
+     * Method to be called on the referenced view, activity, or fragment is resumed
+     */
+    void notifyMeasurableViewHoldersOnResume();
 
-    void notifyViewHoldersOnRefresh();
+    /**
+     * Method to be called on the referenced view, activity, or fragment is refreshed
+     */
+    void notifyMeasurableViewHoldersOnRefresh();
 
-    void flushViewHolderData();
+    /**
+     * Method to be called on the referenced view, activity, or fragment is destroyed
+     */
+    void flushMeasurableViewHolderDataSet();
 
     /**
      * Notify {@link RecyclerView.ViewHolder}, which has implemented {@link IMeasurableViewHolder}

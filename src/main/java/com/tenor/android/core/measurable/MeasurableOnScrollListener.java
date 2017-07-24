@@ -71,7 +71,7 @@ public class MeasurableOnScrollListener<CTX extends Context> extends WeakRefOnSc
                 // perform final update on the range we have ever visited
                 updateVisibleRange(recyclerView);
                 Log.e("==> ", "==>  visible range: [" + mDraggingStart + ", " + mDraggingEnd + "]");
-                MeasurableRecyclerViewHelper.notifyViewHolderDataRangeChanged(recyclerView, mDraggingStart, mDraggingEnd);
+                MeasurableRecyclerViewHelper.notifyMeasurableViewHolderDataRangeChanged(recyclerView, mDraggingStart, mDraggingEnd);
 
                 // reset mDraggingStart and mDraggingEnd here
                 mDraggingStart = RecyclerView.NO_POSITION;
