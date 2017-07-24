@@ -59,8 +59,9 @@ public class MeasurableOnScrollListener<CTX extends Context> extends WeakRefOnSc
             case RecyclerView.SCROLL_STATE_DRAGGING:
                 // distinct drag to improve accuracy, init mDraggingStart and mDraggingEnd here
                 mDragging = true;
-                mDraggingStart = AbstractLayoutManagerUtils.findFirstVisibleItemPosition(recyclerView.getLayoutManager());
-                mDraggingEnd = AbstractLayoutManagerUtils.findFirstVisibleItemPosition(recyclerView.getLayoutManager());
+                final int[] range = AbstractLayoutManagerUtils.getVisibleRange(recyclerView);
+                mDraggingStart = range[0];
+                mDraggingEnd = range[1];
                 break;
             case RecyclerView.SCROLL_STATE_SETTLING:
                 mDragging = false;

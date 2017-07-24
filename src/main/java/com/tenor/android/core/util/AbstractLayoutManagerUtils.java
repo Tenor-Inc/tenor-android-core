@@ -215,18 +215,43 @@ public abstract class AbstractLayoutManagerUtils {
     }
 
     /**
-     * Get the visible range of a given {@link RecyclerView}
+     * Check if the device is on right to left mode
+     *
+     * @param recyclerView the {@link RecyclerView}
+     * @return true if the device is on right to left mode
+     */
+    public static boolean isRightToLeft(@NonNull RecyclerView recyclerView) {
+        return AbstractUIUtils.isRightToLeft(recyclerView.getContext())
+                && getOrientation(recyclerView.getLayoutManager()) == OrientationHelper.HORIZONTAL;
+    }
+
+    /**
+     * Get the rtl-safe visible range of a given {@link RecyclerView}
      *
      * @param recyclerView the {@link RecyclerView}
      * @return the int[] contains the range of interest, [0] contains the start and [1] contains the end
      */
     public static int[] getVisibleRange(@NonNull RecyclerView recyclerView) {
+        final boolean rtl = isRightToLeft(recyclerView);
         int[] range = new int[]{RecyclerView.NO_POSITION, RecyclerView.NO_POSITION};
         int start, end;
         final int spanCount = getSpanCount(recyclerView.getLayoutManager());
         for (int span = 0; span < spanCount; span++) {
-            start = findFirstVisibleItemPosition(recyclerView.getLayoutManager(), span);
-            end = findLastVisibleItemPosition(recyclerView.getLayoutManager(), span);
+            /*
+             * [ANDROID-2198]
+             *
+             * The order of return int[] from `#findFirstVisibleItemPositions()` method doesn't
+             * reflect horizontal orientation of right to left languages
+             */
+            if (!rtl) {
+                // left to right languages
+                start = findFirstVisibleItemPosition(recyclerView.getLayoutManager(), span);
+                end = findLastVisibleItemPosition(recyclerView.getLayoutManager(), span);
+            } else {
+                // right to left languages
+                start = findLastVisibleItemPosition(recyclerView.getLayoutManager(), span);
+                end = findFirstVisibleItemPosition(recyclerView.getLayoutManager(), span);
+            }
 
             // update mDraggingStart and mDraggingEnd if the new bounds are wider than the old one
             if (range[0] == RecyclerView.NO_POSITION) {

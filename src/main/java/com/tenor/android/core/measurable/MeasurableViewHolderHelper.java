@@ -50,17 +50,27 @@ public class MeasurableViewHolderHelper {
         int[] location = new int[2];
         itemView.getLocationInWindow(location);
 
-        int left = (int) (rvRect.left - (1f - threshold) * itemView.getMeasuredWidth());
-        int right = (int) (rvRect.right - threshold * itemView.getMeasuredWidth());
-
-        int top = (int) (rvRect.top - (1f - threshold) * itemView.getMeasuredHeight());
-        int bottom = (int) (rvRect.bottom - threshold * itemView.getMeasuredHeight());
-
         final boolean rtl = AbstractUIUtils.isRightToLeft(recyclerView.getContext());
+        final int width = itemView.getMeasuredWidth();
+        final int height = itemView.getMeasuredHeight();
+
+        // ratio for left bound
+        final float leftBoundRatio;
+        if (!rtl) {
+            // left to right languages
+            leftBoundRatio = 1f - threshold;
+        } else {
+            // right to left languages
+            leftBoundRatio = threshold;
+        }
+
+        final int left = (int) (rvRect.left - leftBoundRatio * width);
+        final int right = (int) (rvRect.right - (1f - leftBoundRatio) * width);
+        final int top = (int) (rvRect.top - (1f - threshold) * height);
+        final int bottom = (int) (rvRect.bottom - threshold * height);
 
         // horizontally out of bound
-        final boolean hoob = !rtl ? location[0] < left || location[0] > right
-                : location[0] > left || location[0] < right;
+        final boolean hoob = location[0] < left || location[0] > right;
 
         // vertically out of bound
         final boolean voob = location[1] < top || location[1] > bottom;
@@ -68,8 +78,8 @@ public class MeasurableViewHolderHelper {
             return 0.01f;
         }
 
-        float wRatio = (float) ivRect.width() / itemView.getMeasuredWidth();
-        float hRatio = (float) ivRect.height() / itemView.getMeasuredHeight();
+        float wRatio = (float) ivRect.width() / width;
+        float hRatio = (float) ivRect.height() / height;
 
         /*
          * the non-moving direction will be always 1.0f,
