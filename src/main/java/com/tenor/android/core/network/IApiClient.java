@@ -5,7 +5,6 @@ import android.support.annotation.IntRange;
 import android.support.annotation.NonNull;
 
 import com.tenor.android.core.measurable.MeasurableViewHolderEvent;
-import com.tenor.android.core.model.impl.Result;
 import com.tenor.android.core.model.impl.Suggestions;
 import com.tenor.android.core.response.impl.AnonIdResponse;
 import com.tenor.android.core.response.impl.EmojiResponse;
@@ -14,7 +13,6 @@ import com.tenor.android.core.response.impl.PackResponse;
 import com.tenor.android.core.response.impl.SearchSuggestionResponse;
 import com.tenor.android.core.response.impl.TagsResponse;
 
-import java.util.List;
 import java.util.Map;
 
 import retrofit2.Call;

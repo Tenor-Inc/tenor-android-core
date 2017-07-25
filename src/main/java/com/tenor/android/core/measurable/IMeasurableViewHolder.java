@@ -4,8 +4,6 @@ import android.support.annotation.FloatRange;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 
-import com.tenor.android.core.constant.ItemVisualPosition;
-
 /**
  * Interface of a {@link RecyclerView.ViewHolder}, measure {@link MeasurableViewHolderData} of a {@link RecyclerView.ViewHolder}
  * <p>

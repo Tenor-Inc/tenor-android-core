@@ -5,7 +5,6 @@ import android.support.annotation.FloatRange;
 import android.support.annotation.IntRange;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.View;
 
 import com.tenor.android.core.concurrency.WeakRefObject;
@@ -13,6 +12,7 @@ import com.tenor.android.core.constant.ItemVisualPosition;
 import com.tenor.android.core.constant.ItemVisualPositions;
 import com.tenor.android.core.constant.StringConstant;
 import com.tenor.android.core.util.AbstractLocaleUtils;
+import com.tenor.android.core.util.AbstractLogUtils;
 
 import java.io.Serializable;
 
@@ -150,14 +150,14 @@ public class MeasurableViewHolderData<VH extends IMeasurableViewHolder> extends 
     }
 
     public synchronized void destroy(@NonNull Context context) {
-        Log.e("===>", "======> item[" + getAdapterPosition() + "], destroy !!!");
+        AbstractLogUtils.e(this, "======> item[" + getAdapterPosition() + "], destroy !!!");
         flush(context);
     }
 
     public synchronized void flush(@NonNull Context context) {
         setVisibleFraction(0f);
         if (getAccumulatedVisibleDuration() > 0 || getAccumulatedVisibleCount() > 0) {
-            Log.e("===>", "======> item[" + getAdapterPosition()
+            AbstractLogUtils.e(this, "======> item[" + getAdapterPosition()
                     + "], flushed, viewed for: " + getAccumulatedVisibleDuration()
                     + ", counted for: " + getAccumulatedVisibleCount());
         }
@@ -192,7 +192,7 @@ public class MeasurableViewHolderData<VH extends IMeasurableViewHolder> extends 
     private void becomesVisible() {
         updateTimestamp();
         mAccumulatedVisibleCount++;
-        Log.e("===>", "======> item[" + getAdapterPosition() + "] becomes Visible !!!");
+        AbstractLogUtils.e(this, "======> item[" + getAdapterPosition() + "] becomes Visible !!!");
     }
 
     private void becomesInvisible() {
@@ -202,6 +202,6 @@ public class MeasurableViewHolderData<VH extends IMeasurableViewHolder> extends 
         final long duration = System.currentTimeMillis() - mTimestampOnVisible;
         mAccumulatedVisibleDuration += duration;
         resetTimestamp();
-        Log.e("===>", "======> item[" + getAdapterPosition() + "] becomes Invisible !!!");
+        AbstractLogUtils.e(this, "======> item[" + getAdapterPosition() + "] becomes Invisible !!!");
     }
 }

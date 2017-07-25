@@ -5,10 +5,10 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.OrientationHelper;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 
 import com.tenor.android.core.concurrency.WeakRefOnScrollListener;
 import com.tenor.android.core.util.AbstractLayoutManagerUtils;
+import com.tenor.android.core.util.AbstractLogUtils;
 import com.tenor.android.core.util.AbstractUIUtils;
 
 import java.util.List;
@@ -71,7 +71,7 @@ public class MeasurableOnScrollListener<CTX extends Context> extends WeakRefOnSc
 
                 // perform final update on the range we have ever visited
                 updateVisibleRange(recyclerView);
-                Log.e("==> ", "==>  visible range: [" + mDraggingStart + ", " + mDraggingEnd + "]");
+                AbstractLogUtils.e(this, "==>  visible range: [" + mDraggingStart + ", " + mDraggingEnd + "]");
                 MeasurableRecyclerViewHelper.notifyMeasurableViewHolderDataRangeChanged(recyclerView, mDraggingStart, mDraggingEnd);
 
                 // reset mDraggingStart and mDraggingEnd here
