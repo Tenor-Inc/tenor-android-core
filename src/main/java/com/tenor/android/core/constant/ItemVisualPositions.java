@@ -26,17 +26,16 @@ public class ItemVisualPositions {
     public static String parse(@IntRange(from = -1, to = Integer.MAX_VALUE) final int spanIndex,
                                final boolean rtl) {
         switch (spanIndex) {
-            case 0:
-                // item on left
-                return !rtl ? LEFT : RIGHT;
-            case 1:
-                // item on right
-                return !rtl ? RIGHT : LEFT;
             case -1:
                 // GridLayoutManager.LayoutParams.INVALID_SPAN_ID
                 // StaggeredGridLayoutManager.LayoutParams.INVALID_SPAN_ID
-            default:
                 return UNKNOWN;
+            case 0:
+                // item on left
+                return !rtl ? LEFT : RIGHT;
+            default:
+                // item on right
+                return !rtl ? RIGHT : LEFT;
         }
     }
 }
