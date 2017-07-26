@@ -369,7 +369,7 @@ public abstract class ApiClient {
         map.put(id.length() <= 20 ? "keyboardid" : "anon_id", id);
         map.put("aaid", AbstractSessionUtils.getAndroidAdvertiseId(context));
         map.put("locale", AbstractLocaleUtils.getCurrentLocaleName(context));
-        map.put("screen_density", String.format(Locale.US, "%f", AbstractUIUtils.getScreenDensity(context)));
+        map.put("screen_density", AbstractUIUtils.getScreenDensity(context));
         return map;
     }
 

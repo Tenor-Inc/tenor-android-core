@@ -20,6 +20,7 @@ import com.tenor.android.core.R;
 import com.tenor.android.core.model.impl.Result;
 
 import java.lang.reflect.Method;
+import java.util.Locale;
 
 /**
  * The UI utility class
@@ -32,12 +33,26 @@ public abstract class AbstractUIUtils {
      * @param context the context
      * @return the screen density
      */
-    public static float getScreenDensity(@Nullable final Context context) {
-        if (context == null) {
-            return 0;
-        }
+    public static String getScreenDensity(@NonNull Context context) {
         final DisplayMetrics metrics = context.getResources().getDisplayMetrics();
-        return metrics.density;
+        return parseScreenDensity(metrics.density);
+    }
+
+    /**
+     * Parse screen density
+     *
+     * @param density the screen density
+     * @return the screen density
+     */
+    public static String parseScreenDensity(float density) {
+        if (density <= 0f) {
+            throw new IllegalArgumentException("screen density must be a non-zero positive float");
+        }
+
+        if (density < 1f) {
+            return String.format(Locale.US, "%.2f", density);
+        }
+        return String.format(Locale.US, "%.1f", density);
     }
 
     public static void hideInputMethod(@Nullable final Activity activity) {
@@ -140,26 +155,6 @@ public abstract class AbstractUIUtils {
     public static int dpToPx(@NonNull final Context context,
                              @FloatRange(from = 0f, to = Float.MAX_VALUE) final float dp) {
         return Math.round(TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp, context.getResources().getDisplayMetrics()));
-    }
-
-    /**
-     * @param context the context
-     * @param px      the pixels
-     * @return the given value in density-independent pixels
-     */
-    public static int pxToDp(@NonNull final Context context,
-                             @IntRange(from = 0, to = Integer.MAX_VALUE) final int px) {
-        return Math.round(px / getScreenDensity(context));
-    }
-
-    /**
-     * @param context the context
-     * @param px      the pixels
-     * @return the given value in density-independent pixels
-     */
-    public static int pxToDp(@NonNull final Context context,
-                             @FloatRange(from = 0f, to = Float.MAX_VALUE) final float px) {
-        return Math.round(px / getScreenDensity(context));
     }
 
     /**
