@@ -26,10 +26,12 @@ import com.tenor.android.core.util.AbstractGsonUtils;
 import com.tenor.android.core.util.AbstractListUtils;
 import com.tenor.android.core.util.AbstractLocaleUtils;
 import com.tenor.android.core.util.AbstractSessionUtils;
+import com.tenor.android.core.util.AbstractUIUtils;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
@@ -358,14 +360,16 @@ public abstract class ApiClient {
         /*
          * The following fields work together to delivery a more accurate and better experience
          *
-         * a non-id is used to roughly identify a user;
-         * an aaid, Android Advertise Id, is used in case "keyboardid" or "anon_id" mutates
-         * a locales is used to deliver curated language/regional specific contents to users
+         * 1. `anon_id`, a non-id or its older version, keyboard is used to roughly identify a user;
+         * 2. `aaid`, Android Advertise Id, is used in case "keyboardid" or "anon_id" mutates
+         * 3. `locale` is used to deliver curated language/regional specific contents to users
+         * 4. `screen_density` is used to optimize the content size to the device
          */
         final String id = AbstractSessionUtils.getAnonId(context);
         map.put(id.length() <= 20 ? "keyboardid" : "anon_id", id);
         map.put("aaid", AbstractSessionUtils.getAndroidAdvertiseId(context));
         map.put("locale", AbstractLocaleUtils.getCurrentLocaleName(context));
+        map.put("screen_density", String.format(Locale.US, "%f", AbstractUIUtils.getScreenDensity(context)));
         return map;
     }
 
