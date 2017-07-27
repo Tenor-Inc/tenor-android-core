@@ -4,6 +4,7 @@ import android.content.Context;
 import android.support.annotation.NonNull;
 
 import com.tenor.android.core.network.ApiClient;
+import com.tenor.android.core.util.AbstractLocaleUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -49,8 +50,8 @@ public class ViewHolderDataManager {
      * @param data    the serialized {@link MeasurableViewHolderData}
      */
     public synchronized static void push(@NonNull final Context context,
-                                         @NonNull final MeasurableViewHolderData data,
-                                         @NonNull String utcOffset) {
+                                         @NonNull final MeasurableViewHolderData data) {
+        final String utcOffset = AbstractLocaleUtils.getUtcOffset(context);
         push(context, new MeasurableViewHolderEvent(data, utcOffset));
     }
 
@@ -64,8 +65,8 @@ public class ViewHolderDataManager {
     public synchronized static void push(@NonNull final Context context,
                                          @NonNull final String id,
                                          @NonNull final String action,
-                                         @NonNull String utcOffset,
                                          @NonNull String visualPosition) {
+        final String utcOffset = AbstractLocaleUtils.getUtcOffset(context);
         push(context, new MeasurableViewHolderEvent(id, action, utcOffset, visualPosition));
     }
 

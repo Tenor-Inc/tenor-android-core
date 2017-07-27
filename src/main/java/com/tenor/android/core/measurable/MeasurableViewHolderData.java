@@ -5,13 +5,14 @@ import android.support.annotation.FloatRange;
 import android.support.annotation.IntRange;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.View;
 
 import com.tenor.android.core.concurrency.WeakRefObject;
 import com.tenor.android.core.constant.ItemVisualPosition;
 import com.tenor.android.core.constant.ItemVisualPositions;
 import com.tenor.android.core.constant.StringConstant;
-import com.tenor.android.core.util.AbstractLocaleUtils;
+import com.tenor.android.core.model.impl.Result;
 import com.tenor.android.core.util.AbstractLogUtils;
 
 import java.io.Serializable;
@@ -38,8 +39,13 @@ public class MeasurableViewHolderData<VH extends IMeasurableViewHolder> extends 
 
     private String mId = StringConstant.EMPTY;
 
+    private boolean mEnhancedContent = false;
+
     @FloatRange(from = 0.01f, to = 1f)
     private float mThreshold = 1f;
+
+    @IntRange(from = -1, to = Integer.MAX_VALUE)
+    private int mAdapterPosition = RecyclerView.NO_POSITION;
 
     public MeasurableViewHolderData(@NonNull VH viewHolder) {
         super(viewHolder);
@@ -52,8 +58,23 @@ public class MeasurableViewHolderData<VH extends IMeasurableViewHolder> extends 
         return mId;
     }
 
+    /**
+     * Set identifier to uniquely identify the referenced {@link IMeasurableViewHolder}
+     *
+     * @param id the id, such as {@link Result#getSourceId()}
+     */
     public void setId(@NonNull String id) {
         mId = StringConstant.getOrEmpty(id);
+        setEnhancedContent(!TextUtils.isEmpty(mId));
+    }
+
+    /**
+     * Set to true if this data should be used to improve future content delivery experience
+     *
+     * @param receivable the boolean
+     */
+    public void setEnhancedContent(boolean receivable) {
+        mEnhancedContent = receivable;
     }
 
     public void setThreshold(@FloatRange(from = 0.01f, to = 1f) float threshold) {
@@ -97,6 +118,8 @@ public class MeasurableViewHolderData<VH extends IMeasurableViewHolder> extends 
         setThreshold(threshold);
         setVisibleFraction(visibleFraction);
         setVisualPosition(visualPosition);
+        // update adapter position
+        getAdapterPosition();
     }
 
     private synchronized void resetCounts() {
@@ -113,8 +136,22 @@ public class MeasurableViewHolderData<VH extends IMeasurableViewHolder> extends 
     }
 
     public int getAdapterPosition() {
-        //noinspection ConstantConditions
-        return hasRef() ? getRef().getAdapterPosition() : RecyclerView.NO_POSITION;
+        // reference GCed
+        if (getRef() == null) {
+            return mAdapterPosition;
+        }
+
+        // adapter position is not initialized
+        if (mAdapterPosition == RecyclerView.NO_POSITION) {
+            mAdapterPosition = getRef().getAdapterPosition();
+        }
+
+        // adapter position changed to a non NO_POSITION position
+        if (getRef().getAdapterPosition() != RecyclerView.NO_POSITION
+                && mAdapterPosition != getRef().getAdapterPosition()) {
+            mAdapterPosition = getRef().getAdapterPosition();
+        }
+        return mAdapterPosition;
     }
 
     public boolean isVisible() {
@@ -156,12 +193,11 @@ public class MeasurableViewHolderData<VH extends IMeasurableViewHolder> extends 
 
     public synchronized void flush(@NonNull Context context) {
         setVisibleFraction(0f);
-        if (getAccumulatedVisibleDuration() > 0 || getAccumulatedVisibleCount() > 0) {
-            AbstractLogUtils.e(this, "======> item[" + getAdapterPosition()
-                    + "], flushed, viewed for: " + getAccumulatedVisibleDuration()
-                    + ", counted for: " + getAccumulatedVisibleCount());
+        AbstractLogUtils.e(this, "======> flushed\n" + toString());
+        if (getAccumulatedVisibleDuration() > 0 && getAccumulatedVisibleCount() > 0
+                && mEnhancedContent) {
+            ViewHolderDataManager.push(context, this);
         }
-        ViewHolderDataManager.push(context, this, AbstractLocaleUtils.getUtcOffset(context));
         clear();
     }
 
@@ -203,5 +239,14 @@ public class MeasurableViewHolderData<VH extends IMeasurableViewHolder> extends 
         mAccumulatedVisibleDuration += duration;
         resetTimestamp();
         AbstractLogUtils.e(this, "======> item[" + getAdapterPosition() + "] becomes Invisible !!!");
+    }
+
+    public String toString() {
+        return "adapter_pos: " + getAdapterPosition() + "\n"
+                + "source_id: " + mId + "\n"
+                + "visual_pos: " + mVisualPosition + "\n"
+                + "viewed: " + getAccumulatedVisibleDuration() + " ms\n"
+                + "counted: " + getAccumulatedVisibleCount() + "\n"
+                + "enhanced_content: " + mEnhancedContent + "\n";
     }
 }
