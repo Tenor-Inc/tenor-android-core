@@ -13,6 +13,7 @@ import com.google.gson.ExclusionStrategy;
 import com.google.gson.FieldAttributes;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.tenor.android.core.constant.ScreenDensities;
 import com.tenor.android.core.constant.StringConstant;
 import com.tenor.android.core.listener.IAnonIdListener;
 import com.tenor.android.core.measurable.MeasurableViewHolderEvent;
@@ -369,7 +370,7 @@ public abstract class ApiClient {
         map.put(id.length() <= 20 ? "keyboardid" : "anon_id", id);
         map.put("aaid", AbstractSessionUtils.getAndroidAdvertiseId(context));
         map.put("locale", AbstractLocaleUtils.getCurrentLocaleName(context));
-        map.put("screen_density", AbstractUIUtils.getScreenDensity(context));
+        map.put("screen_density", ScreenDensities.get(context));
         return map;
     }
 

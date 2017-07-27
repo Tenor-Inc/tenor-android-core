@@ -27,34 +27,6 @@ import java.util.Locale;
  */
 public abstract class AbstractUIUtils {
 
-    /**
-     * Get screen density
-     *
-     * @param context the context
-     * @return the screen density
-     */
-    public static String getScreenDensity(@NonNull Context context) {
-        final DisplayMetrics metrics = context.getResources().getDisplayMetrics();
-        return parseScreenDensity(metrics.density);
-    }
-
-    /**
-     * Parse screen density
-     *
-     * @param density the screen density
-     * @return the screen density
-     */
-    public static String parseScreenDensity(float density) {
-        if (density <= 0f) {
-            throw new IllegalArgumentException("screen density must be a non-zero positive float");
-        }
-
-        if (density < 1f) {
-            return String.format(Locale.US, "%.2f", density);
-        }
-        return String.format(Locale.US, "%.1f", density);
-    }
-
     public static void hideInputMethod(@Nullable final Activity activity) {
         hideInputMethod(activity, 0);
     }
