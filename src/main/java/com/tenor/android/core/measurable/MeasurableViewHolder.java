@@ -64,9 +64,9 @@ public abstract class MeasurableViewHolder<CTX extends IBaseView> extends WeakRe
     }
 
     @Override
-    public synchronized void onContentReady(@NonNull String id, @FloatRange(from = 0.01f, to = 1f) float threshold) {
+    public synchronized float onContentReady(@NonNull String id, @FloatRange(from = 0.01f, to = 1f) float threshold) {
         if (!isAttached() || isDetached()) {
-            return;
+            return 0f;
         }
 
         if (getRecyclerView() == null) {
@@ -76,6 +76,7 @@ public abstract class MeasurableViewHolder<CTX extends IBaseView> extends WeakRe
         float visibleFraction = MeasurableViewHolderHelper.calculateVisibleFraction(getRecyclerView(), itemView, threshold);
         final String visualPosition = AbstractLayoutManagerUtils.getVisualPosition(getContext(), itemView);
         mMeasurableViewHolderData.onViewHolderFullyReady(id, threshold, visibleFraction, visualPosition);
+        return visibleFraction;
     }
 
     @CallSuper
