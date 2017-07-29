@@ -30,15 +30,8 @@ public abstract class AbstractListUtils {
         if (isEmpty(list)) {
             return Collections.emptyList();
         }
-
-        List<T> items = new ArrayList<>();
-        T item;
-        Random random = new Random();
-        while (!isEmpty(list)) {
-            item = list.remove(random.nextInt(list.size()));
-            items.add(item);
-        }
-        return items;
+        Collections.shuffle(list);
+        return list;
     }
 
     /**

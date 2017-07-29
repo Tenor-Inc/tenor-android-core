@@ -1,21 +1,23 @@
 package com.tenor.android.core.model.impl;
 
-import com.google.gson.annotations.SerializedName;
+import android.support.annotation.NonNull;
+
+import com.tenor.android.core.constant.StringConstant;
 
 /**
- * The response model of emoji tag
+ * The response model of Media
  */
 public class Media extends Image {
     private static final long serialVersionUID = -8616498739266612929L;
-    @SerializedName("preview")
-    private String previewUrl;
+    private String preview;
     private double duration;
 
     /**
-     * @return url of the static image preview
+     * @return url of a static image preview
      */
+    @NonNull
     public String getPreviewUrl() {
-        return previewUrl;
+        return StringConstant.getOrEmpty(preview);
     }
 
     /**

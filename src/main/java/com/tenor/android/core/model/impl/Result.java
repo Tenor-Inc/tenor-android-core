@@ -18,30 +18,23 @@ import java.util.List;
  */
 public class Result implements IGif {
     private static final long serialVersionUID = -4037633614634142811L;
-    private Media composite;
-    private double created;
-    private String id;
-
-    @SerializedName("media")
-    private List<MediaCollection> medias;
-
-    private List<String> tags;
-
-    private int shares;
-
-    private GifPoster user;
-
-    private String title;
 
     private String url;
-
-    private String embed;
-
-    @SerializedName("itemurl")
-    private String itemUrl;
-
+    @SerializedName("media")
+    private List<MediaCollection> medias;
+    private double created;
+    private int shares;
+    private String itemurl;
+    private Media composite;
     @SerializedName("hasaudio")
     private boolean hasAudio;
+    private String title;
+    private String id;
+
+
+    private List<String> tags;
+    private GifPoster user;
+    private String embed;
 
     @SerializedName("bg_color")
     private String placeholderColor;
@@ -144,7 +137,7 @@ public class Result implements IGif {
      * @return alternative web url
      */
     public String getItemUrl() {
-        return itemUrl;
+        return itemurl;
     }
 
     @NonNull

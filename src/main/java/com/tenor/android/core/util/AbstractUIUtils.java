@@ -17,10 +17,10 @@ import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 
 import com.tenor.android.core.R;
+import com.tenor.android.core.model.impl.MediaCollection;
 import com.tenor.android.core.model.impl.Result;
 
 import java.lang.reflect.Method;
-import java.util.Locale;
 
 /**
  * The UI utility class
@@ -292,15 +292,13 @@ public abstract class AbstractUIUtils {
             return 0;
         }
 
-        if (AbstractListUtils.isEmpty(result.getMedias())
-                || result.getMedias().get(0) == null
-                || result.getMedias().get(0).getGif() == null) {
+        if (AbstractListUtils.isEmpty(result.getMedias()) || result.getMedias().get(0) == null) {
             return 0;
         }
 
         return getAdjustedStaggeredGridItemHeight(context,
-                result.getMedias().get(0).getGif().getWidth(),
-                result.getMedias().get(0).getGif().getHeight(),
+                result.getMedias().get(0).get(MediaCollection.GIF).getWidth(),
+                result.getMedias().get(0).get(MediaCollection.GIF).getHeight(),
                 columnCount, padding);
     }
 
