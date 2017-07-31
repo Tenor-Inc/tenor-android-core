@@ -87,21 +87,6 @@ public interface IApiClient {
                                    @Query("type") String type);
 
     /**
-     * Retrieves a set of mp4s containing audio
-     *
-     * @param serviceIds a {@link Map} of a collection of ids for better content delivery experience
-     * @param limit      <b>bucket</b> size of each response
-     * @param pos        <b>index</b> for where the first result should come from.  If <b>empty</b>, start at the first result
-     * @param type       <i>optional.</i> Qualifier for specific searches.
-     * @return {@link Call}<{@link GifsResponse}>
-     */
-    @GET("music")
-    Call<GifsResponse> getMusic(@QueryMap Map<String, String> serviceIds,
-                                @Query("limit") Integer limit,
-                                @Query("pos") String pos,
-                                @Query("type") String type);
-
-    /**
      * Retrieve gifs with specific ids
      *
      * @param serviceIds a {@link Map} of a collection of ids for better content delivery experience

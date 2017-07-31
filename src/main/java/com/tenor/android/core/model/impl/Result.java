@@ -31,10 +31,7 @@ public class Result implements IGif {
     private String title;
     private String id;
 
-
     private List<String> tags;
-    private GifPoster user;
-    private String embed;
 
     @SerializedName("bg_color")
     private String placeholderColor;
@@ -107,11 +104,6 @@ public class Result implements IGif {
         return shares;
     }
 
-    @NonNull
-    public GifPoster getUser() {
-        return user != null ? user : new GifPoster();
-    }
-
     /**
      * @return name of the gif
      */
@@ -124,13 +116,6 @@ public class Result implements IGif {
      */
     public String getUrl() {
         return url;
-    }
-
-    /**
-     * @return web embed code
-     */
-    public String getEmbed() {
-        return embed;
     }
 
     /**

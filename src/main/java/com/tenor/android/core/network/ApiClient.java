@@ -39,15 +39,15 @@ public class ApiClient {
      * Initialize the ApiClient instance with your custom interceptor
      *
      * @param context the context
-     * @param builder {@link ApiService.Builder}
+     * @param builder {@link ApiService.IBuilder}
      */
     public static synchronized void init(@NonNull final Context context,
-                                         @NonNull ApiService.Builder<IApiClient> builder) {
+                                         @NonNull ApiService.IBuilder<IApiClient> builder) {
         init(context, builder, null);
     }
 
     public static synchronized void init(@NonNull final Context context,
-                                         @NonNull ApiService.Builder<IApiClient> builder,
+                                         @NonNull ApiService.IBuilder<IApiClient> builder,
                                          @Nullable IAnonIdListener listener) {
         if (sApiService == null) {
             sApiService = builder.build();
@@ -58,6 +58,13 @@ public class ApiClient {
         }
     }
 
+    public static String getApiKey() {
+        if (sApiService == null) {
+            throw new IllegalStateException("Api service cannot be null");
+        }
+        return sApiService.getApiKey();
+    }
+
     /**
      * Retrieve instance of the {@link ApiClient}, and create instance if not already created
      *
@@ -66,7 +73,7 @@ public class ApiClient {
     @NonNull
     public static synchronized IApiClient getInstance() {
         if (sApiService == null) {
-            throw new IllegalStateException("Client cannot be null, please run ApiClient#Builder() first");
+            throw new IllegalStateException("Api service cannot be null");
         }
         return sApiService.get();
     }
