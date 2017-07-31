@@ -151,8 +151,8 @@ public interface IApiClient {
                                      @Query("allterms") boolean isAllTerms);
 
     @GET("registershare")
-    Call<GifsResponse> registerShare(@QueryMap Map<String, String> serviceIds,
-                                     @Query("id") Integer id);
+    Call<Void> registerShare(@QueryMap Map<String, String> serviceIds,
+                             @Query("id") Integer id);
 
     /**
      * Get keyboard id

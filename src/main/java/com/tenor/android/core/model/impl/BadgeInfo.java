@@ -5,7 +5,6 @@ import android.support.annotation.FloatRange;
 import android.support.annotation.NonNull;
 
 import com.google.gson.annotations.SerializedName;
-import com.tenor.android.core.constant.StringConstant;
 import com.tenor.android.core.util.AbstractListUtils;
 
 import java.io.Serializable;
