@@ -148,7 +148,8 @@ public class MeasurableRecyclerViewHelper {
      * @param end          the end position
      */
     public static <T extends IViewHolder> List<T> getViewHolders(@Nullable RecyclerView recyclerView, Class<T> cls, int start, int end) {
-        final List<T> list = new ArrayList<>(end);
+        final int capacity = Math.max(end - start + 1, 0);
+        final List<T> list = new ArrayList<>(capacity);
         if (recyclerView == null || recyclerView.getAdapter() == null) {
             return list;
         }
