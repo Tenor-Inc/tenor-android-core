@@ -5,7 +5,7 @@ import android.support.v7.widget.RecyclerView;
 /**
  *
  */
-public interface IMeasurableRecyclerView {
+public interface IMeasurableRecyclerView extends IRecyclerView {
 
     /**
      * Method to be called on the referenced view, activity, or fragment is paused
