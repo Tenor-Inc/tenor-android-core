@@ -189,38 +189,6 @@ public abstract class AbstractListUtils {
     }
 
     /**
-     * Split a list into several sub-lists; each sub-lists has length equal the given limit
-     *
-     * @param list  the given list
-     * @param limit the given limit of each sub-list
-     */
-    public static <T> List<List<T>> splits(@Nullable final List<T> list, int limit) {
-        List<List<T>> result = new ArrayList<>();
-        if (isEmpty(list)) {
-            return result;
-        }
-
-        if (limit < 2) {
-            result.add(list);
-            return result;
-        }
-
-        List<T> row = new ArrayList<>();
-        for (T item : list) {
-            row.add(item);
-            if (row.size() == limit) {
-                result.add(row);
-                row = new ArrayList<>();
-            }
-        }
-
-        if (!isEmpty(row)) {
-            result.add(row);
-        }
-        return result;
-    }
-
-    /**
      * Merge lists while ignoring duplicates
      *
      * @param base  the base list
