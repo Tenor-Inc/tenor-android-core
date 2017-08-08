@@ -86,5 +86,6 @@ public interface IViewHolder {
      */
     int getItemViewType();
 
+    @NonNull
     String toString();
 }

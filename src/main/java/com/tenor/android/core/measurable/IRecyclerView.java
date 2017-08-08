@@ -3,6 +3,8 @@ package com.tenor.android.core.measurable;
 
 import android.graphics.Canvas;
 import android.graphics.Rect;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.RecyclerViewAccessibilityDelegate;
 import android.util.AttributeSet;
@@ -19,7 +21,7 @@ import java.util.ArrayList;
  * Interface of {@link RecyclerView} on support library v25.3.1
  */
 public interface IRecyclerView {
-    
+
     void addFocusables(ArrayList<View> views, int direction, int focusableMode);
 
     void addItemDecoration(RecyclerView.ItemDecoration decor);
@@ -64,20 +66,27 @@ public interface IRecyclerView {
 
     View findContainingItemView(View view);
 
+    @Nullable
     RecyclerView.ViewHolder findContainingViewHolder(View view);
 
+    @Nullable
     RecyclerView.ViewHolder findViewHolderForAdapterPosition(int position);
 
+    @Nullable
     RecyclerView.ViewHolder findViewHolderForItemId(long id);
 
+    @Nullable
     RecyclerView.ViewHolder findViewHolderForLayoutPosition(int position);
 
+    @Nullable
     RecyclerView.ViewHolder findViewHolderForPosition(int position);
 
     boolean fling(int velocityX, int velocityY);
 
+    @Nullable
     View focusSearch(View focused, int direction);
 
+    @NonNull
     ViewGroup.LayoutParams generateLayoutParams(AttributeSet attrs);
 
     RecyclerView.Adapter getAdapter();

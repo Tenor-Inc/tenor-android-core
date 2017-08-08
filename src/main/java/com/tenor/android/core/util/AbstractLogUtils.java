@@ -22,7 +22,7 @@ public abstract class AbstractLogUtils {
      * @param msg    The message you would like logged.
      */
     public static int e(@NonNull Object caller, @NonNull String msg) {
-        return sDebuggable ? Log.e(caller.getClass().getCanonicalName(), msg) : 0;
+        return isDebuggable() ? Log.e(caller.getClass().getCanonicalName(), msg) : 0;
     }
 
     /**
@@ -33,7 +33,7 @@ public abstract class AbstractLogUtils {
      * @param msg The message you would like logged.
      */
     public static int e(@NonNull String tag, @NonNull String msg) {
-        return sDebuggable ? Log.e(tag, msg) : 0;
+        return isDebuggable() ? Log.e(tag, msg) : 0;
     }
 
     /**
@@ -44,7 +44,7 @@ public abstract class AbstractLogUtils {
      * @param tr     An exception to log
      */
     public static int e(@NonNull Object caller, @NonNull String msg, @NonNull Throwable tr) {
-        return e(caller.getClass().getCanonicalName(), msg, tr);
+        return isDebuggable() ? e(caller.getClass().getCanonicalName(), msg, tr) : 0;
     }
 
     /**
@@ -56,6 +56,6 @@ public abstract class AbstractLogUtils {
      * @param tr  An exception to log
      */
     public static int e(@NonNull String tag, @NonNull String msg, @NonNull Throwable tr) {
-        return sDebuggable ? Log.e(tag, msg, tr) : 0;
+        return isDebuggable() ? Log.e(tag, msg, tr) : 0;
     }
 }

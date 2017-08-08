@@ -4,6 +4,8 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
 
+import com.tenor.android.core.constant.MediaCollectionFormat;
+import com.tenor.android.core.constant.MediaCollectionFormats;
 import com.tenor.android.core.constant.StringConstant;
 import com.tenor.android.core.constant.SupportMessengers;
 import com.tenor.android.core.model.IGif;
@@ -51,8 +53,8 @@ public abstract class AbstractGifUtils {
      * @param gif the given {@link IGif}
      * @return the mp4 url
      */
-    public static String getMp4Url(@NonNull IGif gif) {
-        return getMediaUrl(gif, MediaCollection.MP4);
+    public static String getMp4Url(@Nullable IGif gif) {
+        return getMediaUrl(gif, MediaCollectionFormats.MP4);
     }
 
     /**
@@ -72,11 +74,11 @@ public abstract class AbstractGifUtils {
         }
 
         final MediaCollection collection = result.getMedias().get(0);
-        if (collection.get(MediaCollection.MP4).getDuration() > VIDEO_LOOP_CAP) {
+        if (collection.get(MediaCollectionFormats.MP4).getDuration() > VIDEO_LOOP_CAP) {
             return getMp4Url(result);
         }
 
-        final String loopedMp4Url = collection.get(MediaCollection.MP4_LOOPED).getUrl();
+        final String loopedMp4Url = collection.get(MediaCollectionFormats.MP4_LOOPED).getUrl();
         if (!TextUtils.isEmpty(loopedMp4Url)) {
             return loopedMp4Url;
         }
@@ -89,8 +91,8 @@ public abstract class AbstractGifUtils {
      * @param gif the given {@link IGif}
      * @return the media gif url
      */
-    public static String getGifUrl(@NonNull IGif gif) {
-        return getMediaUrl(gif, MediaCollection.GIF);
+    public static String getGifUrl(@Nullable IGif gif) {
+        return getMediaUrl(gif, MediaCollectionFormats.GIF);
     }
 
     /**
@@ -99,14 +101,14 @@ public abstract class AbstractGifUtils {
      * @param gif the given {@link IGif}
      * @return the media tiny gif url
      */
-    public static String getTinyGifUrl(@NonNull IGif gif) {
-        return getMediaUrl(gif, MediaCollection.GIF_TINY);
+    public static String getTinyGifUrl(@Nullable IGif gif) {
+        return getMediaUrl(gif, MediaCollectionFormats.GIF_TINY);
     }
 
     /**
      * Get url of a given {@link Media}
      */
-    private static String getMediaUrl(@Nullable final Media media) {
+    private static String getMediaUrl(@Nullable Media media) {
         if (media == null || TextUtils.isEmpty(media.getUrl())) {
             return StringConstant.EMPTY;
         }
@@ -117,11 +119,11 @@ public abstract class AbstractGifUtils {
      * Get url of a given {@link Result} on the type of interest
      *
      * @param result the given {@link Result}
-     * @param type   the type of {@link MediaCollection#GIF_TINY}, {@link MediaCollection#GIF} or {@link MediaCollection#MP4}
+     * @param type   one of {@link MediaCollectionFormat}
      * @return the {@link Media}
      */
     @Nullable
-    public static Media getMedia(@Nullable final Result result, @Nullable final String type) {
+    public static Media getMedia(@Nullable Result result, @MediaCollectionFormat String type) {
         if (result == null || AbstractListUtils.isEmpty(result.getMedias())
                 || result.getMedias().get(0) == null || TextUtils.isEmpty(type)) {
             return null;
@@ -135,9 +137,9 @@ public abstract class AbstractGifUtils {
      * Get url of a given {@link Result} on the type of interest
      *
      * @param result the given {@link Result}
-     * @param type   the type of {@link MediaCollection#GIF_TINY}, {@link MediaCollection#GIF} or {@link MediaCollection#MP4}
+     * @param type   the type of {@link MediaCollectionFormat}
      */
-    private static String getMediaUrl(@Nullable final Result result, @Nullable final String type) {
+    private static String getMediaUrl(@Nullable Result result, @MediaCollectionFormat String type) {
         return getMediaUrl(getMedia(result, type));
     }
 
@@ -146,7 +148,7 @@ public abstract class AbstractGifUtils {
      *
      * @param result the given {@link Result}
      */
-    private static String getUrl(@Nullable final Result result) {
+    private static String getUrl(@Nullable Result result) {
         if (result == null || TextUtils.isEmpty(result.getUrl())) {
             return StringConstant.EMPTY;
         }
@@ -159,7 +161,7 @@ public abstract class AbstractGifUtils {
      * @param tag the given {@link Tag}
      * @return the image url of {@link Tag}
      */
-    private static String getUrl(@Nullable final Tag tag) {
+    private static String getUrl(@Nullable Tag tag) {
         //noinspection ConstantConditions
         if (tag == null || TextUtils.isEmpty(tag.getImage())) {
             return StringConstant.EMPTY;
@@ -171,10 +173,11 @@ public abstract class AbstractGifUtils {
      * Get media url of a given {@link IGif} on the type of interest
      *
      * @param gif  the given {@link IGif}
-     * @param type the type of {@link MediaCollection#GIF_TINY}, {@link MediaCollection#GIF} or {@link MediaCollection#MP4}
+     * @param type the type of {@link MediaCollectionFormat}
      * @return the url
      */
-    private static String getMediaUrl(@Nullable final IGif gif, @Nullable final String type) {
+    private static String getMediaUrl(@Nullable final IGif gif,
+                                      @MediaCollectionFormat final String type) {
         if (gif == null || TextUtils.isEmpty(type)) {
             return StringConstant.EMPTY;
         }
@@ -194,7 +197,7 @@ public abstract class AbstractGifUtils {
      * @param gif the given {@link IGif}
      * @return the url
      */
-    public static String getShareGifUrl(@Nullable final IGif gif) {
+    public static String getShareGifUrl(@Nullable IGif gif) {
         if (gif == null) {
             return StringConstant.EMPTY;
         }
@@ -215,7 +218,7 @@ public abstract class AbstractGifUtils {
      * @param result      the given {@link Result}
      * @return the media url for sending/sharing
      */
-    public static String getSharedMediaUrl(@Nullable final String packageName, @Nullable final Result result) {
+    public static String getSharedMediaUrl(@Nullable String packageName, @Nullable Result result) {
 
         if (TextUtils.isEmpty(packageName) || result == null) {
             return StringConstant.EMPTY;
@@ -246,9 +249,9 @@ public abstract class AbstractGifUtils {
      * @param packageName the package name of current messenger
      * @param result      the given {@link Result}
      * @param useMp4      whether an mp4 link should be returned instead of a gif
-     * @return
+     * @return url to be shared
      */
-    public static String getSharedMediaUrl(@NonNull String packageName, @NonNull Result result, boolean useMp4) {
+    public static String getSharedMediaUrl(@Nullable String packageName, @Nullable Result result, boolean useMp4) {
 
         if (TextUtils.isEmpty(packageName) || result == null) {
             return StringConstant.EMPTY;
@@ -295,8 +298,8 @@ public abstract class AbstractGifUtils {
      * @param gif the given {@link IGif}
      * @return the tiny gif url
      */
-    public static String getTinyGifPreviewUrl(@NonNull IGif gif) {
-        return getPreviewUrl(gif, MediaCollection.GIF_TINY);
+    public static String getTinyGifPreviewUrl(@Nullable IGif gif) {
+        return getPreviewUrl(gif, MediaCollectionFormats.GIF_TINY);
     }
 
     /**
@@ -305,8 +308,8 @@ public abstract class AbstractGifUtils {
      * @param gif the given {@link IGif}
      * @return the tiny gif url
      */
-    public static String getGifPreviewUrl(@NonNull IGif gif) {
-        return getPreviewUrl(gif, MediaCollection.GIF);
+    public static String getGifPreviewUrl(@Nullable IGif gif) {
+        return getPreviewUrl(gif, MediaCollectionFormats.GIF);
     }
 
     private static String getPreviewUrl(@Nullable IGif gif, @NonNull String type) {
