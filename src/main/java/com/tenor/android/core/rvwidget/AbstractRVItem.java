@@ -9,17 +9,13 @@ public abstract class AbstractRVItem implements IRVItem {
 
     private final int mType;
     private final String mId;
+    private int mRelativePosition = -1;
 
     public AbstractRVItem(int type) {
         this(type, String.valueOf(type));
     }
 
     public AbstractRVItem(int type, @NonNull final String id) {
-
-        if (id == null) {
-            throw new IllegalArgumentException("id cannot be null");
-        }
-
         mType = type;
         mId = id;
     }
@@ -43,5 +39,21 @@ public abstract class AbstractRVItem implements IRVItem {
     @NonNull
     public String getId() {
         return mId;
+    }
+
+    @Override
+    public int getRelativePosition() {
+        return mRelativePosition;
+    }
+
+    /**
+     * Set the position relative to the same {@link #getType()},
+     * this may not may not be the same as the adapter position
+     *
+     * @param relativePosition the relative position
+     */
+    public AbstractRVItem setRelativePosition(int relativePosition) {
+        mRelativePosition = relativePosition;
+        return this;
     }
 }
