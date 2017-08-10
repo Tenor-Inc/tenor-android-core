@@ -159,7 +159,7 @@ public interface IApiClient {
      * Register batch action
      *
      * @param serviceIds a {@link Map} of a collection of ids for better content delivery experience
-     * @param data       a list of {@link MeasurableViewHolderEvent}
+     * @param data       a serialized list of {@link MeasurableViewHolderEvent}
      * @return {@link Call}<{@link Void}>
      */
     @POST("registeraction")
@@ -167,17 +167,4 @@ public interface IApiClient {
     @NonNull
     Call<Void> registerActions(@FieldMap Map<String, String> serviceIds,
                                @Field("data") @NonNull String data);
-
-    /**
-     * Register action
-     *
-     * @param serviceIds a {@link Map} of a collection of ids for better content delivery experience
-     * @param data       a {@link MeasurableViewHolderEvent}
-     * @return {@link Call}<{@link Void}>
-     */
-    @POST("registeraction")
-    @FormUrlEncoded
-    @NonNull
-    Call<Void> registerAction(@FieldMap Map<String, String> serviceIds,
-                              @Field("data") @NonNull MeasurableViewHolderEvent data);
 }

@@ -19,6 +19,7 @@ import com.tenor.android.core.util.AbstractGsonUtils;
 import com.tenor.android.core.util.AbstractLocaleUtils;
 import com.tenor.android.core.util.AbstractSessionUtils;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -184,22 +185,35 @@ public class ApiClient {
     /**
      * @param context  the application context
      * @param sourceId the source id of a {@link Result}
-     * @param action   the action {share|tap}
+     * @param action   the action {view|share|tap}
      * @return {@link Call}<{@link Void}>
      */
-    public static Call<Void> registerGmeAction(@NonNull final Context context,
-                                               @NonNull String sourceId,
-                                               @NonNull String visualPosition,
-                                               @NonNull final String action) {
-        final MeasurableViewHolderEvent event = new MeasurableViewHolderEvent(sourceId, action, AbstractLocaleUtils.getUtcOffset(context), visualPosition);
-        Call<Void> call = ApiClient.getInstance(context).registerAction(getServiceIds(context), event);
-        call.enqueue(new VoidCallBack());
-        return call;
+    public static Call<Void> registerAction(@NonNull final Context context,
+                                            @NonNull String sourceId,
+                                            @NonNull String visualPosition,
+                                            @NonNull final String action) {
+        return registerAction(context, new MeasurableViewHolderEvent(sourceId, action, AbstractLocaleUtils.getUtcOffset(context), visualPosition));
     }
 
+    /**
+     * @param context the application context
+     * @param event   the {@link MeasurableViewHolderEvent}
+     * @return {@link Call}<{@link Void}>
+     */
+    public static Call<Void> registerAction(@NonNull final Context context,
+                                            @NonNull MeasurableViewHolderEvent event) {
+        List<MeasurableViewHolderEvent> actions = Collections.singletonList(event);
+        return registerActions(context, actions);
+    }
+
+    /**
+     * @param context the application context
+     * @param events   the {@link MeasurableViewHolderEvent}
+     * @return {@link Call}<{@link Void}>
+     */
     public static Call<Void> registerActions(@NonNull final Context context,
-                                             @NonNull List<MeasurableViewHolderEvent> list) {
-        final String data = AbstractGsonUtils.getInstance().toJson(list);
+                                             @NonNull List<MeasurableViewHolderEvent> events) {
+        final String data = AbstractGsonUtils.getInstance().toJson(events);
         Call<Void> call = ApiClient.getInstance().registerActions(getServiceIds(context), data);
         call.enqueue(new VoidCallBack());
         return call;
