@@ -14,13 +14,8 @@ import android.support.v7.widget.RecyclerView;
 public interface IMeasurableViewHolder extends IViewHolder {
 
     /**
-     * Notify {@link MeasurableViewHolderData} that the view and content of this view holder has been
-     * finalized and all facts should be gathered and stored on {@link MeasurableViewHolderData}
-     *
      * @return visible fraction of the item view
      */
-    float onContentReady(@NonNull String id, @FloatRange(from = 0.01f, to = 1f) float threshold);
-
     @FloatRange(from = 0f, to = 1f)
     float measure(@NonNull RecyclerView recyclerView);
 

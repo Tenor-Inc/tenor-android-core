@@ -5,7 +5,6 @@ import android.support.annotation.FloatRange;
 import android.support.annotation.IntRange;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
-import android.text.TextUtils;
 import android.view.View;
 
 import com.tenor.android.core.concurrency.WeakRefObject;
@@ -65,16 +64,16 @@ public class MeasurableViewHolderData<VH extends IMeasurableViewHolder> extends 
      */
     public void setId(@NonNull String id) {
         mId = StringConstant.getOrEmpty(id);
-        setEnhancedContent(!TextUtils.isEmpty(mId));
     }
 
     /**
      * Set to true if this data should be used to improve future content delivery experience
      *
-     * @param receivable the boolean
+     * @param enhancedContent the boolean to determine if this data should be used to improve
+     *                        future content delivery experience
      */
-    public void setEnhancedContent(boolean receivable) {
-        mEnhancedContent = receivable;
+    public void setEnhancedContent(boolean enhancedContent) {
+        mEnhancedContent = enhancedContent;
     }
 
     public void setThreshold(@FloatRange(from = 0.01f, to = 1f) float threshold) {
@@ -84,6 +83,10 @@ public class MeasurableViewHolderData<VH extends IMeasurableViewHolder> extends 
     @FloatRange(from = 0.01f, to = 1f)
     public float getThreshold() {
         return mThreshold;
+    }
+
+    public boolean isVisualPositionUnknown() {
+        return ItemVisualPositions.UNKNOWN.equals(getVisualPosition());
     }
 
     @ItemVisualPosition
@@ -100,26 +103,6 @@ public class MeasurableViewHolderData<VH extends IMeasurableViewHolder> extends 
         resetTimestamp();
         resetCounts();
         mVisibleFraction = 0f;
-    }
-
-    /**
-     * Notify {@link MeasurableViewHolderData} that the view and content of this view holder has been
-     * finalized and all facts should be gathered and stored on {@link MeasurableViewHolderData}
-     * <p>
-     * This method should be called on the {@link IMeasurableViewHolder#onContentReady(String, float)},
-     * or the similar corresponding method on the subclass of {@link IMeasurableViewHolder}.
-     */
-    public synchronized void onViewHolderFullyReady(@NonNull String id,
-                                                    @FloatRange(from = 0.01f, to = 1f) float threshold,
-                                                    @FloatRange(from = 0f, to = 1f) float visibleFraction,
-                                                    @ItemVisualPosition String visualPosition) {
-        updateTimestamp();
-        setId(id);
-        setThreshold(threshold);
-        setVisibleFraction(visibleFraction);
-        setVisualPosition(visualPosition);
-        // update adapter position
-        getAdapterPosition();
     }
 
     private synchronized void resetCounts() {
@@ -186,16 +169,13 @@ public class MeasurableViewHolderData<VH extends IMeasurableViewHolder> extends 
         updateTimestamp();
     }
 
-    public synchronized void destroy(@NonNull Context context) {
-        AbstractLogUtils.e(this, "======> item[" + getAdapterPosition() + "], destroy !!!");
-        flush(context);
-    }
-
     public synchronized void flush(@NonNull Context context) {
         setVisibleFraction(0f);
-        AbstractLogUtils.e(this, "======> flushed\n" + toString());
-        if (getAccumulatedVisibleDuration() > 0 && getAccumulatedVisibleCount() > 0
-                && mEnhancedContent) {
+
+        final boolean pushable = getAccumulatedVisibleDuration() > 0 && getAccumulatedVisibleCount() > 0
+                && mEnhancedContent;
+        AbstractLogUtils.e(this, "==> flushed\n" + (pushable ? toString() : StringConstant.EMPTY));
+        if (pushable) {
             ViewHolderDataManager.push(context, this);
         }
         clear();
@@ -228,7 +208,7 @@ public class MeasurableViewHolderData<VH extends IMeasurableViewHolder> extends 
     private void becomesVisible() {
         updateTimestamp();
         mAccumulatedVisibleCount++;
-        AbstractLogUtils.e(this, "======> item[" + getAdapterPosition() + "] becomes Visible !!!");
+        AbstractLogUtils.e(this, "==> item[" + getAdapterPosition() + "] becomes Visible");
     }
 
     private void becomesInvisible() {
@@ -238,7 +218,7 @@ public class MeasurableViewHolderData<VH extends IMeasurableViewHolder> extends 
         final long duration = System.currentTimeMillis() - mTimestampOnVisible;
         mAccumulatedVisibleDuration += duration;
         resetTimestamp();
-        AbstractLogUtils.e(this, "======> item[" + getAdapterPosition() + "] becomes Invisible !!!");
+        AbstractLogUtils.e(this, "==> item[" + getAdapterPosition() + "] becomes Invisible");
     }
 
     public String toString() {

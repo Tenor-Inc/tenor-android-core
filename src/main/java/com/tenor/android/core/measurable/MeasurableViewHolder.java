@@ -6,7 +6,10 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
+import android.view.ViewGroup;
 
+import com.tenor.android.core.model.impl.BadgeInfo;
+import com.tenor.android.core.model.impl.Result;
 import com.tenor.android.core.rvwidget.WeakRefViewHolder;
 import com.tenor.android.core.util.AbstractLayoutManagerUtils;
 import com.tenor.android.core.view.IBaseView;
@@ -19,15 +22,48 @@ public abstract class MeasurableViewHolder<CTX extends IBaseView> extends WeakRe
     private RecyclerView mRecyclerView;
     private boolean mAttached;
     private boolean mDetached;
+    private boolean mInitialized;
 
     /**
+     * Order of operation:
+     * <p>
+     * 1. {@link RecyclerView.Adapter#onCreateViewHolder(ViewGroup, int)} calls {@link MeasurableViewHolder} constructor
+     * <p>
+     * 2. {@link RecyclerView.OnChildAttachStateChangeListener#onChildViewAttachedToWindow(View)} calls {@link MeasurableViewHolder#attachMeasurer(RecyclerView)}
+     * <p>
+     * 3. {@link RecyclerView.Adapter#onBindViewHolder(RecyclerView.ViewHolder, int)} calls {@link MeasurableViewHolder#onBindMeasurableViewHolderData(String, float, boolean)}
+     * <p>
+     * 4. {@link RecyclerView.OnChildAttachStateChangeListener#onChildViewDetachedFromWindow(View)} calls {@link MeasurableViewHolder#detachMeasurer()}
+     * <p><p>
      * Lifecycle fo MeasurableViewHolder:
      * <p>
-     * attachMeasurer() -> onViewHolderFullyReady() -> measure() -> detachMeasurer()
+     * attachMeasurer() -> measure() -> detachMeasurer()
      */
     public MeasurableViewHolder(View itemView, CTX context) {
         super(itemView, context);
         mMeasurableViewHolderData = new MeasurableViewHolderData<>(this);
+    }
+
+    /**
+     * Call on the {@link RecyclerView.Adapter#onBindViewHolder(RecyclerView.ViewHolder, int)}
+     * to initialize {@link MeasurableViewHolderData}
+     *
+     * @param id              the unique identifier of the content, such as {@link Result#getSourceId()}
+     * @param threshold       the percentage of content seen by users in order to be considered as viewed,
+     *                        such as {@link BadgeInfo#getThreshold()}, which {@link BadgeInfo} is available
+     *                        through {@link Result#getBadgeInfo()}
+     * @param enhancedContent true if {@link MeasurableViewHolderData} should be used to improve
+     *                        future content delivery experience
+     */
+    public synchronized void onBindMeasurableViewHolderData(@NonNull String id,
+                                                            @FloatRange(from = 0.01f, to = 1f) float threshold,
+                                                            boolean enhancedContent) {
+        mMeasurableViewHolderData.setId(id);
+        mMeasurableViewHolderData.setThreshold(threshold);
+        mMeasurableViewHolderData.setEnhancedContent(enhancedContent);
+        mMeasurableViewHolderData.updateTimestamp();
+        mMeasurableViewHolderData.getAdapterPosition();
+        mInitialized = true;
     }
 
     @Nullable
@@ -49,33 +85,27 @@ public abstract class MeasurableViewHolder<CTX extends IBaseView> extends WeakRe
         return mDetached;
     }
 
-    public synchronized void measure() {
-        if (getRecyclerView() == null) {
-            throw new IllegalStateException("measure() cannot be called before attachMeasurer() or after detachMeasurer() is called");
-        }
-        measure(getRecyclerView());
+    public synchronized float measure() {
+        return measure(getRecyclerView());
     }
 
     @Override
-    public synchronized float measure(@NonNull RecyclerView recyclerView) {
-        float visibleFraction = MeasurableViewHolderHelper.calculateVisibleFraction(recyclerView, itemView, mMeasurableViewHolderData.getThreshold());
-        mMeasurableViewHolderData.setVisibleFraction(visibleFraction);
-        return visibleFraction;
-    }
-
-    @Override
-    public synchronized float onContentReady(@NonNull String id, @FloatRange(from = 0.01f, to = 1f) float threshold) {
-        if (!isAttached() || isDetached()) {
+    public synchronized float measure(@Nullable RecyclerView recyclerView) {
+        if (!isAttached() || isDetached() || !mInitialized) {
             return 0f;
         }
 
-        if (getRecyclerView() == null) {
+        if (recyclerView == null) {
             throw new IllegalStateException("ViewHolder must be attached to a non-null RecyclerView");
         }
 
-        float visibleFraction = MeasurableViewHolderHelper.calculateVisibleFraction(getRecyclerView(), itemView, threshold);
-        final String visualPosition = AbstractLayoutManagerUtils.getVisualPosition(getContext(), itemView);
-        mMeasurableViewHolderData.onViewHolderFullyReady(id, threshold, visibleFraction, visualPosition);
+        float visibleFraction = MeasurableViewHolderHelper.calculateVisibleFraction(recyclerView, itemView, mMeasurableViewHolderData.getThreshold());
+        mMeasurableViewHolderData.setVisibleFraction(visibleFraction);
+
+        if (mMeasurableViewHolderData.isVisualPositionUnknown()) {
+            final String visualPosition = AbstractLayoutManagerUtils.getVisualPosition(getContext(), itemView);
+            mMeasurableViewHolderData.setVisualPosition(visualPosition);
+        }
         return visibleFraction;
     }
 
@@ -86,7 +116,6 @@ public abstract class MeasurableViewHolder<CTX extends IBaseView> extends WeakRe
         mAttached = true;
         mDetached = false;
         mMeasurableViewHolderData.clear();
-        measure(recyclerView);
     }
 
     @CallSuper
@@ -106,7 +135,7 @@ public abstract class MeasurableViewHolder<CTX extends IBaseView> extends WeakRe
     public synchronized void detachMeasurer() {
         mAttached = false;
         mDetached = true;
-        mMeasurableViewHolderData.destroy(getContext());
+        mMeasurableViewHolderData.flush(getContext());
     }
 
     @CallSuper
