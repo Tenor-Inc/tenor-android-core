@@ -1,5 +1,8 @@
 package com.tenor.android.core.sponsorable.impl;
 
+import android.support.annotation.NonNull;
+
+import com.tenor.android.core.model.impl.ItemBadge;
 import com.tenor.android.core.sponsorable.ItemBadgePosition;
 
 public class ItemBadgePositions {
@@ -39,6 +42,10 @@ public class ItemBadgePositions {
         }
     }
 
+    public static boolean isExterior(@NonNull ItemBadge badge) {
+        return isExterior(badge.getPosition());
+    }
+
     public static boolean isExterior(@ItemBadgePosition int position) {
         switch (position) {
             case EXTERIOR_TOP_LEFT:
@@ -51,12 +58,48 @@ public class ItemBadgePositions {
         }
     }
 
+    public static boolean isInterior(@NonNull ItemBadge badge) {
+        return isInterior(badge.getPosition());
+    }
+
     public static boolean isInterior(@ItemBadgePosition int position) {
         switch (position) {
             case ItemBadgePositions.INTERIOR_TOP_LEFT:
             case ItemBadgePositions.INTERIOR_TOP_RIGHT:
             case ItemBadgePositions.INTERIOR_BOTTOM_RIGHT:
             case ItemBadgePositions.INTERIOR_BOTTOM_LEFT:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    public static boolean isLeft(@NonNull ItemBadge badge) {
+        return isLeft(badge.getPosition());
+    }
+
+    public static boolean isLeft(@ItemBadgePosition int position) {
+        switch (position) {
+            case ItemBadgePositions.INTERIOR_TOP_LEFT:
+            case ItemBadgePositions.INTERIOR_BOTTOM_LEFT:
+            case ItemBadgePositions.EXTERIOR_TOP_LEFT:
+            case ItemBadgePositions.EXTERIOR_BOTTOM_LEFT:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    public static boolean isRight(@NonNull ItemBadge badge) {
+        return isRight(badge.getPosition());
+    }
+
+    public static boolean isRight(@ItemBadgePosition int position) {
+        switch (position) {
+            case ItemBadgePositions.INTERIOR_TOP_RIGHT:
+            case ItemBadgePositions.INTERIOR_BOTTOM_RIGHT:
+            case ItemBadgePositions.EXTERIOR_TOP_RIGHT:
+            case ItemBadgePositions.EXTERIOR_BOTTOM_RIGHT:
                 return true;
             default:
                 return false;
