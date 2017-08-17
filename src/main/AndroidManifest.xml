@@ -8,8 +8,7 @@
     <uses-permission android:name="android.permission.READ_CONTACTS" />
     <uses-permission android:name="android.permission.GET_ACCOUNTS" />
 
-    <application
-        android:label="@string/tenor_core_name">
+    <application>
         <service
             android:name="com.tenor.android.core.service.AaidService"
             android:exported="false" />
