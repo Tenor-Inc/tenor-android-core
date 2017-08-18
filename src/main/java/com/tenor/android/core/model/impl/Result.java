@@ -144,10 +144,6 @@ public class Result implements IGif {
         return featuredInfo != null;
     }
 
-    public boolean hasItemBadge() {
-        return badgeInfo != null;
-    }
-
     @Nullable
     public BadgeInfo getBadgeInfo() {
         return badgeInfo;

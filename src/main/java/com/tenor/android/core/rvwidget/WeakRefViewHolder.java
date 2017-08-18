@@ -21,7 +21,7 @@ public abstract class WeakRefViewHolder<CTX> extends RecyclerView.ViewHolder
 
     private final WeakReference<CTX> mWeakRef;
 
-    public WeakRefViewHolder(View itemView, CTX context) {
+    public WeakRefViewHolder(@NonNull View itemView, @NonNull CTX context) {
         super(itemView);
         mWeakRef = new WeakReference<>(context);
     }

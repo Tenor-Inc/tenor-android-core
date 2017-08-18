@@ -204,6 +204,10 @@ public abstract class StringConstant {
         return !isEmpty(str) ? str : EMPTY;
     }
 
+    public static CharSequence getOrEmpty(@Nullable final CharSequence str) {
+        return !isEmpty(str) ? str : EMPTY;
+    }
+
     /**
      * Parse the given {@link String} into int
      *

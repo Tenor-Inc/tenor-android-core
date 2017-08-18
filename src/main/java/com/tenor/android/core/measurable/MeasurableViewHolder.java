@@ -39,7 +39,7 @@ public abstract class MeasurableViewHolder<CTX extends IBaseView> extends WeakRe
      * <p>
      * attachMeasurer() -> measure() -> detachMeasurer()
      */
-    public MeasurableViewHolder(View itemView, CTX context) {
+    public MeasurableViewHolder(@NonNull View itemView, @NonNull CTX context) {
         super(itemView, context);
         mMeasurableViewHolderData = new MeasurableViewHolderData<>(this);
     }

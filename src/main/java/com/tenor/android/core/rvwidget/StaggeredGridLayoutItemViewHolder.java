@@ -30,7 +30,7 @@ public class StaggeredGridLayoutItemViewHolder<CTX extends IBaseView> extends Me
         void onClick(int position);
     }
 
-    public StaggeredGridLayoutItemViewHolder(View itemView, CTX context) {
+    public StaggeredGridLayoutItemViewHolder(@NonNull View itemView, @NonNull CTX context) {
         super(itemView, context);
     }
 
