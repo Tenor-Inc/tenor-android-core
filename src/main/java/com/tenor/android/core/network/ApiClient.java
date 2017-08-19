@@ -14,6 +14,7 @@ import com.tenor.android.core.model.impl.Result;
 import com.tenor.android.core.response.BaseCallback;
 import com.tenor.android.core.response.BaseError;
 import com.tenor.android.core.response.impl.AnonIdResponse;
+import com.tenor.android.core.service.AaidClient;
 import com.tenor.android.core.service.AaidService;
 import com.tenor.android.core.util.AbstractGsonUtils;
 import com.tenor.android.core.util.AbstractLocaleUtils;
@@ -113,6 +114,9 @@ public class ApiClient {
          */
         final String id = AbstractSessionUtils.getAnonId(context);
         map.put(id.length() <= 20 ? "keyboardid" : "anon_id", id);
+        if (TextUtils.isEmpty(AbstractSessionUtils.getAndroidAdvertiseId(context))) {
+            AaidClient.init(context);
+        }
         map.put("aaid", AbstractSessionUtils.getAndroidAdvertiseId(context));
         map.put("locale", AbstractLocaleUtils.getCurrentLocaleName(context));
         map.put("screen_density", ScreenDensities.get(context));
