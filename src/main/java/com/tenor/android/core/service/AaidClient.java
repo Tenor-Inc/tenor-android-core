@@ -1,4 +1,4 @@
-package com.tenor.android.core.util;
+package com.tenor.android.core.service;
 
 import android.content.ComponentName;
 import android.content.Context;
@@ -16,6 +16,7 @@ import android.support.annotation.WorkerThread;
 import android.text.TextUtils;
 
 import com.tenor.android.core.constant.StringConstant;
+import com.tenor.android.core.util.AbstractSessionUtils;
 
 import java.util.concurrent.LinkedBlockingQueue;
 

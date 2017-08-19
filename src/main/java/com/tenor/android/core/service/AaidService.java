@@ -3,8 +3,6 @@ package com.tenor.android.core.service;
 import android.app.IntentService;
 import android.content.Intent;
 
-import com.tenor.android.core.util.AaidClient;
-
 
 public class AaidService extends IntentService {
 

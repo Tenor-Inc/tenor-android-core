@@ -1,9 +1,8 @@
-package com.tenor.android.core.sponsorable.impl;
+package com.tenor.android.core.constant;
 
 import android.support.annotation.NonNull;
 
 import com.tenor.android.core.model.impl.ItemBadge;
-import com.tenor.android.core.sponsorable.ItemBadgePosition;
 
 public class ItemBadgePositions {
 

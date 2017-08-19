@@ -34,12 +34,6 @@ public class StaggeredGridLayoutItemViewHolder<CTX extends IBaseView> extends Me
         super(itemView, context);
     }
 
-    @NonNull
-    @Override
-    public View getItemView() {
-        return itemView;
-    }
-
     /**
      * Get context, use hasWeakRef() to check its existence first
      */

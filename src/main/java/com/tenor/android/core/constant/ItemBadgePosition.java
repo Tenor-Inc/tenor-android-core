@@ -1,8 +1,6 @@
-package com.tenor.android.core.sponsorable;
+package com.tenor.android.core.constant;
 
 import android.support.annotation.IntDef;
-
-import com.tenor.android.core.sponsorable.impl.ItemBadgePositions;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
