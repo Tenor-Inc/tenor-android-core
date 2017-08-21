@@ -1,7 +1,6 @@
 package com.tenor.android.core.measurable;
 
 import android.support.annotation.CallSuper;
-import android.support.annotation.FloatRange;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
@@ -14,6 +13,13 @@ import com.tenor.android.core.rvwidget.WeakRefViewHolder;
 import com.tenor.android.core.util.AbstractLayoutManagerUtils;
 import com.tenor.android.core.view.IBaseView;
 
+/**
+ * A subclass of {@link WeakRefViewHolder} that can measure user impression of GIFs and use the data
+ * to improve future content delivery experience
+ * <p>
+ * Developers can decide whether to utilize this future by setting the boolean value of
+ * {@link #onBindMeasurableViewHolderData(Result, boolean)}
+ */
 public abstract class MeasurableViewHolder<CTX extends IBaseView> extends WeakRefViewHolder<CTX>
         implements IMeasurableViewHolder {
 
@@ -31,7 +37,7 @@ public abstract class MeasurableViewHolder<CTX extends IBaseView> extends WeakRe
      * <p>
      * 2. {@link RecyclerView.OnChildAttachStateChangeListener#onChildViewAttachedToWindow(View)} calls {@link MeasurableViewHolder#attachMeasurer(RecyclerView)}
      * <p>
-     * 3. {@link RecyclerView.Adapter#onBindViewHolder(RecyclerView.ViewHolder, int)} calls {@link MeasurableViewHolder#onBindMeasurableViewHolderData(String, float, boolean)}
+     * 3. {@link RecyclerView.Adapter#onBindViewHolder(RecyclerView.ViewHolder, int)} calls {@link MeasurableViewHolder#onBindMeasurableViewHolderData(Result, boolean)}
      * <p>
      * 4. {@link RecyclerView.OnChildAttachStateChangeListener#onChildViewDetachedFromWindow(View)} calls {@link MeasurableViewHolder#detachMeasurer()}
      * <p><p>
@@ -48,18 +54,14 @@ public abstract class MeasurableViewHolder<CTX extends IBaseView> extends WeakRe
      * Call on the {@link RecyclerView.Adapter#onBindViewHolder(RecyclerView.ViewHolder, int)}
      * to initialize {@link MeasurableViewHolderData}
      *
-     * @param id              the unique identifier of the content, such as {@link Result#getSourceId()}
-     * @param threshold       the percentage of content seen by users in order to be considered as viewed,
-     *                        such as {@link BadgeInfo#getThreshold()}, which {@link BadgeInfo} is available
-     *                        through {@link Result#getBadgeInfo()}
+     * @param result          the {@link Result}
      * @param enhancedContent true if {@link MeasurableViewHolderData} should be used to improve
      *                        future content delivery experience
      */
-    public synchronized void onBindMeasurableViewHolderData(@NonNull String id,
-                                                            @FloatRange(from = 0.01f, to = 1f) float threshold,
+    public synchronized void onBindMeasurableViewHolderData(@NonNull Result result,
                                                             boolean enhancedContent) {
-        mMeasurableViewHolderData.setId(id);
-        mMeasurableViewHolderData.setThreshold(threshold);
+        mMeasurableViewHolderData.setId(result.getSourceId());
+        mMeasurableViewHolderData.setThreshold(getThreshold(result));
         mMeasurableViewHolderData.setEnhancedContent(enhancedContent);
         mMeasurableViewHolderData.updateTimestamp();
         mMeasurableViewHolderData.getAdapterPosition();
@@ -142,5 +144,17 @@ public abstract class MeasurableViewHolder<CTX extends IBaseView> extends WeakRe
     @Override
     public void flush() {
         mMeasurableViewHolderData.flush(getContext());
+    }
+
+    /**
+     * @return the percentage of content seen by users in order to be considered as viewed,
+     * such as {@link BadgeInfo#getThreshold()}, which {@link BadgeInfo} is available
+     * through {@link Result#getBadgeInfo()}
+     */
+    private static float getThreshold(@Nullable Result result) {
+        if (result == null || result.getBadgeInfo() == null) {
+            return 1f;
+        }
+        return result.getBadgeInfo().getThreshold();
     }
 }

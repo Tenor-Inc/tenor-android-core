@@ -165,17 +165,16 @@ public class MeasurableViewHolderData<VH extends IMeasurableViewHolder> extends 
     }
 
     public synchronized void resume() {
-        // update the timestamp
         updateTimestamp();
     }
 
     public synchronized void flush(@NonNull Context context) {
         setVisibleFraction(0f);
 
-        final boolean pushable = getAccumulatedVisibleDuration() > 0 && getAccumulatedVisibleCount() > 0
-                && mEnhancedContent;
-        AbstractLogUtils.e(this, "==> flushed\n" + (pushable ? toString() : StringConstant.EMPTY));
-        if (pushable) {
+        final boolean useful = mEnhancedContent
+                && getAccumulatedVisibleDuration() > 0 && getAccumulatedVisibleCount() > 0;
+        AbstractLogUtils.e(this, "==> flushed\n" + (useful ? toString() : StringConstant.EMPTY));
+        if (useful) {
             ViewHolderDataManager.push(context, this);
         }
         clear();
