@@ -1,25 +1,20 @@
 package com.tenor.android.core.service;
 
-import android.app.IntentService;
+import android.content.Context;
 import android.content.Intent;
+import android.support.annotation.NonNull;
+import android.support.v4.app.JobIntentService;
 
 
-public class AaidService extends IntentService {
+public class AaidService extends JobIntentService {
 
-    public static final String ACTION_GET_AAID = "ACTION_GET_AAID";
-
-    public AaidService() {
-        super(AaidService.class.getName());
-    }
+    private static final int JOB_ID_GET_AAID = 1611;
+    private static final String ACTION_GET_AAID = "ACTION_GET_AAID";
 
     @Override
-    protected void onHandleIntent(Intent workIntent) {
+    protected void onHandleWork(@NonNull Intent intent) {
 
-        if (workIntent == null) {
-            return;
-        }
-
-        switch (workIntent.getAction()) {
+        switch (intent.getAction()) {
             case ACTION_GET_AAID:
                 AaidClient.init(getApplicationContext());
                 break;
@@ -27,5 +22,9 @@ public class AaidService extends IntentService {
                 // do nothing
                 break;
         }
+    }
+
+    public static void requestAaid(@NonNull Context context) {
+        enqueueWork(context, AaidService.class, JOB_ID_GET_AAID, new Intent(ACTION_GET_AAID));
     }
 }

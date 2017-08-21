@@ -116,7 +116,7 @@ public class ApiClient {
         final String id = AbstractSessionUtils.getAnonId(context);
         map.put(id.length() <= 20 ? "keyboardid" : "anon_id", id);
         if (TextUtils.isEmpty(AbstractSessionUtils.getAndroidAdvertiseId(context))) {
-            AaidClient.init(context);
+            AaidService.requestAaid(context);
         }
         map.put("aaid", AbstractSessionUtils.getAndroidAdvertiseId(context));
         map.put("locale", AbstractLocaleUtils.getCurrentLocaleName(context));
@@ -164,9 +164,7 @@ public class ApiClient {
         });
 
         // request for aaid
-        Intent mServiceIntent = new Intent(context, AaidService.class);
-        mServiceIntent.setAction(AaidService.ACTION_GET_AAID);
-        context.startService(mServiceIntent);
+        AaidService.requestAaid(context);
 
         return call;
     }
