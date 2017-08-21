@@ -1,4 +1,4 @@
-package com.tenor.android.core.concurrency;
+package com.tenor.android.core.weakref;
 
 
 import android.support.annotation.NonNull;

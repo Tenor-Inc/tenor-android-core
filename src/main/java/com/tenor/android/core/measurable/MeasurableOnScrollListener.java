@@ -6,7 +6,7 @@ import android.support.annotation.Nullable;
 import android.support.v7.widget.OrientationHelper;
 import android.support.v7.widget.RecyclerView;
 
-import com.tenor.android.core.concurrency.WeakRefOnScrollListener;
+import com.tenor.android.core.weakref.WeakRefOnScrollListener;
 import com.tenor.android.core.util.AbstractLayoutManagerUtils;
 import com.tenor.android.core.util.AbstractLogUtils;
 import com.tenor.android.core.util.AbstractUIUtils;

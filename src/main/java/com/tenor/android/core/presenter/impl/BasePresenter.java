@@ -2,7 +2,7 @@ package com.tenor.android.core.presenter.impl;
 
 import android.support.annotation.Nullable;
 
-import com.tenor.android.core.concurrency.WeakRefObject;
+import com.tenor.android.core.weakref.WeakRefObject;
 import com.tenor.android.core.presenter.IBasePresenter;
 import com.tenor.android.core.view.IBaseView;
 

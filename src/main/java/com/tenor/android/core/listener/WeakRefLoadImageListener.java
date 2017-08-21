@@ -4,7 +4,7 @@ import android.graphics.drawable.Drawable;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
-import com.tenor.android.core.concurrency.WeakRefObject;
+import com.tenor.android.core.weakref.WeakRefObject;
 
 import java.lang.ref.WeakReference;
 
