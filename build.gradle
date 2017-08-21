@@ -31,10 +31,6 @@ android {
         targetSdkVersion 25
         versionCode versionMajor * 1000 + versionMinor * 100 + versionPatch
         versionName "${versionMajor}.${versionMinor}.${versionPatch}"
-
-        setProperty("archivesBaseName",
-                "tenor-android-core-v" + versionName);
-
     }
     buildTypes {
         release {

@@ -87,12 +87,13 @@ public abstract class AbstractSessionUtils {
             return id;
         }
 
+        // migrate id
         final String keyboardId = getPreferences(context).getString(KEY_KEYBOARD_ID, StringConstant.EMPTY);
         if (!TextUtils.isEmpty(keyboardId)) {
             // migrate keyboard id to anon id
             getPreferences(context).edit().putString(KEY_ANON_ID, keyboardId).apply();
-            // do remove KEY_KEYBOARD_ID for easier key pairing and anonid migration in the future
-            // getPreferences(context).edit().remove(KEY_KEYBOARD_ID).apply();
+            // do remove KEY_KEYBOARD_ID for easier key pairing and anon id migration in the future
+            getPreferences(context).edit().remove(KEY_KEYBOARD_ID).apply();
         }
         return keyboardId;
     }

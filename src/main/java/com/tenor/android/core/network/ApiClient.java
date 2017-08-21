@@ -8,6 +8,7 @@ import android.support.v4.util.ArrayMap;
 import android.text.TextUtils;
 
 import com.tenor.android.core.constant.ScreenDensities;
+import com.tenor.android.core.constant.ViewAction;
 import com.tenor.android.core.listener.IAnonIdListener;
 import com.tenor.android.core.measurable.MeasurableViewHolderEvent;
 import com.tenor.android.core.model.impl.Result;
@@ -108,7 +109,7 @@ public class ApiClient {
          * The following fields work together to delivery a more accurate and better experience
          *
          * 1. `anon_id`, a non-id or its older version, keyboard is used to roughly identify a user;
-         * 2. `aaid`, Android Advertise Id, is used in case "keyboardid" or "anon_id" mutates
+         * 2. `aaid`, Android Advertise Id, is also used in case "keyboardid" or "anon_id" mutates
          * 3. `locale` is used to deliver curated language/regional specific contents to users
          * 4. `screen_density` is used to optimize the content size to the device
          */
@@ -195,7 +196,7 @@ public class ApiClient {
     public static Call<Void> registerAction(@NonNull final Context context,
                                             @NonNull String sourceId,
                                             @NonNull String visualPosition,
-                                            @NonNull final String action) {
+                                            @ViewAction final String action) {
         return registerAction(context, new MeasurableViewHolderEvent(sourceId, action, AbstractLocaleUtils.getUtcOffset(context), visualPosition));
     }
 

@@ -4,6 +4,7 @@ import android.content.Context;
 import android.support.annotation.NonNull;
 
 import com.tenor.android.core.concurrent.ConcurrentFifoQueue;
+import com.tenor.android.core.constant.ViewAction;
 import com.tenor.android.core.network.ApiClient;
 import com.tenor.android.core.util.AbstractLocaleUtils;
 
@@ -72,13 +73,6 @@ public class ViewHolderDataManager extends ConcurrentFifoQueue<MeasurableViewHol
      */
     private static ViewHolderDataManager sManager;
 
-    /**
-     * initialize {@link ViewHolderDataManager}
-     */
-    public static void init() {
-        get();
-    }
-
     public static ViewHolderDataManager get() {
         if (sManager == null) {
             sManager = new ViewHolderDataManager();
@@ -96,38 +90,5 @@ public class ViewHolderDataManager extends ConcurrentFifoQueue<MeasurableViewHol
                                          @NonNull final MeasurableViewHolderData data) {
         final String utcOffset = AbstractLocaleUtils.getUtcOffset(context);
         get().push(context, new MeasurableViewHolderEvent(data, utcOffset));
-    }
-
-    /**
-     * Queue up a {@link MeasurableViewHolderData} by supplying raw fields
-     *
-     * @param context the context
-     * @param id      the unique identifier of the view holder
-     * @param action  the action {share|tap}
-     */
-    public synchronized static void push(@NonNull final Context context,
-                                         @NonNull final String id,
-                                         @NonNull final String action,
-                                         @NonNull String visualPosition) {
-        final String utcOffset = AbstractLocaleUtils.getUtcOffset(context);
-        get().push(context, new MeasurableViewHolderEvent(id, action, utcOffset, visualPosition));
-    }
-
-    /**
-     * Flush feedback
-     *
-     * @param context the context
-     */
-    public synchronized static void flush(@NonNull final Context context) {
-        get().send(context, Integer.MAX_VALUE);
-    }
-
-    /**
-     * Send feedback to improve future content delivery experience
-     *
-     * @param context the context
-     */
-    public synchronized static void send(@NonNull final Context context) {
-        get().send(context, BATCH_SIZE);
     }
 }
