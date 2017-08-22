@@ -1,4 +1,4 @@
-package com.tenor.android.core.network.impl;
+package com.tenor.android.core.network;
 
 import java.io.IOException;
 

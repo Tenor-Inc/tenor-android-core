@@ -8,9 +8,7 @@ import android.support.annotation.Nullable;
 import android.telephony.TelephonyManager;
 import android.text.TextUtils;
 
-import com.tenor.android.core.BuildConfig;
 import com.tenor.android.core.constant.StringConstant;
-import com.tenor.android.core.network.impl.CustomUserAgent;
 
 import java.net.InetAddress;
 import java.net.NetworkInterface;
@@ -21,8 +19,6 @@ import java.util.Enumeration;
  * Contains methods to access the network status
  */
 public abstract class AbstractNetworkUtils {
-
-    private static CustomUserAgent sUserAgent;
 
     private static int sBatchSize = -1;
 
@@ -400,21 +396,6 @@ public abstract class AbstractNetworkUtils {
                 break;
         }
         return t + StringConstant.DASH + st;
-    }
-
-    public static void initUserAgent(@NonNull final CustomUserAgent userAgent) {
-        sUserAgent = userAgent;
-    }
-
-    public static CustomUserAgent getUserAgent(@NonNull Context context) {
-        if (sUserAgent == null) {
-            sUserAgent = new CustomUserAgent.Builder(BuildConfig.APPLICATION_ID,
-                    BuildConfig.VERSION_NAME,
-                    BuildConfig.VERSION_CODE)
-                    .locale(AbstractLocaleUtils.getCurrentLocaleName(context))
-                    .build();
-        }
-        return sUserAgent;
     }
 
     public static String parseIpAddress(@Nullable final String ip) {
