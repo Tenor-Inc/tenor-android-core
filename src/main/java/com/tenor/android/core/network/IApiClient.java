@@ -37,7 +37,6 @@ public interface IApiClient {
      * @param query      <b>term</b> being searched for
      * @param limit      <b>bucket</b> size of each response
      * @param pos        <b>index</b> for where the first result should come from.  If <b>empty</b>, start at the first result
-     * @param component  the location of the app where the search occurs
      * @return {@link Call}<{@link GifsResponse}>
      */
     @GET("search")
@@ -45,8 +44,7 @@ public interface IApiClient {
     Call<GifsResponse> search(@QueryMap Map<String, String> serviceIds,
                               @Query("tag") @NonNull String query,
                               @Query("limit") int limit,
-                              @Query("pos") @NonNull String pos,
-                              @Query("component") @NonNull String component);
+                              @Query("pos") @NonNull String pos);
 
     /**
      * Retrieves a set of tags to be displayed as gif categories,
@@ -77,14 +75,12 @@ public interface IApiClient {
      * @param serviceIds a {@link Map} of a collection of ids for better content delivery experience
      * @param limit      <b>bucket</b> size of each response
      * @param pos        <b>index</b> for where the first result should come from.  If <b>empty</b>, start at the first result
-     * @param type       <i>optional.</i> Qualifier for specific searches.
      * @return {@link Call}<{@link GifsResponse}>
      */
     @GET("trending")
     Call<GifsResponse> getTrending(@QueryMap Map<String, String> serviceIds,
                                    @Query("limit") Integer limit,
-                                   @Query("pos") String pos,
-                                   @Query("type") String type);
+                                   @Query("pos") String pos);
 
     /**
      * Retrieve gifs with specific ids
