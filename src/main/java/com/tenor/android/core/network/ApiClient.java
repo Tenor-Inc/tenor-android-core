@@ -1,7 +1,6 @@
 package com.tenor.android.core.network;
 
 import android.content.Context;
-import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.util.ArrayMap;
@@ -15,7 +14,6 @@ import com.tenor.android.core.model.impl.Result;
 import com.tenor.android.core.response.BaseCallback;
 import com.tenor.android.core.response.BaseError;
 import com.tenor.android.core.response.impl.AnonIdResponse;
-import com.tenor.android.core.service.AaidClient;
 import com.tenor.android.core.service.AaidService;
 import com.tenor.android.core.util.AbstractGsonUtils;
 import com.tenor.android.core.util.AbstractLocaleUtils;

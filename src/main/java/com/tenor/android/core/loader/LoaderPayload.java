@@ -1,4 +1,4 @@
-package com.tenor.android.core.model.impl;
+package com.tenor.android.core.loader;
 
 import android.content.Context;
 import android.graphics.Color;
@@ -8,19 +8,22 @@ import android.support.annotation.ColorRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
+import android.text.TextUtils;
 import android.widget.ImageView;
 
-import com.bumptech.glide.request.target.Target;
 import com.tenor.android.core.listener.ILoadImageListener;
 
 import java.io.Serializable;
+import java.util.regex.Pattern;
 
 /**
  * Configuration of loading a gif
  */
-public class GlidePayload implements Serializable {
+public class LoaderPayload implements Serializable {
 
     private static final long serialVersionUID = -3764658332353857684L;
+
+    private static final String HEX_COLOR_PATTERN = "^#([A-Fa-f0-9]{8}|[A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$";
 
     /**
      * Required
@@ -34,9 +37,6 @@ public class GlidePayload implements Serializable {
     @NonNull
     private final String mPath;
 
-    @Nullable
-    private Media mMedia;
-
     /**
      * Placeholder {@link ColorDrawable}, default is transparent
      */
@@ -45,8 +45,9 @@ public class GlidePayload implements Serializable {
     private float mThumbnailMultiplier = 1f;
     private int mCurrentRetry;
     private int mMaxRetry = 3;
-    private int mWidth = Target.SIZE_ORIGINAL;
-    private int mHeight = Target.SIZE_ORIGINAL;
+
+    @NonNull
+    private final Pattern mPattern;
 
     @NonNull
     private ILoadImageListener mListener = new ILoadImageListener() {
@@ -59,10 +60,11 @@ public class GlidePayload implements Serializable {
         }
     };
 
-    public GlidePayload(@NonNull final ImageView imageView,
-                        @NonNull final String path) {
+    public LoaderPayload(@NonNull ImageView imageView,
+                         @NonNull String path) {
         mImageView = imageView;
         mPath = path;
+        mPattern = Pattern.compile(HEX_COLOR_PATTERN);
     }
 
     @NonNull
@@ -80,25 +82,35 @@ public class GlidePayload implements Serializable {
     }
 
     /**
-     * default is android.R.color.transparent
+     * Set placeholder color, the default is android.R.color.transparent
+     *
+     * @param context     the context
+     * @param placeholder the color resource
      */
-    public GlidePayload setPlaceholder(@NonNull final Context context, @ColorRes final int placeholder) {
+    public LoaderPayload setPlaceholder(@NonNull final Context context, @ColorRes final int placeholder) {
         mPlaceholder = ContextCompat.getDrawable(context, placeholder);
         return this;
     }
 
     /**
-     * default is android.R.color.transparent
+     * Set placeholder color, the default is android.R.color.transparent
+     *
+     * @param drawable the drawable
      */
-    public GlidePayload setPlaceholder(@NonNull final Drawable drawable) {
+    public LoaderPayload setPlaceholder(@NonNull final Drawable drawable) {
         mPlaceholder = drawable;
         return this;
     }
 
     /**
-     * default is android.R.color.transparent
+     * Set placeholder color, the default is android.R.color.transparent
+     *
+     * @param color hex color code in {@link String}, such as {@code #000000}
      */
-    public GlidePayload setPlaceholder(@Nullable final String color) {
+    public LoaderPayload setPlaceholder(@Nullable final String color) {
+        if (!isHexColor(color)) {
+            throw new IllegalArgumentException("color must be in a valid hex color code");
+        }
         mPlaceholder = new ColorDrawable(Color.parseColor(color));
         return this;
     }
@@ -108,9 +120,9 @@ public class GlidePayload implements Serializable {
     }
 
     /**
-     * default is false
+     * default is 1f
      */
-    public GlidePayload setThumbnailMultiplier(float multiplier) {
+    public LoaderPayload setThumbnailMultiplier(float multiplier) {
         if (multiplier >= 0f && multiplier <= 1f) {
             mThumbnailMultiplier = multiplier;
         }
@@ -128,14 +140,14 @@ public class GlidePayload implements Serializable {
     /**
      * default is 0
      */
-    public GlidePayload setCurrentRetry(int retry) {
+    public LoaderPayload setCurrentRetry(int retry) {
         if (retry >= 0) {
             mCurrentRetry = retry;
         }
         return this;
     }
 
-    public GlidePayload incrementCurrentRetry() {
+    public LoaderPayload incrementCurrentRetry() {
         mCurrentRetry++;
         return this;
     }
@@ -147,7 +159,7 @@ public class GlidePayload implements Serializable {
     /**
      * default is 3
      */
-    public GlidePayload setMaxRetry(int maxRetry) {
+    public LoaderPayload setMaxRetry(int maxRetry) {
         mMaxRetry = maxRetry;
         return this;
     }
@@ -160,46 +172,14 @@ public class GlidePayload implements Serializable {
     /**
      * default is do nothing
      */
-    public GlidePayload setListener(@Nullable final ILoadImageListener listener) {
+    public LoaderPayload setListener(@Nullable final ILoadImageListener listener) {
         if (listener != null) {
             mListener = listener;
         }
         return this;
     }
 
-    @Nullable
-    public Media getMedia() {
-        return mMedia;
-    }
-
-    public GlidePayload setMedia(@Nullable final Media media) {
-        if (media != null) {
-            mMedia = media;
-            setWidth(media.getWidth());
-            setHeight(media.getHeight());
-        }
-        return this;
-    }
-
-    public int getWidth() {
-        return mWidth;
-    }
-
-    public GlidePayload setWidth(int width) {
-        if (width > 0) {
-            this.mWidth = width;
-        }
-        return this;
-    }
-
-    public int getHeight() {
-        return mHeight;
-    }
-
-    public GlidePayload setHeight(int height) {
-        if (height > 0) {
-            this.mHeight = height;
-        }
-        return this;
+    private boolean isHexColor(@Nullable CharSequence text) {
+        return !TextUtils.isEmpty(text) && mPattern.matcher(text).matches();
     }
 }

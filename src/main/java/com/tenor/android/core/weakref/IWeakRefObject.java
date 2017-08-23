@@ -1,4 +1,4 @@
-package com.tenor.android.core.listener;
+package com.tenor.android.core.weakref;
 
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;

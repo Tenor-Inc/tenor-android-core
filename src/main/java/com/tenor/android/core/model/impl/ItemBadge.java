@@ -2,9 +2,9 @@ package com.tenor.android.core.model.impl;
 
 import android.support.annotation.NonNull;
 
-import com.tenor.android.core.constant.StringConstant;
 import com.tenor.android.core.constant.ItemBadgePosition;
 import com.tenor.android.core.constant.ItemBadgePositions;
+import com.tenor.android.core.constant.StringConstant;
 
 public class ItemBadge extends Image {
 

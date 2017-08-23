@@ -6,9 +6,9 @@ import android.text.TextUtils;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.tenor.android.core.weakref.WeakRefRunnable;
 import com.tenor.android.core.util.AbstractWeakReferenceUtils;
 import com.tenor.android.core.view.IBaseView;
+import com.tenor.android.core.weakref.WeakRefRunnable;
 
 import java.lang.ref.WeakReference;
 

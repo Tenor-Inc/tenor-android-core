@@ -9,6 +9,9 @@ import android.view.View;
 
 import com.tenor.android.core.util.AbstractUIUtils;
 
+/**
+ * Helper of {@link MeasurableViewHolder}
+ */
 public class MeasurableViewHolderHelper {
 
     /**

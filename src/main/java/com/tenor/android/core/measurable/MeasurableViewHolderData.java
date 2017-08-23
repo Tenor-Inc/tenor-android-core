@@ -7,12 +7,12 @@ import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 
-import com.tenor.android.core.weakref.WeakRefObject;
 import com.tenor.android.core.constant.ItemVisualPosition;
 import com.tenor.android.core.constant.ItemVisualPositions;
 import com.tenor.android.core.constant.StringConstant;
 import com.tenor.android.core.model.impl.Result;
 import com.tenor.android.core.util.AbstractLogUtils;
+import com.tenor.android.core.weakref.WeakRefObject;
 
 import java.io.Serializable;
 

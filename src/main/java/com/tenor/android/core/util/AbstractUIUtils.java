@@ -3,10 +3,8 @@ package com.tenor.android.core.util;
 import android.app.Activity;
 import android.content.Context;
 import android.os.Build;
-import android.support.annotation.ColorRes;
 import android.support.annotation.DimenRes;
 import android.support.annotation.FloatRange;
-import android.support.annotation.IntRange;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.DisplayMetrics;
@@ -17,8 +15,6 @@ import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 
 import com.tenor.android.core.R;
-import com.tenor.android.core.model.impl.MediaCollection;
-import com.tenor.android.core.model.impl.Result;
 
 import java.lang.reflect.Method;
 

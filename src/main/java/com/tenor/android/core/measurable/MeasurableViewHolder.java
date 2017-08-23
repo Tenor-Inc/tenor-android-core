@@ -24,7 +24,7 @@ public abstract class MeasurableViewHolder<CTX extends IBaseView> extends WeakRe
         implements IMeasurableViewHolder {
 
     @NonNull
-    private final MeasurableViewHolderData<? extends MeasurableViewHolder<CTX>> mMeasurableViewHolderData;
+    private final MeasurableViewHolderData<MeasurableViewHolder<CTX>> mMeasurableViewHolderData;
     private RecyclerView mRecyclerView;
     private boolean mAttached;
     private boolean mDetached;
@@ -33,13 +33,17 @@ public abstract class MeasurableViewHolder<CTX extends IBaseView> extends WeakRe
     /**
      * Order of operation:
      * <p>
-     * 1. {@link RecyclerView.Adapter#onCreateViewHolder(ViewGroup, int)} calls {@link MeasurableViewHolder} constructor
+     * 1. {@link RecyclerView.Adapter#onCreateViewHolder(ViewGroup, int)}
+     * calls {@link MeasurableViewHolder} constructor
      * <p>
-     * 2. {@link RecyclerView.OnChildAttachStateChangeListener#onChildViewAttachedToWindow(View)} calls {@link MeasurableViewHolder#attachMeasurer(RecyclerView)}
+     * 2. {@link RecyclerView.OnChildAttachStateChangeListener#onChildViewAttachedToWindow(View)}
+     * calls {@link MeasurableViewHolder#attachMeasurer(RecyclerView)}
      * <p>
-     * 3. {@link RecyclerView.Adapter#onBindViewHolder(RecyclerView.ViewHolder, int)} calls {@link MeasurableViewHolder#onBindMeasurableViewHolderData(Result, boolean)}
+     * 3. {@link RecyclerView.Adapter#onBindViewHolder(RecyclerView.ViewHolder, int)}
+     * calls {@link MeasurableViewHolder#onBindMeasurableViewHolderData(Result, boolean)}
      * <p>
-     * 4. {@link RecyclerView.OnChildAttachStateChangeListener#onChildViewDetachedFromWindow(View)} calls {@link MeasurableViewHolder#detachMeasurer()}
+     * 4. {@link RecyclerView.OnChildAttachStateChangeListener#onChildViewDetachedFromWindow(View)}
+     * calls {@link MeasurableViewHolder#detachMeasurer()}
      * <p><p>
      * Lifecycle fo MeasurableViewHolder:
      * <p>
@@ -73,7 +77,8 @@ public abstract class MeasurableViewHolder<CTX extends IBaseView> extends WeakRe
         return mRecyclerView;
     }
 
-    protected MeasurableViewHolderData<? extends MeasurableViewHolder<CTX>> getMeasurableData() {
+    @NonNull
+    protected MeasurableViewHolderData getMeasurableData() {
         return mMeasurableViewHolderData;
     }
 

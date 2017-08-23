@@ -6,8 +6,8 @@ import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 
-import com.tenor.android.core.listener.IWeakRefObject;
 import com.tenor.android.core.util.AbstractWeakReferenceUtils;
+import com.tenor.android.core.weakref.IWeakRefObject;
 
 import java.lang.ref.WeakReference;
 

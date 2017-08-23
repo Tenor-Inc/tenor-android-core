@@ -4,7 +4,6 @@ package com.tenor.android.core.weakref;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
-import com.tenor.android.core.listener.IWeakRefObject;
 import com.tenor.android.core.util.AbstractWeakReferenceUtils;
 
 import java.lang.ref.WeakReference;

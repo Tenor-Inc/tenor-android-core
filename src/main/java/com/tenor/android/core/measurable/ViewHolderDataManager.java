@@ -4,7 +4,6 @@ import android.content.Context;
 import android.support.annotation.NonNull;
 
 import com.tenor.android.core.concurrent.ConcurrentFifoQueue;
-import com.tenor.android.core.constant.ViewAction;
 import com.tenor.android.core.network.ApiClient;
 import com.tenor.android.core.util.AbstractLocaleUtils;
 

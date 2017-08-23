@@ -2,9 +2,9 @@ package com.tenor.android.core.presenter.impl;
 
 import android.support.annotation.Nullable;
 
-import com.tenor.android.core.weakref.WeakRefObject;
 import com.tenor.android.core.presenter.IBasePresenter;
 import com.tenor.android.core.view.IBaseView;
+import com.tenor.android.core.weakref.WeakRefObject;
 
 /**
  * The base presenter class that all presenters should extend from
