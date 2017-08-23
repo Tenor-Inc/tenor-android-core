@@ -1,16 +1,11 @@
-Tenor Android Core Documentation
-================================
-This documentation is for `tenor-android-core` module.
+Tenor Android Core
+==================
 
-* [Include `tenor-android-core` in your project](include-tenor-android-core-in-your-project)
-* [Initialize Tenor Service](#initialize-tenor-service)
-  * [Customized User-Agent](#customized-user-agent)
-  * [Customized Interceptor](#customized-interceptor)
-* [Use Tenor Service](#use-tenor-service)
-* [File Provider](#file-provider)
+Tenor allows for a fast and easy way to search for and view GIFs inside your Android application.
 
-## Include `tenor-android-core` in your project
-Copy `tenor-android-core.aar` into your app's `libs` folder, then add the following setup to your app's `build.gradle` file:
+## Download
+### To be replaced with JCenter gradle
+If you wish to add the full libraray, copy `tenor-android-core.aar` into your app's `libs` folder.  You will also need to add three additional dependencies used by the core:
 ```java
 repositories {
     flatDir{
@@ -21,8 +16,8 @@ repositories {
 dependencies {
   compile(name: 'tenor-android-core', ext: 'aar') {
       transitive = true
-  }
-  compile 'com.android.support:recyclerview-v7:25.3.1'
+
+  compile "com.android.support:recyclerview-v7:${build_tools_version}"
   compile 'com.squareup.retrofit2:converter-gson:2.3.0'
   compile 'com.github.bumptech.glide:glide:3.8.0'
 }
@@ -30,221 +25,124 @@ dependencies {
 
 
 
-## Initialize Tenor Service
-On the `onCreate()` of your `Application` class, add:
+## Initialize Tenor Core Service
+Create an application class, if you don't already have one.
+Then, add the following lines of code to you `onCreate()` function.
+You will need an `API_KEY` from Tenor.  For development purposes, you may use our developer key, `"LIVDSRZULELA"`.
+
+However, if you wish to continue using Tenor core services for your application, please request a unique api key [here]{https://tenor.com/gifapi#apikey}
+
 ```java
-if (BuildConfig.DEBUG) {
-    ApiClient.setProtocolType(ApiClient.HTTP);
-    ApiClient.setServer("qa-api");
-}
+@Override
+public void onCreate() {
+    super.onCreate();
 
-// put your tenor API key here
-ApiClient.setApiKey("");
+    // Create a builder for ApiService
+    ApiService.IBuilder<IApiClient> builder = new ApiService.Builder<>(this, IApiClient.class)
 
-// initialize ApiClient and request keyboard id
-ApiClient.init(this);
-```
+    // add your tenor API key here
+    builder.apiKey(API_KEY);
 
-
-
-### Customized User-Agent
-If you want to customize the User-Agent of all your API requests, you need to supply an `Interceptor` when initializing the `ApiClient`:
-```java
-/*
- * initialize custom user-agent for all requests
- * by using CustomUserAgent and UserAgentInterceptor
- */
-AbstractNetworkUtils.initUserAgent(
-        new CustomUserAgent.Builder(BuildConfig.APPLICATION_ID, BuildConfig.VERSION_NAME, BuildConfig.VERSION_CODE)
-                .locale(AbstractLocaleUtils.getCurrentLocaleName(this))
-                .build()
-);
-final Interceptor interceptor = new UserAgentInterceptor(this, AbstractNetworkUtils.getUserAgent(this));
-
-// request keyboard id with custom user-agent interceptor
-ApiClient.init(this, interceptor);
-```
-
-
-
-### Customized Interceptor
-You can also construct and supply your own `Interceptor` when initializing the `ApiClient`:
-```java
-final Interceptor interceptor = new Interceptor() {
-    @Override
-    public Response intercept(Chain chain) throws IOException {
-        return null;
-    }
-};
-
-// request keyboard id with custom interceptor
-ApiClient.init(this, interceptor);
-```
-
-
-
-## Use Tenor Service
-Assuming your project follows Model View Presenter (MVP) pattern, it is recommended to create a presenter to perform the API calls.  Some example implementation would be shown as following:
-
-`ITenorGifView` and `ITenorGifPresenter` are the interfaces communicating between your presenter and view/activity.
-```java
-public interface ITenorGifView extends IBaseView {
-    void onReceiveSearchResultsSucceed(GifsResponse response, boolean isAppend);
-
-    void onReceiveSearchResultsFailed(BaseError error);
-
-    void onReceiveTrendingSucceeded(List<Result> list, String nextPageId, boolean isAppend);
-
-    void onReceiveTrendingFailed(BaseError error);
+    // initialize the Tenor ApiClient
+    ApiClient.init(this, builder);
 }
 ```
 
-```java
-public interface ITenorGifPresenter extends IBasePresenter<ITenorGifView> {
-    Call<GifsResponse> search(String query, int limit, String pos, boolean isAppend);
 
-    Call<GifsResponse> getTrending(int limit, String pos, boolean isAppend);
-}
+## Retrieving GIFs from Tenor
+The Tenor API offers robust ways to fetch the right at the right time for your users.
+For now, we look at the simplest ways to fetch a stream of GIFs, the `trending` and the `search` API end points.
+
+### Trending GIFs
+The `trending` stream fetches whatever the most popular GIFs are at the time of the request, in the order of most popular.
+If there is no specific search term selected yet, we reccomend displaying trending `GIFS`.
+```java
+    Call<GifsResponse> call = ApiClient.getInstance(getContext()).getTrending(
+                    ApiClient.getServiceIds(getContext()),limit, pos, type);
+
+    call.enqueue(new WeakRefCallback<GifsResponse, IKeyboardView>(getWeakRef()) {
+        @Override
+        public void success(@NonNull IKeyboardView view, GifsResponse response) {
+            // handle success case
+        }
+
+        @Override
+        public void failure(@NonNull IKeyboardView view, BaseError error) {
+            // handle failure case
+        }
+    });
+```
+ApiClient.getServiceIds(getContext()) will pass in all the fields stored on the ApiClient as a mapping object.
+The only additional fields required are `limit` and `pos`:
+| Name     | Type    | Despcription                                         |
+| ---------| ------- | ---------------------------------------------------- |
+| limit    | string  | fetch up to a specified number of results (max: 50). |
+| pos      | integer | get results starting at position "value".  Use "" empty string for the initial pos.  
+Subsequent values will be from the `next` field in the gif response. |
+
+
+### Searching GIFS by specific search term
+The Tenor API's crowing feature is its ever improving search engine, with the presenting the user with the right GIF at the right time.
+By adding only an additional `query` field, either as a single word or multiple words, you can display GIFs that capture the reactions your users are searching for.
+```java
+    Call<GifsResponse> call = ApiClient.getInstance(getContext()).search(
+                    ApiClient.getServiceIds(getContext()), query, limit, pos);
+
+    call.enqueue(new WeakRefCallback<GifsResponse, IKeyboardView>(getWeakRef()) {
+        @Override
+        public void success(@NonNull IKeyboardView view, GifsResponse response) {
+            // handle success case
+        }
+
+        @Override
+        public void failure(@NonNull IKeyboardView view, BaseError error) {
+            // handle failure case
+        }
+    });
 ```
 
-`TenorGifPresenter` is the implementation of the presenter, where API calls are made.
+To see a detailed look of the GIF response json object, see [here]{https://tenor.com/gifapi#responseobjects}
+
+## Displaying GIFs
+Once the GIFs have been retrieved, they can now be loaded into and ImageView.
+First, use the `AbstractGifUtils` class to fetch the url you wish to display.  For a stream of multiple GIFs being displayed at once,
+as well for smaller bundles used for sharing, we reccommend `AbstractGifUtils.getTinyGifUrl(gif_result_object)`.  
+Alternatively for full size GIFs, you may user `AbstractGifUtils.getGifUrl(gif_result_object)`.
+
 ```java
-public class TenorGifPresenter extends BasePresenter<ITenorGifView> implements ITenorGifPresenter {
-
-    public GifPresenter(IKeyboardView view) {
-        super(view);
-    }
-
-    @Override
-    public Call<GifsResponse> search(String query, int limit, String pos, final boolean isAppend) {
-
-        final String qry = !TextUtils.isEmpty(query) ? query : StringConstant.EMPTY;
-
-        Call<GifsResponse> call = ApiClient.getInstance(getView().getContext()).search(ApiClient.getApiKey(),
-                qry, AbstractLocaleUtils.getCurrentLocaleName(getView().getContext()),
-                AbstractSessionUtils.getKeyboardId(getView().getContext()), limit, pos);
-
-        call.enqueue(new WeakRefCallback<GifsResponse, IKeyboardView>(getWeakRef()) {
+    call.enqueue(new WeakRefCallback<GifsResponse, IKeyboardView>(getWeakRef()) {
             @Override
             public void success(@NonNull IKeyboardView view, GifsResponse response) {
-                view.onReceiveSearchResultsSucceed(response, isAppend);
+                Result gif_result_object = response.getResults().get(0);
+                String gif_url = AbstractGifUtils.getTinyGifUrl(gif_result_object);
             }
-
-            @Override
-            public void failure(@NonNull IKeyboardView view, BaseError error) {
-                view.onReceiveSearchResultsFailed(error);
-            }
-        });
-        return call;
-    }
-
-    @Override
-    public Call<GifsResponse> getTrending(int limit, String pos, final boolean isAppend) {
-        Call<GifsResponse> call = ApiClient.getInstance(getView().getContext()).getTrending(ApiClient.getApiKey(),
-                limit, !TextUtils.isEmpty(pos) ? pos : StringConstant.EMPTY,
-                AbstractLocaleUtils.getCurrentLocaleName(getView().getContext()),
-                AbstractSessionUtils.getKeyboardId(getView().getContext()));
-
-        call.enqueue(new WeakRefCallback<GifsResponse, IKeyboardView>(getWeakRef()) {
-            @Override
-            public void success(@NonNull IKeyboardView view, GifsResponse response) {
-                if (response == null || (!isAppend && AbstractListUtils.isEmpty(response.getResults()))) {
-                    // TODO: getView().onReceiveTrendingFailed();
-                    return;
-                }
-                view.onReceiveTrendingSucceeded(response.getResults(), response.getNext(), isAppend);
-            }
-
-            @Override
-            public void failure(@NonNull IKeyboardView view, BaseError error) {
-                view.onReceiveTrendingFailed(error);
-            }
-        });
-        return call;
-    }
 }
 ```
-
-`MainActivity` is your activity, where you want to use the presenter.
+Next, we need to construct a `GlidePayload` so that gif can be loaded into the ImageView.  `GlidePayload` makes use of the `glide library'{https://github.com/bumptech/glide}.
+Additionally, you have the option to add a callback for when a GIF has finished loading.
 ```java
-public class MainActivity extends Activity implements ITenorGifView {
+    GlidePayload payload = new GlidePayload(mImageView, gif_url)
+                    .setListener(new WeakRefLoadImageListener<>(this) {
+                        @Override
+                        public void onLoadImageSucceeded(@NonNull GifSearchItemVH<CTX> ctx, @Nullable Drawable drawable) {
+                            // handle the success case
+                        }
 
-    private ITenorGifPresenter mPresenter;
-    // initialize the next page id for pagination
-    private String mNextPageId = StringConstant.EMPTY;
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-
-        // initialize the presenter
-        mPresenter = new TenorGifPresenter(this);
-
-        // perform the gif search
-        mPresenter.getTrending(24, mNextPageId, isAppend);
-
-        /*
-         * Your other works...
-         */
-
-         // reset pagination
-         mNextPageId = StringConstant.EMPTY;
-    }
-
-    @Override
-    public void onReceiveSearchResultsSucceed(GifsResponse response, boolean isAppend) {
-      mNextPageId = response.getNext();
-      // handle the result gifs
-    }
-
-    @Override
-    public void onReceiveSearchResultsFailed(BaseError error) {}
-
-    @Override
-    public void onReceiveTrendingSucceeded(List<Result> list, String nextPageId, boolean isAppend) {
-      mNextPageId = nextPageId;
-      // handle the result gifs
-    }
-
-    @Override
-    public void onReceiveTrendingFailed(BaseError error) {}
-}
+                        @Override
+                        public void onLoadImageFailed(@NonNull GifSearchItemVH<CTX> ctx, @Nullable Drawable drawable) {
+                            // handle the failure case
+                        }
+                    });
 ```
 
-
-## Commit Gif using RCS
-You can use `AbstractKeyboardUtils.commitGif();` methods to commit a gif or other supported `@ContentFormat`; the `ContentFormats.java` listed the supported formats.
-
+Finally, once the payload has been constructed, add the following line of code to finish the process:
 ```java
-public static void commitGif(@NonNull final InputMethodService inputMethodService,
-                             @NonNull final Uri uri);
+    AbstractGlideUtils.loadGif(getContext(), payload);
+``` 
 
-public static void commitContent(@NonNull final InputMethodService inputMethodService,
-                                 @NonNull final Uri uri,
-                                 @Nullable @ContentFormat final String... mimeTypes)
-```
-
-
-
-## File Provider
-In order to properly access the file on Android 24+, we need to configure and utilize the `FileProvider` provided by the support library.  Copy and paste the following code snippet into your app's manifest file.
-
-```xml
-<provider
-    android:name="android.support.v4.content.FileProvider"
-    android:authorities="${applicationId}.provider"
-    android:exported="false"
-    android:grantUriPermissions="true">
-    <meta-data
-        android:name="android.support.FILE_PROVIDER_PATHS"
-        android:resource="@xml/tenor_android_core_file_provider_paths"/>
-</provider>
-```
-
-You should then be able to retrieve a `Uri` of a given `File` class object in a API 24+ compatible manner using `com.tenor.android.core.util.LocalStorageUtils.getUriForFileCompat()`.
-
-Also make sure you have `applicationId` defined on your `build.gradle` file.
+This should be enough to get you started and display GIFs to your users.
+A working demo using search and GIF image loading can be found in the `Demo` folder above.
+Full documentation of our API, including ways to further refine user searches with suggestions, can be found [here]{https://tenor.com/gifapi}
 
 
 
