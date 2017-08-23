@@ -8,7 +8,6 @@ import android.text.TextUtils;
 
 import com.tenor.android.core.constant.ScreenDensities;
 import com.tenor.android.core.constant.ViewAction;
-import com.tenor.android.core.listener.IAnonIdListener;
 import com.tenor.android.core.measurable.MeasurableViewHolderEvent;
 import com.tenor.android.core.model.impl.Result;
 import com.tenor.android.core.response.BaseCallback;
