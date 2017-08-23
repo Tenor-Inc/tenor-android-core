@@ -17,7 +17,6 @@ dependencies {
   compile(name: 'tenor-android-core', ext: 'aar') {
       transitive = true
 
-  compile "com.android.support:recyclerview-v7:${build_tools_version}"
   compile 'com.squareup.retrofit2:converter-gson:2.3.0'
   compile 'com.github.bumptech.glide:glide:3.8.0'
 }
@@ -74,6 +73,7 @@ If there is no specific search term selected yet, we reccomend displaying trendi
 ```
 ApiClient.getServiceIds(getContext()) will pass in all the fields stored on the ApiClient as a mapping object.
 The only additional fields required are `limit` and `pos`:
+
 * `limit` (type `string`) - Fetch up to a specified number of results (max: 50).
 * `pos` (type `integer`) - Get results starting at position "value".  Use "" empty string for the initial pos.  
 
@@ -98,13 +98,13 @@ By adding only an additional `query` field, either as a single word or multiple 
     });
 ```
 
-To see a detailed look of the GIF response json object, see [here]{https://tenor.com/gifapi#responseobjects}
+To see a detailed look of the GIF response json object, see [here](https://tenor.com/gifapi#responseobjects)
 
 ## Displaying GIFs
 Once the GIFs have been retrieved, they can now be loaded into and ImageView.
 First, use the `AbstractGifUtils` class to fetch the url you wish to display.  For a stream of multiple GIFs being displayed at once,
 as well for smaller bundles used for sharing, we reccommend `AbstractGifUtils.getTinyGifUrl(gif_result_object)`.  
-Alternatively for full size GIFs, you may user `AbstractGifUtils.getGifUrl(gif_result_object)`.
+Alternatively for full size GIFs, you may use `AbstractGifUtils.getGifUrl(gif_result_object)`.
 
 ```java
     call.enqueue(new WeakRefCallback<GifsResponse, IKeyboardView>(getWeakRef()) {
@@ -113,8 +113,9 @@ Alternatively for full size GIFs, you may user `AbstractGifUtils.getGifUrl(gif_r
                 Result gif_result_object = response.getResults().get(0);
                 String gif_url = AbstractGifUtils.getTinyGifUrl(gif_result_object);
             }
-}
+    }
 ```
+
 Next, we need to construct a `GlidePayload` so that gif can be loaded into the ImageView.  `GlidePayload` makes use of the `glide library'(https://github.com/bumptech/glide).
 Additionally, you have the option to add a callback for when a GIF has finished loading.
 ```java
