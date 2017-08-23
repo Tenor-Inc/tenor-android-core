@@ -62,12 +62,12 @@ If there is no specific search term selected yet, we reccomend displaying trendi
 
     call.enqueue(new WeakRefCallback<GifsResponse, IBaseView>(getWeakRef()) {
         @Override
-        public void success(@NonNull IBaseView view, GifsResponse response) {
+        public void success(IBaseView view, GifsResponse response) {
             // handle success case
         }
 
         @Override
-        public void failure(@NonNull IBaseView view, BaseError error) {
+        public void failure(IBaseView view, BaseError error) {
             // handle failure case
         }
     });
@@ -88,12 +88,12 @@ By adding only an additional `query` field, either as a single word or multiple 
 
     call.enqueue(new WeakRefCallback<GifsResponse, IBaseView>(getWeakRef()) {
         @Override
-        public void success(@NonNull IBaseView view, GifsResponse response) {
+        public void success(IBaseView view, GifsResponse response) {
             // handle success case
         }
 
         @Override
-        public void failure(@NonNull IBaseView view, BaseError error) {
+        public void failure(IBaseView view, BaseError error) {
             // handle failure case
         }
     });
@@ -110,7 +110,7 @@ Alternatively for full size GIFs, you may use `AbstractGifUtils.getGifUrl(gif_re
 ```java
     call.enqueue(new WeakRefCallback<GifsResponse, IBaseView>(getWeakRef()) {
             @Override
-            public void success(@NonNull IBaseView view, GifsResponse response) {
+            public void success(IBaseView view, GifsResponse response) {
                 Result gif_result_object = response.getResults().get(0);
                 String gif_url = AbstractGifUtils.getTinyGifUrl(gif_result_object);
             }
@@ -123,12 +123,12 @@ Additionally, you have the option to add a callback for when a GIF has finished 
     GlidePayload payload = new GlidePayload(mImageView, gif_url)
                     .setListener(new WeakRefLoadImageListener<>(this) {
                         @Override
-                        public void onLoadImageSucceeded(@NonNull GifSearchItemVH<CTX> ctx, @Nullable Drawable drawable) {
+                        public void onLoadImageSucceeded(GifSearchItemVH<CTX> ctx, Drawable drawable) {
                             // handle the success case
                         }
 
                         @Override
-                        public void onLoadImageFailed(@NonNull GifSearchItemVH<CTX> ctx, @Nullable Drawable drawable) {
+                        public void onLoadImageFailed(GifSearchItemVH<CTX> ctx, Drawable drawable) {
                             // handle the failure case
                         }
                     });
