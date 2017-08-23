@@ -30,7 +30,7 @@ Create an application class, if you don't already have one.
 Then, add the following lines of code to you `onCreate()` function.
 You will need an `API_KEY` from Tenor.  For development purposes, you may use our developer key, `"LIVDSRZULELA"`.
 
-However, if you wish to continue using Tenor core services for your application, please request a unique api key [here]{https://tenor.com/gifapi#apikey}
+However, if you wish to continue using Tenor core services for your application, please request a unique api key [here](https://tenor.com/gifapi#apikey)
 
 ```java
 @Override
@@ -74,11 +74,8 @@ If there is no specific search term selected yet, we reccomend displaying trendi
 ```
 ApiClient.getServiceIds(getContext()) will pass in all the fields stored on the ApiClient as a mapping object.
 The only additional fields required are `limit` and `pos`:
-| Name     | Type    | Despcription                                         |
-| ---------| ------- | ---------------------------------------------------- |
-| limit    | string  | fetch up to a specified number of results (max: 50). |
-| pos      | integer | get results starting at position "value".  Use "" empty string for the initial pos.  
-Subsequent values will be from the `next` field in the gif response. |
+* `limit` (type `string`) - Fetch up to a specified number of results (max: 50).
+* `pos` (type `integer`) - Get results starting at position "value".  Use "" empty string for the initial pos.  
 
 
 ### Searching GIFS by specific search term
@@ -118,7 +115,7 @@ Alternatively for full size GIFs, you may user `AbstractGifUtils.getGifUrl(gif_r
             }
 }
 ```
-Next, we need to construct a `GlidePayload` so that gif can be loaded into the ImageView.  `GlidePayload` makes use of the `glide library'{https://github.com/bumptech/glide}.
+Next, we need to construct a `GlidePayload` so that gif can be loaded into the ImageView.  `GlidePayload` makes use of the `glide library'(https://github.com/bumptech/glide).
 Additionally, you have the option to add a callback for when a GIF has finished loading.
 ```java
     GlidePayload payload = new GlidePayload(mImageView, gif_url)
@@ -142,7 +139,7 @@ Finally, once the payload has been constructed, add the following line of code t
 
 This should be enough to get you started and display GIFs to your users.
 A working demo using search and GIF image loading can be found in the `Demo` folder above.
-Full documentation of our API, including ways to further refine user searches with suggestions, can be found [here]{https://tenor.com/gifapi}
+Full documentation of our API, including ways to further refine user searches with suggestions, can be found [here](https://tenor.com/gifapi)
 
 
 
