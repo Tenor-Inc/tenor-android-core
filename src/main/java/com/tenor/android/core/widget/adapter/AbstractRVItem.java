@@ -1,4 +1,4 @@
-package com.tenor.android.core.rvwidget;
+package com.tenor.android.core.widget.adapter;
 
 import android.support.annotation.NonNull;
 

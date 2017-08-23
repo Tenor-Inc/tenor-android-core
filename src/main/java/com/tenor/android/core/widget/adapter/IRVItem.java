@@ -1,4 +1,4 @@
-package com.tenor.android.core.rvwidget;
+package com.tenor.android.core.widget.adapter;
 
 /**
  * Interface for all recycler view items

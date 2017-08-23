@@ -9,9 +9,9 @@ import android.view.ViewGroup;
 
 import com.tenor.android.core.model.impl.BadgeInfo;
 import com.tenor.android.core.model.impl.Result;
-import com.tenor.android.core.rvwidget.WeakRefViewHolder;
 import com.tenor.android.core.util.AbstractLayoutManagerUtils;
 import com.tenor.android.core.view.IBaseView;
+import com.tenor.android.core.widget.viewholder.WeakRefViewHolder;
 
 /**
  * A subclass of {@link WeakRefViewHolder} that can measure user impression of GIFs and use the data
