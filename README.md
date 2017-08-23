@@ -16,6 +16,7 @@ repositories {
 dependencies {
   compile(name: 'tenor-android-core', ext: 'aar') {
       transitive = true
+  }
 
   compile 'com.squareup.retrofit2:converter-gson:2.3.0'
   compile 'com.github.bumptech.glide:glide:3.8.0'
@@ -59,14 +60,14 @@ If there is no specific search term selected yet, we reccomend displaying trendi
     Call<GifsResponse> call = ApiClient.getInstance(getContext()).getTrending(
                     ApiClient.getServiceIds(getContext()),limit, pos, type);
 
-    call.enqueue(new WeakRefCallback<GifsResponse, IKeyboardView>(getWeakRef()) {
+    call.enqueue(new WeakRefCallback<GifsResponse, IBaseView>(getWeakRef()) {
         @Override
-        public void success(@NonNull IKeyboardView view, GifsResponse response) {
+        public void success(@NonNull IBaseView view, GifsResponse response) {
             // handle success case
         }
 
         @Override
-        public void failure(@NonNull IKeyboardView view, BaseError error) {
+        public void failure(@NonNull IBaseView view, BaseError error) {
             // handle failure case
         }
     });
@@ -85,14 +86,14 @@ By adding only an additional `query` field, either as a single word or multiple 
     Call<GifsResponse> call = ApiClient.getInstance(getContext()).search(
                     ApiClient.getServiceIds(getContext()), query, limit, pos);
 
-    call.enqueue(new WeakRefCallback<GifsResponse, IKeyboardView>(getWeakRef()) {
+    call.enqueue(new WeakRefCallback<GifsResponse, IBaseView>(getWeakRef()) {
         @Override
-        public void success(@NonNull IKeyboardView view, GifsResponse response) {
+        public void success(@NonNull IBaseView view, GifsResponse response) {
             // handle success case
         }
 
         @Override
-        public void failure(@NonNull IKeyboardView view, BaseError error) {
+        public void failure(@NonNull IBaseView view, BaseError error) {
             // handle failure case
         }
     });
@@ -107,9 +108,9 @@ as well for smaller bundles used for sharing, we reccommend `AbstractGifUtils.ge
 Alternatively for full size GIFs, you may use `AbstractGifUtils.getGifUrl(gif_result_object)`.
 
 ```java
-    call.enqueue(new WeakRefCallback<GifsResponse, IKeyboardView>(getWeakRef()) {
+    call.enqueue(new WeakRefCallback<GifsResponse, IBaseView>(getWeakRef()) {
             @Override
-            public void success(@NonNull IKeyboardView view, GifsResponse response) {
+            public void success(@NonNull IBaseView view, GifsResponse response) {
                 Result gif_result_object = response.getResults().get(0);
                 String gif_url = AbstractGifUtils.getTinyGifUrl(gif_result_object);
             }
