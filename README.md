@@ -1,7 +1,7 @@
 Tenor Android Core
 ==================
-
-Tenor allows for a fast and easy way to search for and view GIFs inside your Android application.
+## Introduction
+Tenor's API delivers the most relevant GIFs for users anywhere in the world, and the Tenor Android Core provides Android developers with the code necessary to integrate basic Tenor GIF functionality into mobile apps.
 
 ## Download
 ### *__NOTE FOR US: Replace with JCenter gradle once it is setup__*
@@ -23,7 +23,7 @@ dependencies {
   compile "com.android.support:support-annotations:${build_version_number}"
 }
 ```
-Additionally, Tenor Android Core runs on Android version 26.0.1.  Please make sure to add the following lines, if they have not already been added to the root `build.gradle`
+Additionally, Tenor Android Core runs on Android version 26.0.1.  Please make sure to add the following lines, if they have not already been added, to the root `build.gradle`
 ```java
     allprojects {
         repositories {
@@ -59,12 +59,12 @@ public void onCreate() {
 
 
 ## Retrieving GIFs from Tenor
-The Tenor API offers robust ways to fetch the right at the right time for your users.
-For now, we look at the simplest ways to fetch a stream of GIFs, the `trending` and the `search` API end points.
+The Tenor API offers robust ways to fetch highly shareable GIF for your users.
+For now, we will look at the simplest ways to fetch a stream of GIFs, the `trending` and the `search` API end points.
 
 ### Trending GIFs
 The `trending` stream fetches whatever the most popular GIFs are at the time of the request, in the order of most popular.
-If there is no specific search term selected yet, we reccomend displaying trending `GIFS`.
+If you wish to display GIFs to a user before a specific search term has been selected or entered, we recommend displaying `trending` GIFS.
 ```java
     Call<GifsResponse> call = ApiClient.getInstance(getContext()).getTrending(
                     ApiClient.getServiceIds(getContext()),limit, pos, type);
@@ -81,7 +81,7 @@ If there is no specific search term selected yet, we reccomend displaying trendi
         }
     });
 ```
-ApiClient.getServiceIds(getContext()) will pass in all the fields stored on the ApiClient as a mapping object.
+ApiClient.getServiceIds(getContext()) will pass in all the required fields stored on the ApiClient as a mapped object.
 The only additional fields required are `limit` and `pos`:
 
 * `limit` (type `string`) - Fetch up to a specified number of results (max: 50).
@@ -89,8 +89,9 @@ The only additional fields required are `limit` and `pos`:
 
 
 ### Searching GIFS by specific search term
-The Tenor API's crowing feature is its ever improving search engine, with the presenting the user with the right GIF at the right time.
-It uses the same fields as `trending`, but with an additional `tag` field that takes a single word or multiple words, to fetch more specific GIFs that capture the reactions your users are searching for.
+Search is where Tenor's API particularly excels. Our understanding of what daily users search, share, upload, favorite, and collect allows us to continually return with precision the most relevant and shareable GIFs.
+
+`search` uses the same fields as `trending`, but with an additional `tag` field that takes a single or multiple words, to return the most precise GIFs possible.
 ```java
     Call<GifsResponse> call = ApiClient.getInstance(getContext()).search(
                     ApiClient.getServiceIds(getContext()), tag, limit, pos);
@@ -111,10 +112,10 @@ It uses the same fields as `trending`, but with an additional `tag` field that t
 To see a detailed look of the GIF response json object, click [here](https://tenor.com/gifapi#responseobjects).
 
 ## Displaying GIFs
-Once the GIFs have been retrieved, they can now be loaded into and ImageView.
+Once the GIFs have been retrieved, they can now be loaded into an ImageView.
 First, use the `AbstractGifUtils` class to fetch the url you wish to display.  For a stream of multiple GIFs being displayed at once,
-as well for smaller bundles used for sharing, we reccommend `AbstractGifUtils.getTinyGifUrl(gif_result_object)`.  
-Alternatively for full size GIFs, you may use `AbstractGifUtils.getGifUrl(gif_result_object)`.
+as well as creating smaller bundles used for sharing, we reccommend `AbstractGifUtils.getTinyGifUrl(gif_result_object)`.  
+Alternatively, for full size GIFs, you may use `AbstractGifUtils.getGifUrl(gif_result_object)`.
 
 ```java
     // using the response variable from the success callback
@@ -122,7 +123,7 @@ Alternatively for full size GIFs, you may use `AbstractGifUtils.getGifUrl(gif_re
     String gif_url = AbstractGifUtils.getTinyGifUrl(gif_result_object);
 ```
 
-Next, we need to construct a `GlidePayload` so that gif can be loaded into the ImageView.  `GlidePayload` makes use of the [glide library](https://github.com/bumptech/glide), which offers full support for loading GIFs inside and ImageView.
+Next, we need to construct a `GlidePayload` so that gif can be loaded into the ImageView.  `GlidePayload` makes use of the [glide library](https://github.com/bumptech/glide), which offers full support for loading GIFs inside an ImageView.
 Additionally, you have the option to add a callback for when a GIF has finished loading.
 ```java
     GlideTaskParams<ImageView> params = new GlideTaskParams<>(mImageView, gif_url)
@@ -146,9 +147,9 @@ If the GIF fails to render, check that bounds have been given in either the xml 
     GifLoader.loadGif(getContext(), payload);
 ``` 
 
-This should be enough to get you started and display GIFs to your users.
-A working demo using search and GIF image loading can be found in the `Demo` folder above.
-Full documentation of our API, including ways to further refine user searches with related search suggestions, can be found [here](https://tenor.com/gifapi).
+This should be enough to get you started and displaying GIFs to your users.
+A working demo - which showcases `search`,`trending`, and GIF image loading as well as other Tenor API features like `tags` and `search suggestions` - can be found in the `Demo` folder above.
 
+Full documentation of our API, which details out further ways to refine and bolster the GIF experience, can be found [here](https://tenor.com/gifapi).
 
 
