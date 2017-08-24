@@ -119,6 +119,8 @@ Alternatively for full size GIFs, you may use `AbstractGifUtils.getGifUrl(gif_re
 
 Next, we need to construct a `GlidePayload` so that gif can be loaded into the ImageView.  `GlidePayload` makes use of the `glide library'(https://github.com/bumptech/glide).
 Additionally, you have the option to add a callback for when a GIF has finished loading.
+Please note if the ImageView or its parent has `WRAP_CONTENT` for both the height and width, the GIF rendering may not succeed (and neither callback will fire).  When this happens, the ImagView will be interpreted as having both a height and width of 0.
+If the GIF fails to render, check that bounds have been given in either the xml or in the java code.
 ```java
     GlidePayload payload = new GlidePayload(mImageView, gif_url)
                     .setListener(new WeakRefLoadImageListener<>(this) {
