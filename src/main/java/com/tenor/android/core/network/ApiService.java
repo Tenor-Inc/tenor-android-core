@@ -4,19 +4,26 @@ import android.app.Application;
 import android.content.Context;
 import android.support.annotation.IntRange;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.text.TextUtils;
 
 import com.google.gson.Gson;
 import com.tenor.android.core.constant.StringConstant;
+import com.tenor.android.core.network.constant.Protocol;
+import com.tenor.android.core.network.constant.Protocols;
 import com.tenor.android.core.util.AbstractGsonUtils;
 import com.tenor.android.core.util.AbstractListUtils;
 
+import java.io.File;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
+import okhttp3.Cache;
 import okhttp3.Interceptor;
+import okhttp3.OkHttpClient;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 
 /**
  * Do NOT call {@link ApiService} directly, use its wrapper, {@link ApiClient}
@@ -27,10 +34,10 @@ public class ApiService<T> implements IApiService<T> {
     private final String mApiKey;
     private final String mEndpoint;
 
-    public ApiService(Builder<T> builder) {
+    protected ApiService(Builder<T> builder) {
         mClient = create(builder);
-        mApiKey = builder.getApiKey();
-        mEndpoint = builder.getEndpoint();
+        mApiKey = builder.apiKey;
+        mEndpoint = builder.endpoint;
     }
 
     @Override
@@ -40,13 +47,29 @@ public class ApiService<T> implements IApiService<T> {
 
     @Override
     public synchronized T create(@NonNull Builder<T> builder) {
-        return ApiServiceUtils.create(builder);
-    }
+        Context ctx = builder.context;
+        if (!(ctx instanceof Application)) {
+            ctx = ctx.getApplicationContext();
+        }
 
-    @NonNull
-    @Override
-    public String getApiKey() {
-        return mApiKey;
+        final File cacheDir = new File(ctx.getCacheDir().getAbsolutePath(), ctx.getPackageName());
+        final Cache cache = new Cache(cacheDir, 10 * 1024 * 1024);
+
+        OkHttpClient.Builder http = new OkHttpClient.Builder()
+                .cache(cache)
+                .writeTimeout(builder.timeout, TimeUnit.SECONDS);
+
+        for (Interceptor interceptor : builder.interceptors) {
+            http.addInterceptor(interceptor);
+        }
+
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl(builder.endpoint)
+                .client(http.build())
+                .addConverterFactory(GsonConverterFactory.create(builder.gson))
+                .build();
+
+        return retrofit.create(builder.cls);
     }
 
     @NonNull
@@ -55,37 +78,17 @@ public class ApiService<T> implements IApiService<T> {
         return mEndpoint;
     }
 
+
+    @NonNull
+    @Override
+    public String getApiKey() {
+        if (TextUtils.isEmpty(mApiKey)) {
+            throw new IllegalStateException("API key cannot be null or empty.");
+        }
+        return mApiKey;
+    }
+
     public interface IBuilder<T> extends Serializable {
-        Class<T> getCls();
-
-        @NonNull
-        Context getContext();
-
-        @NonNull
-        String getApiKey();
-
-        @NonNull
-        Gson getGson();
-
-        @NonNull
-        List<Interceptor> getInterceptors();
-
-        /**
-         * Return host endpoint.
-         * If in BuildConfig.DEBUG, use the developer servers.
-         * Otherwise, use the production servers
-         *
-         * @return String of the api <b>endpoint host</b>
-         */
-        @NonNull
-        String getEndpoint();
-
-        @NonNull
-        String getAppVersionName();
-
-        @IntRange(from = 0, to = 30)
-        int getTimeout();
-
         IBuilder<T> apiKey(@NonNull String apiKey);
 
         IBuilder<T> gson(@NonNull Gson gson);
@@ -95,9 +98,9 @@ public class ApiService<T> implements IApiService<T> {
          * <p>
          * Call this on the onCreate() of your Application
          *
-         * @param protocol {@link ApiParams#HTTP} or {@link ApiParams#HTTPS}
+         * @param protocol {@link Protocol}
          */
-        IBuilder<T> protocol(@NonNull String protocol);
+        IBuilder<T> protocol(@Protocol String protocol);
 
         /**
          * Set API server
@@ -125,7 +128,7 @@ public class ApiService<T> implements IApiService<T> {
         /**
          * Network timeout
          *
-         * @param timeout between 0 to {@link ApiParams#TIMEOUT_SLOW_CONNECTION} seconds
+         * @param timeout between 0 to 30 seconds
          */
         IBuilder<T> timeout(@IntRange(from = 0, to = 30) int timeout);
 
@@ -135,72 +138,40 @@ public class ApiService<T> implements IApiService<T> {
          */
         IBuilder<T> endpoint(@NonNull String endpoint);
 
-        IBuilder<T> appVersionName(@NonNull String versionName);
-
         IApiService<T> build();
     }
 
-    public static class Builder<T> extends ApiParams implements IBuilder<T> {
+    public static class Builder<T> implements IBuilder<T> {
 
         private static final long serialVersionUID = -3581428418516126896L;
 
-        @NonNull
-        private String mProtocolType = HTTPS;
-        @NonNull
-        private String mServerName = SERVER_API;
-        @NonNull
-        private String mEndpoint = StringConstant.EMPTY;
+        protected static final String API_ENDPOINT_FORMATTER = "%1$s://%2$s.tenor.com/v1/";
+        protected static final String SERVER_NAME = "api";
 
+        @Protocol
+        private String protocol = Protocols.HTTPS;
+        @NonNull
+        private String serverName = SERVER_NAME;
+        @NonNull
+        private String endpoint = String.format(API_ENDPOINT_FORMATTER, protocol, serverName);
         @IntRange(from = 0, to = 30)
-        private int mTimeout = TIMEOUT_FAST_CONNECTION;
+        private int timeout = 15;
+        @NonNull
+        private List<Interceptor> interceptors = new ArrayList<>();
+        @NonNull
+        private String apiKey = StringConstant.EMPTY;
+        @NonNull
+        private Gson gson = AbstractGsonUtils.getInstance();
 
-        private List<Interceptor> mInterceptors;
-        /**
-         * This variable is limited to 20 characters
-         */
-        @NonNull
-        private String mAppVersionName = StringConstant.EMPTY;
-        @NonNull
-        private String mApiKey = StringConstant.EMPTY;
-        @NonNull
-        private Gson mGson = AbstractGsonUtils.getInstance();
-
-        private final Context mContext;
-        private final Class<T> mCls;
+        private final Context context;
+        private final Class<T> cls;
 
         /**
          * Call this on the onCreate() of your subclass of {@link Application}
          */
         public Builder(@NonNull Context context, @NonNull Class<T> cls) {
-            mContext = context;
-            mCls = cls;
-        }
-
-        @NonNull
-        @Override
-        public Class<T> getCls() {
-            return mCls;
-        }
-
-        @NonNull
-        @Override
-        public Context getContext() {
-            return mContext;
-        }
-
-        @NonNull
-        @Override
-        public String getApiKey() {
-            if (TextUtils.isEmpty(mApiKey)) {
-                throw new IllegalStateException("API key cannot be null or empty.");
-            }
-            return mApiKey;
-        }
-
-        @NonNull
-        @Override
-        public Gson getGson() {
-            return mGson;
+            this.context = context;
+            this.cls = cls;
         }
 
         @Override
@@ -208,13 +179,13 @@ public class ApiService<T> implements IApiService<T> {
             if (TextUtils.isEmpty(apiKey)) {
                 throw new IllegalStateException("API key cannot be null or empty.");
             }
-            mApiKey = apiKey;
+            this.apiKey = apiKey;
             return this;
         }
 
         @Override
         public IBuilder<T> gson(@NonNull Gson gson) {
-            mGson = gson;
+            this.gson = gson;
             return this;
         }
 
@@ -223,13 +194,12 @@ public class ApiService<T> implements IApiService<T> {
          * <p>
          * Call this on the onCreate() of your Application
          *
-         * @param protocol {@link #HTTP} or {@link #HTTPS}
+         * @param protocol {@link Protocols}
          */
         @Override
-        public IBuilder<T> protocol(@NonNull String protocol) {
-            if (HTTP.equals(protocol) || HTTPS.equals(protocol)) {
-                mProtocolType = protocol;
-            }
+        public IBuilder<T> protocol(@Protocol String protocol) {
+            this.protocol = Protocols.getOrHttps(protocol);
+            this.endpoint = String.format(API_ENDPOINT_FORMATTER, this.protocol, this.serverName);
             return this;
         }
 
@@ -238,23 +208,13 @@ public class ApiService<T> implements IApiService<T> {
          * <p>
          * Call this on the onCreate() of your Application
          *
-         * @param serverName server name, default value is "api"
+         * @param server server name, default value is "api"
          */
         @Override
-        public IBuilder<T> server(@NonNull String serverName) {
-            if (!TextUtils.isEmpty(serverName)) {
-                mServerName = serverName;
-            }
+        public IBuilder<T> server(@NonNull String server) {
+            this.serverName = !TextUtils.isEmpty(server) ? server : SERVER_NAME;
+            this.endpoint = String.format(API_ENDPOINT_FORMATTER, this.protocol, this.serverName);
             return this;
-        }
-
-        @NonNull
-        @Override
-        public List<Interceptor> getInterceptors() {
-            if (mInterceptors == null) {
-                mInterceptors = new ArrayList<>();
-            }
-            return mInterceptors;
         }
 
         /**
@@ -263,10 +223,8 @@ public class ApiService<T> implements IApiService<T> {
          * @param interceptor the interceptor
          */
         @Override
-        public IBuilder<T> interceptor(@Nullable final Interceptor interceptor) {
-            if (interceptor != null) {
-                getInterceptors().add(interceptor);
-            }
+        public IBuilder<T> interceptor(@NonNull Interceptor interceptor) {
+            this.interceptors.add(interceptor);
             return this;
         }
 
@@ -276,40 +234,19 @@ public class ApiService<T> implements IApiService<T> {
          * @param interceptors the list of interceptors
          */
         @Override
-        public IBuilder<T> interceptors(@Nullable final List<Interceptor> interceptors) {
+        public IBuilder<T> interceptors(@NonNull List<Interceptor> interceptors) {
             if (!AbstractListUtils.isEmpty(interceptors)) {
-                getInterceptors().addAll(interceptors);
+                this.interceptors.addAll(interceptors);
             }
             return this;
-        }
-
-        @Override
-        public int getTimeout() {
-            return mTimeout;
         }
 
         @Override
         public IBuilder<T> timeout(@IntRange(from = 0, to = 30) int timeout) {
-            if (timeout > -1 && mTimeout != timeout) {
-                mTimeout = timeout;
+            if (timeout >= 0 && timeout <= 30 && this.timeout != timeout) {
+                this.timeout = timeout;
             }
             return this;
-        }
-
-        /**
-         * Return host endpoint.
-         * If in BuildConfig.DEBUG, use the developer servers.
-         * Otherwise, use the production servers
-         *
-         * @return String of the api <b>endpoint host</b>
-         */
-        @NonNull
-        @Override
-        public String getEndpoint() {
-            if (!TextUtils.isEmpty(mEndpoint)) {
-                return mEndpoint;
-            }
-            return String.format(API_ENDPOINT_FORMATTER, mProtocolType, mServerName);
         }
 
         /**
@@ -317,25 +254,11 @@ public class ApiService<T> implements IApiService<T> {
          * {@link #server(String)} are recommended over using this.
          */
         @Override
-        public IBuilder<T> endpoint(@NonNull final String endpoint) {
+        public IBuilder<T> endpoint(@NonNull String endpoint) {
             if (!TextUtils.isEmpty(endpoint)) {
-                mEndpoint = endpoint;
+                this.endpoint = endpoint;
             }
             return this;
-        }
-
-        @Override
-        public IBuilder<T> appVersionName(@NonNull String versionName) {
-            if (!TextUtils.isEmpty(versionName)) {
-                mAppVersionName += versionName;
-            }
-            return this;
-        }
-
-        @NonNull
-        @Override
-        public String getAppVersionName() {
-            return mAppVersionName;
         }
 
         @Override

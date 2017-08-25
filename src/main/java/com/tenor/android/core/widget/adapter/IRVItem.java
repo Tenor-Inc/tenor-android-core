@@ -1,11 +1,14 @@
 package com.tenor.android.core.widget.adapter;
 
+import android.support.annotation.NonNull;
+
 /**
  * Interface for all recycler view items
  */
 public interface IRVItem {
     int getType();
 
+    @NonNull
     String getId();
 
     /**

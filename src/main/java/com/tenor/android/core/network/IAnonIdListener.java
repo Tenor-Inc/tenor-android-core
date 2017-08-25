@@ -1,4 +1,4 @@
-package com.tenor.android.core.listener;
+package com.tenor.android.core.network;
 
 
 import android.support.annotation.NonNull;
