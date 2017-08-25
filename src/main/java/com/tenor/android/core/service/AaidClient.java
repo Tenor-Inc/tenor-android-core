@@ -20,21 +20,10 @@ import com.tenor.android.core.util.AbstractSessionUtils;
 
 import java.util.concurrent.LinkedBlockingQueue;
 
-public class AaidClient {
-
-    public interface OnInitAaidListener {
-        void onReceiveAaidSucceeded(@NonNull String aaid);
-
-        void onReceiveAaidFaileded();
-    }
+final class AaidClient {
 
     @WorkerThread
-    public static void init(@NonNull Context context) {
-        init(context, null);
-    }
-
-    @WorkerThread
-    public static void init(@NonNull Context context, @Nullable final OnInitAaidListener listener) {
+    public static void init(@NonNull Context context, @Nullable IAaidListener listener) {
         if (context == null) {
             throw new IllegalStateException("context cannot be null");
         }
@@ -43,9 +32,9 @@ public class AaidClient {
 
         if (listener != null) {
             if (!TextUtils.isEmpty(aaid)) {
-                listener.onReceiveAaidSucceeded(aaid);
+                listener.success(aaid);
             } else {
-                listener.onReceiveAaidFaileded();
+                listener.failure();
             }
         }
     }
@@ -79,8 +68,8 @@ public class AaidClient {
         try {
             if (googleServiceBinded) {
                 AdvertisingInterface adInterface = new AdvertisingInterface(connection.getBinder());
-                AdInfo adInfo = new AdInfo(adInterface.getId(), adInterface.isLimitAdTrackingEnabled(true));
-                return !adInfo.isLimitAdTrackingEnabled() ? adInfo.getId() : StringConstant.EMPTY;
+                Info info = new Info(adInterface.getId(), adInterface.isLimitAdTrackingEnabled(true));
+                return !info.isLimitAdTrackingEnabled() ? info.getId() : StringConstant.EMPTY;
             }
         } catch (Throwable ignored) {
             return StringConstant.EMPTY;
@@ -90,14 +79,17 @@ public class AaidClient {
         return StringConstant.EMPTY;
     }
 
-    private static final class AdInfo {
+    /**
+     * Mirror of AdvertisingIdClient#Info
+     */
+    private static final class Info {
 
         @NonNull
         private final String mAdvertisingId;
         private final boolean mLimitAdTrackingEnabled;
 
-        public AdInfo(@Nullable final String advertisingId, final boolean limitAdTrackingEnabled) {
-            mAdvertisingId = !TextUtils.isEmpty(advertisingId) ? advertisingId : StringConstant.EMPTY;
+        public Info(@Nullable String advertisingId, boolean limitAdTrackingEnabled) {
+            mAdvertisingId = StringConstant.getOrEmpty(advertisingId);
             mLimitAdTrackingEnabled = limitAdTrackingEnabled;
         }
 
@@ -108,6 +100,11 @@ public class AaidClient {
 
         public boolean isLimitAdTrackingEnabled() {
             return mLimitAdTrackingEnabled;
+        }
+
+        public final String toString() {
+            return (new StringBuilder(7 + String.valueOf(mAdvertisingId).length()))
+                    .append("{").append(mAdvertisingId).append("}").append(mLimitAdTrackingEnabled).toString();
         }
     }
 

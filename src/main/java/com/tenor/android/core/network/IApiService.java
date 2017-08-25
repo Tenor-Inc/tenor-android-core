@@ -12,6 +12,13 @@ public interface IApiService<T> {
     @NonNull
     String getApiKey();
 
+    /**
+     * Return host endpoint.
+     * If in BuildConfig.DEBUG, use the developer servers.
+     * Otherwise, use the production servers
+     *
+     * @return String of the api <b>endpoint host</b>
+     */
     @NonNull
     String getEndpoint();
 }
