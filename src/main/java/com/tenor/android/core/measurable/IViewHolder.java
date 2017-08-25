@@ -4,7 +4,10 @@ import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 
 /**
- * Interface of a {@link android.support.v7.widget.RecyclerView.ViewHolder}
+ * Interface of {@link RecyclerView.ViewHolder} on support library
+ *
+ * @version v26.0.1
+ * @since v22.0.0
  */
 public interface IViewHolder {
 

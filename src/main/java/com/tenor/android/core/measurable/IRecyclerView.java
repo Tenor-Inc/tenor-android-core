@@ -18,7 +18,10 @@ import java.util.ArrayList;
 
 
 /**
- * Interface of {@link RecyclerView} on support library v25.3.1
+ * Interface of {@link RecyclerView} on support library
+ *
+ * @version v26.0.1
+ * @since v22.0.0
  */
 public interface IRecyclerView {
 
@@ -32,22 +35,49 @@ public interface IRecyclerView {
 
     void addOnItemTouchListener(RecyclerView.OnItemTouchListener listener);
 
+    /**
+     * @since v22.1.0
+     */
     void addOnScrollListener(RecyclerView.OnScrollListener listener);
 
+    /**
+     * @since v22.2.0
+     */
     void clearOnChildAttachStateChangeListeners();
 
+    /**
+     * @since v22.1.0
+     */
     void clearOnScrollListeners();
 
+    /**
+     * @since v22.1.0
+     */
     int computeHorizontalScrollExtent();
 
+    /**
+     * @since v22.1.0
+     */
     int computeHorizontalScrollOffset();
 
+    /**
+     * @since v22.1.0
+     */
     int computeHorizontalScrollRange();
 
+    /**
+     * @since v22.1.0
+     */
     int computeVerticalScrollExtent();
 
+    /**
+     * @since v22.1.0
+     */
     int computeVerticalScrollOffset();
 
+    /**
+     * @since v22.1.0
+     */
     int computeVerticalScrollRange();
 
     boolean dispatchNestedFling(float velocityX, float velocityY, boolean consumed);
@@ -56,14 +86,30 @@ public interface IRecyclerView {
 
     boolean dispatchNestedPreScroll(int dx, int dy, int[] consumed, int[] offsetInWindow);
 
+    /**
+     * @since v26.0.0
+     */
+    boolean dispatchNestedPreScroll(int dx, int dy, int[] consumed, int[] offsetInWindow, int type);
+
+    /**
+     * @since v26.0.0
+     */
+    boolean dispatchNestedScroll(int dxConsumed, int dyConsumed, int dxUnconsumed, int dyUnconsumed, int[] offsetInWindow, int type);
+
     boolean dispatchNestedScroll(int dxConsumed, int dyConsumed, int dxUnconsumed, int dyUnconsumed, int[] offsetInWindow);
 
     void draw(Canvas c);
 
+    /**
+     * @since v22.2.0
+     */
     boolean drawChild(Canvas canvas, View child, long drawingTime);
 
     View findChildViewUnder(float x, float y);
 
+    /**
+     * @since v23.2.0
+     */
     View findContainingItemView(View view);
 
     @Nullable
@@ -107,18 +153,38 @@ public interface IRecyclerView {
 
     RecyclerViewAccessibilityDelegate getCompatAccessibilityDelegate();
 
+    /**
+     * @since v25.0.0
+     */
     void getDecoratedBoundsWithMargins(View view, Rect outBounds);
 
     RecyclerView.ItemAnimator getItemAnimator();
 
+    /**
+     * @since v26.0.0
+     */
+    RecyclerView.ItemDecoration getItemDecorationAt(int index);
+
     RecyclerView.LayoutManager getLayoutManager();
 
+    /**
+     * @since v22.2.0
+     */
     int getMaxFlingVelocity();
 
+    /**
+     * @since v22.2.0
+     */
     int getMinFlingVelocity();
 
+    /**
+     * @since v24.2.0
+     */
     RecyclerView.OnFlingListener getOnFlingListener();
 
+    /**
+     * @since v24.0.0
+     */
     boolean getPreserveFocusAfterLayout();
 
     RecyclerView.RecycledViewPool getRecycledViewPool();
@@ -129,16 +195,33 @@ public interface IRecyclerView {
 
     boolean hasNestedScrollingParent();
 
+    /**
+     * @since v26.0.0
+     */
+    boolean hasNestedScrollingParent(int type);
+
+    /**
+     * @since v22.1.0
+     */
     boolean hasPendingAdapterUpdates();
 
     void invalidateItemDecorations();
 
+    /**
+     * @since v22.2.0
+     */
     boolean isAnimating();
 
     boolean isAttachedToWindow();
 
+    /**
+     * @since v22.2.1
+     */
     boolean isComputingLayout();
 
+    /**
+     * @since v23.0.0
+     */
     boolean isLayoutFrozen();
 
     boolean isNestedScrollingEnabled();
@@ -157,18 +240,30 @@ public interface IRecyclerView {
 
     boolean onInterceptTouchEvent(MotionEvent e);
 
+    /**
+     * @since v22.1.0
+     */
     void onScrollStateChanged(int state);
 
+    /**
+     * @since v22.1.0
+     */
     void onScrolled(int dx, int dy);
 
     boolean onTouchEvent(MotionEvent e);
 
     void removeItemDecoration(RecyclerView.ItemDecoration decor);
 
+    /**
+     * @since v22.2.0
+     */
     void removeOnChildAttachStateChangeListener(RecyclerView.OnChildAttachStateChangeListener listener);
 
     void removeOnItemTouchListener(RecyclerView.OnItemTouchListener listener);
 
+    /**
+     * @since v22.1.0
+     */
     void removeOnScrollListener(RecyclerView.OnScrollListener listener);
 
     void requestChildFocus(View child, View focused);
@@ -191,6 +286,9 @@ public interface IRecyclerView {
 
     void setAdapter(RecyclerView.Adapter adapter);
 
+    /**
+     * @since v22.2.0
+     */
     void setChildDrawingOrderCallback(RecyclerView.ChildDrawingOrderCallback childDrawingOrderCallback);
 
     void setClipToPadding(boolean clipToPadding);
@@ -201,16 +299,25 @@ public interface IRecyclerView {
 
     void setItemViewCacheSize(int size);
 
+    /**
+     * @since v23.0.0
+     */
     void setLayoutFrozen(boolean frozen);
 
     void setLayoutManager(RecyclerView.LayoutManager layout);
 
     void setNestedScrollingEnabled(boolean enabled);
 
+    /**
+     * @since v24.2.0
+     */
     void setOnFlingListener(RecyclerView.OnFlingListener onFlingListener);
 
     void setOnScrollListener(RecyclerView.OnScrollListener listener);
 
+    /**
+     * @since v24.0.0
+     */
     void setPreserveFocusAfterLayout(boolean preserveFocusAfterLayout);
 
     void setRecycledViewPool(RecyclerView.RecycledViewPool pool);
@@ -223,31 +330,29 @@ public interface IRecyclerView {
 
     void smoothScrollBy(int dx, int dy);
 
+    /**
+     * @since v25.1.0
+     */
     void smoothScrollBy(int dx, int dy, Interpolator interpolator);
 
     void smoothScrollToPosition(int position);
 
     boolean startNestedScroll(int axes);
 
+    /**
+     * @since v26.0.0
+     */
+    boolean startNestedScroll(int axes, int type);
+
     void stopNestedScroll();
+
+    /**
+     * @since v26.0.0
+     */
+    void stopNestedScroll(int type);
 
     void stopScroll();
 
     void swapAdapter(RecyclerView.Adapter adapter, boolean removeAndRecycleExistingViews);
-
-    /*
-     * To be added on support library v26.0.0
-     */
-    // boolean dispatchNestedPreScroll(int dx, int dy, int[] consumed, int[] offsetInWindow, int type);
-
-    // boolean dispatchNestedScroll(int dxConsumed, int dyConsumed, int dxUnconsumed, int dyUnconsumed, int[] offsetInWindow, int type);
-
-    // RecyclerView.ItemDecoration getItemDecorationAt(int index);
-
-    // boolean hasNestedScrollingParent(int type);
-
-    // boolean startNestedScroll(int axes, int type);
-
-    // void stopNestedScroll(int type);
 }
 
