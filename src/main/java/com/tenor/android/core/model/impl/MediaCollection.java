@@ -9,7 +9,7 @@ import com.tenor.android.core.constant.MediaCollectionFormats;
 import java.io.Serializable;
 
 /**
- * The response model of the media collection object, which contains different supported formats of a gif
+ * The model of {@link MediaCollection}, which contains a collection of {@link Media} formats of {@link Result}
  */
 public class MediaCollection implements Serializable {
     private static final long serialVersionUID = -8824214919408809561L;
@@ -28,6 +28,9 @@ public class MediaCollection implements Serializable {
     private Media tinywebm;
     private Media nanowebm;
 
+    /**
+     * @param type one of {@link MediaCollectionFormats}
+     */
     @NonNull
     public Media get(@MediaCollectionFormat String type) {
         switch (type) {

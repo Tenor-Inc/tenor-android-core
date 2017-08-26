@@ -9,7 +9,7 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * The search suggestion response
+ * The response of search suggestions
  */
 public class SearchSuggestionResponse extends AbstractResponse {
 

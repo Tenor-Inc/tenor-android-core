@@ -8,7 +8,7 @@ import com.tenor.android.core.constant.StringConstant;
 import java.io.Serializable;
 
 /**
- * The response model for emoji tag
+ * The model of {@link EmojiTag}
  */
 public class EmojiTag implements Serializable {
     private static final long serialVersionUID = -2207206185861282031L;

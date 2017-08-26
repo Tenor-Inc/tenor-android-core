@@ -8,7 +8,7 @@ import android.widget.ImageView;
 /**
  * @param <T> the type of the target to load resource into
  */
-public interface IContentLoaderTaskParams<T extends ImageView, R extends Drawable> extends ITaskParams {
+public interface IDrawableLoaderTaskParams<T extends ImageView, R extends Drawable> extends ITaskParams {
 
     /**
      * @return the target to load the resource into
@@ -29,5 +29,5 @@ public interface IContentLoaderTaskParams<T extends ImageView, R extends Drawabl
     String getPath();
 
     @NonNull
-    IContentLoaderTaskListener<T, Drawable> getListener();
+    IDrawableLoaderTaskListener<T, R> getListener();
 }

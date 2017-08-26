@@ -10,7 +10,7 @@ import com.tenor.android.core.model.impl.Media;
 /**
  * Configuration of loading a gif
  */
-public class GlideTaskParams<T extends ImageView> extends ContentLoaderTaskParams<T> {
+public class GlideTaskParams<T extends ImageView> extends DrawableLoaderTaskParams<T> {
 
     private static final long serialVersionUID = -5195385185012871394L;
 

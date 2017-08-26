@@ -10,7 +10,7 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * The emoji response
+ * The response of Emoji
  */
 public class EmojiResponse extends AbstractResponse {
     private static final long serialVersionUID = 5979803531976871364L;

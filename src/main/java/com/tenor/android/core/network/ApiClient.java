@@ -1,5 +1,6 @@
 package com.tenor.android.core.network;
 
+import android.app.Application;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -10,8 +11,8 @@ import com.tenor.android.core.constant.ScreenDensities;
 import com.tenor.android.core.constant.ViewAction;
 import com.tenor.android.core.measurable.MeasurableViewHolderEvent;
 import com.tenor.android.core.model.impl.Result;
-import com.tenor.android.core.response.BaseCallback;
 import com.tenor.android.core.response.BaseError;
+import com.tenor.android.core.response.WeakRefCallback;
 import com.tenor.android.core.response.impl.AnonIdResponse;
 import com.tenor.android.core.service.AaidService;
 import com.tenor.android.core.util.AbstractGsonUtils;
@@ -128,17 +129,24 @@ public class ApiClient {
      * @param listener the callback when the asynchronous keyboard id API request is done
      * @return {@link Call}<{@link AnonIdResponse}>
      */
-    public static Call<AnonIdResponse> getAnonId(@NonNull final Context context,
+    public static Call<AnonIdResponse> getAnonId(@NonNull Context context,
                                                  @Nullable final IAnonIdListener listener) {
+        Context app;
+        if (context instanceof Application) {
+            app = context;
+        } else {
+            app = context.getApplicationContext();
+        }
+
         // request for new keyboard id
-        Call<AnonIdResponse> call = ApiClient.getInstance(context)
+        Call<AnonIdResponse> call = ApiClient.getInstance(app)
                 .getAnonId(sApiService.getApiKey(), AbstractLocaleUtils.getCurrentLocaleName(context));
 
-        call.enqueue(new BaseCallback<AnonIdResponse>() {
+        call.enqueue(new WeakRefCallback<Context, AnonIdResponse>(app) {
             @Override
-            public void success(AnonIdResponse response) {
+            public void success(@NonNull Context app, @Nullable AnonIdResponse response) {
                 if (response != null && !TextUtils.isEmpty(response.getId())) {
-                    AbstractSessionUtils.setAnonId(context, response.getId());
+                    AbstractSessionUtils.setAnonId(app, response.getId());
 
                     if (listener == null) {
                         return;
@@ -153,7 +161,7 @@ public class ApiClient {
             }
 
             @Override
-            public void failure(BaseError error) {
+            public void failure(@NonNull Context app, @Nullable BaseError error) {
                 if (listener != null) {
                     listener.onReceiveAnonIdFailed(error);
                 }
@@ -208,7 +216,7 @@ public class ApiClient {
 
     /**
      * @param context the application context
-     * @param events   the {@link MeasurableViewHolderEvent}
+     * @param events  the {@link MeasurableViewHolderEvent}
      * @return {@link Call}<{@link Void}>
      */
     public static Call<Void> registerActions(@NonNull final Context context,

@@ -5,7 +5,7 @@ import android.support.annotation.NonNull;
 import com.tenor.android.core.constant.StringConstant;
 
 /**
- * The response model of Media
+ * The model of {@link Media}
  */
 public class Media extends Image {
     private static final long serialVersionUID = -8616498739266612929L;

@@ -5,9 +5,9 @@ import android.support.annotation.NonNull;
 import android.widget.ImageView;
 
 /**
- * Listener for on content loader task completed
+ * Listener of loading {@link Drawable} task is completed
  */
-public interface IContentLoaderTaskListener<T extends ImageView, R extends Drawable> {
+public interface IDrawableLoaderTaskListener<T extends ImageView, R extends Drawable> {
     /**
      * Load task success case
      */

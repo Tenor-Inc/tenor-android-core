@@ -10,7 +10,7 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * The response model of suggestions
+ * The model of {@link Suggestions}, which contains a collection of {@link String}
  */
 public class Suggestions implements Serializable {
     private static final long serialVersionUID = 5805025178874996139L;

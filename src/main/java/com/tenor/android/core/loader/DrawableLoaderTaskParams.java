@@ -9,16 +9,13 @@ import android.support.annotation.ColorRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
-import android.text.TextUtils;
 import android.widget.ImageView;
 
-import java.util.regex.Pattern;
+import com.tenor.android.core.util.AbstractColorUtils;
 
-public class ContentLoaderTaskParams<T extends ImageView> implements IContentLoaderTaskParams<T, Drawable> {
+public class DrawableLoaderTaskParams<T extends ImageView> implements IDrawableLoaderTaskParams<T, Drawable> {
 
     private static final long serialVersionUID = -3764658332353857684L;
-
-    private static final String HEX_COLOR_PATTERN = "^#([A-Fa-f0-9]{8}|[A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$";
 
     /**
      * Required
@@ -37,16 +34,12 @@ public class ContentLoaderTaskParams<T extends ImageView> implements IContentLoa
      */
     private Drawable mPlaceholder;
 
-    @NonNull
-    private final Pattern mPattern;
+    private IDrawableLoaderTaskListener<T, Drawable> mListener;
 
-    private IContentLoaderTaskListener<T, Drawable> mListener;
-
-    public ContentLoaderTaskParams(@NonNull T imageView,
-                                   @NonNull String path) {
+    public DrawableLoaderTaskParams(@NonNull T imageView,
+                                    @NonNull String path) {
         mImageView = imageView;
         mPath = path;
-        mPattern = Pattern.compile(HEX_COLOR_PATTERN);
     }
 
     @NonNull
@@ -76,7 +69,7 @@ public class ContentLoaderTaskParams<T extends ImageView> implements IContentLoa
      * @param context    the context
      * @param colorResId the color resource
      */
-    public ContentLoaderTaskParams<T> setPlaceholder(@NonNull Context context, @ColorRes int colorResId) {
+    public DrawableLoaderTaskParams<T> setPlaceholder(@NonNull Context context, @ColorRes int colorResId) {
         setPlaceholder(ContextCompat.getDrawable(context, colorResId));
         return this;
     }
@@ -86,7 +79,7 @@ public class ContentLoaderTaskParams<T extends ImageView> implements IContentLoa
      *
      * @param drawable the drawable
      */
-    public ContentLoaderTaskParams<T> setPlaceholder(@NonNull Drawable drawable) {
+    public DrawableLoaderTaskParams<T> setPlaceholder(@NonNull Drawable drawable) {
         mPlaceholder = drawable;
         return this;
     }
@@ -96,8 +89,8 @@ public class ContentLoaderTaskParams<T extends ImageView> implements IContentLoa
      *
      * @param colorHex hex color code in {@link String}, such as {@code #000000}
      */
-    public ContentLoaderTaskParams<T> setPlaceholder(@Nullable String colorHex) {
-        if (!isHexColor(colorHex)) {
+    public DrawableLoaderTaskParams<T> setPlaceholder(@Nullable String colorHex) {
+        if (!AbstractColorUtils.isColorHex(colorHex)) {
             throw new IllegalArgumentException("color must be in a valid hex color code");
         }
         setPlaceholder(Color.parseColor(colorHex));
@@ -109,15 +102,15 @@ public class ContentLoaderTaskParams<T extends ImageView> implements IContentLoa
      *
      * @param colorInt the color integer
      */
-    public ContentLoaderTaskParams<T> setPlaceholder(@ColorInt int colorInt) {
+    public DrawableLoaderTaskParams<T> setPlaceholder(@ColorInt int colorInt) {
         setPlaceholder(new ColorDrawable(colorInt));
         return this;
     }
 
     @NonNull
-    public IContentLoaderTaskListener<T, Drawable> getListener() {
+    public IDrawableLoaderTaskListener<T, Drawable> getListener() {
         return mListener != null ? mListener :
-                new IContentLoaderTaskListener<T, Drawable>() {
+                new IDrawableLoaderTaskListener<T, Drawable>() {
                     @Override
                     public void success(@NonNull T target, @NonNull Drawable taskResult) {
 
@@ -133,12 +126,8 @@ public class ContentLoaderTaskParams<T extends ImageView> implements IContentLoa
     /**
      * default is do nothing
      */
-    public ContentLoaderTaskParams<T> setListener(@Nullable final IContentLoaderTaskListener<T, Drawable> listener) {
+    public DrawableLoaderTaskParams<T> setListener(@Nullable final IDrawableLoaderTaskListener<T, Drawable> listener) {
         mListener = listener;
         return this;
-    }
-
-    private boolean isHexColor(@Nullable CharSequence text) {
-        return !TextUtils.isEmpty(text) && mPattern.matcher(text).matches();
     }
 }

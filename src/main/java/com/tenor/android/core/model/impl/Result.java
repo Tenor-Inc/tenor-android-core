@@ -8,29 +8,33 @@ import android.text.TextUtils;
 import com.google.gson.annotations.SerializedName;
 import com.tenor.android.core.constant.StringConstant;
 import com.tenor.android.core.model.IGif;
+import com.tenor.android.core.util.AbstractColorUtils;
 import com.tenor.android.core.util.AbstractListUtils;
 
 import java.util.Collections;
 import java.util.List;
 
 /**
- * The response model of result
+ * The model of {@link Result}
  */
 public class Result implements IGif {
     private static final long serialVersionUID = -4037633614634142811L;
 
     private String url;
+
     @SerializedName("media")
     private List<MediaCollection> medias;
+
     private double created;
     private int shares;
     private String itemurl;
     private Media composite;
+
     @SerializedName("hasaudio")
     private boolean hasAudio;
+
     private String title;
     private String id;
-
     private List<String> tags;
 
     @SerializedName("bg_color")
@@ -82,7 +86,7 @@ public class Result implements IGif {
     }
 
     /**
-     * @return collection of Media objects for the different asset formats
+     * @return collection of {@link Media} formats of this {@link Result}
      */
     @NonNull
     public List<MediaCollection> getMedias() {
@@ -90,7 +94,7 @@ public class Result implements IGif {
     }
 
     /**
-     * @return list of related tags for a result
+     * @return collection of related {@link Tag}s of this {@link Result}
      */
     @NonNull
     public List<String> getTags() {
@@ -98,41 +102,48 @@ public class Result implements IGif {
     }
 
     /**
-     * @return times shared by all users
+     * @return share count of this {@link Result}
      */
     public int getShares() {
         return shares;
     }
 
     /**
-     * @return name of the gif
+     * @return name of this {@link Result}
      */
     public String getTitle() {
         return title;
     }
 
     /**
-     * @return default web url
+     * @return web url of this {@link Result}
      */
     public String getUrl() {
         return url;
     }
 
     /**
-     * @return alternative web url
+     * @return alternative web url of this {@link Result}
      */
     public String getItemUrl() {
         return itemurl;
     }
 
+    /**
+     * @return placeholder color hex of this {@link Result}
+     */
     @NonNull
-    public String getPlaceholderColor() {
-        return !TextUtils.isEmpty(placeholderColor) ? placeholderColor : "#000000";
+    public String getPlaceholderColorHex() {
+        return AbstractColorUtils.isColorHex(placeholderColor) ? placeholderColor : "#000000";
     }
 
+    /**
+     * @return aspect ratio of this {@link Result} or the default 1080p aspect ratio, 1.778f
+     */
     @FloatRange(from = 0.01f, to = 5.01f)
     public float getAspectRatio() {
-        return Float.parseFloat(aspectRatio != null ? aspectRatio : "1.778f");
+        float ratio = StringConstant.parse(aspectRatio, 1.778f);
+        return ratio >= 0.01f && ratio <= 5.01f ? ratio : 1.778f;
     }
 
     @Nullable

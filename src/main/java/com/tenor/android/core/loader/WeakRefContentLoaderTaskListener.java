@@ -11,7 +11,7 @@ import java.lang.ref.WeakReference;
 
 public abstract class WeakRefContentLoaderTaskListener<CTX, T extends ImageView>
         extends WeakRefObject<CTX>
-        implements IContentLoaderTaskListener<T, Drawable> {
+        implements IDrawableLoaderTaskListener<T, Drawable> {
 
     public WeakRefContentLoaderTaskListener(@NonNull CTX ctx) {
         super(ctx);

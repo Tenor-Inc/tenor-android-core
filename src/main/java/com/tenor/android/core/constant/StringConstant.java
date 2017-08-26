@@ -1,9 +1,10 @@
 package com.tenor.android.core.constant;
 
+import android.content.ClipData;
+import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.content.res.Resources;
-import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
@@ -200,12 +201,16 @@ public abstract class StringConstant {
         });
     }
 
-    public static String getOrEmpty(@Nullable final String str) {
-        return !isEmpty(str) ? str : EMPTY;
+    public static <T> T getOrDef(@Nullable T t, @NonNull T def) {
+        return t != null ? t : def;
     }
 
-    public static CharSequence getOrEmpty(@Nullable final CharSequence str) {
-        return !isEmpty(str) ? str : EMPTY;
+    public static String getOrEmpty(@Nullable String str) {
+        return getOrDef(str, EMPTY);
+    }
+
+    public static CharSequence getOrEmpty(@Nullable CharSequence str) {
+        return getOrDef(str, EMPTY);
     }
 
     /**
@@ -226,35 +231,36 @@ public abstract class StringConstant {
         }
     }
 
-    public static boolean copy(@Nullable final Context context,
-                               @Nullable final String label,
-                               @Nullable final String content) {
-        if (context == null || isEmpty(label) || isEmpty(content)) {
-            return false;
+    /**
+     * Parse the given {@link String} into float
+     *
+     * @param str    the string
+     * @param defVal the default value
+     */
+    public static float parse(@Nullable final String str, final float defVal) {
+        if (TextUtils.isEmpty(str) || !TextUtils.isDigitsOnly(str)) {
+            return defVal;
         }
 
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB) {
-            //noinspection deprecation
-            android.text.ClipboardManager clipboard =
-                    (android.text.ClipboardManager) context.getSystemService(Context.CLIPBOARD_SERVICE);
-            clipboard.setText(content);
-        } else {
-            android.content.ClipboardManager clipboard =
-                    (android.content.ClipboardManager) context.getSystemService(Context.CLIPBOARD_SERVICE);
-            android.content.ClipData clip = android.content.ClipData.newPlainText(label, content);
-            clipboard.setPrimaryClip(clip);
+        try {
+            return Float.parseFloat(str);
+        } catch (NumberFormatException ignored) {
+            return defVal;
         }
-        return true;
     }
 
     /**
-     * Mirror of TextUtils.isEmpty() to avoid mocking on unit tests
-     * Returns true if the string is null or 0-length.
-     *
-     * @param str the string to be examined
-     * @return true if str is null or zero length
+     * Save {@code content} into device clipboard with {@code label}
      */
-    public static boolean isEmpty(@Nullable CharSequence str) {
-        return str == null || str.length() == 0;
+    public static boolean copy(@NonNull final Context context,
+                               @NonNull final String label,
+                               @NonNull final String content) {
+        if (TextUtils.isEmpty(label) || TextUtils.isEmpty(content)) {
+            return false;
+        }
+
+        ClipboardManager clipboard = (ClipboardManager) context.getSystemService(Context.CLIPBOARD_SERVICE);
+        clipboard.setPrimaryClip(ClipData.newPlainText(label, content));
+        return true;
     }
 }

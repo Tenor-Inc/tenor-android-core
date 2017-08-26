@@ -10,7 +10,7 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * The tags response
+ * The response of tags
  */
 public class TagsResponse extends AbstractResponse {
 

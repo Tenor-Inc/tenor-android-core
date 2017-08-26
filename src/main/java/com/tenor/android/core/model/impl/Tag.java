@@ -1,17 +1,19 @@
 package com.tenor.android.core.model.impl;
 
+import android.support.annotation.NonNull;
+
 import com.google.gson.annotations.SerializedName;
+import com.tenor.android.core.constant.StringConstant;
 import com.tenor.android.core.model.IGif;
 
 /**
- * The response model of tag, which represents a collection of {@link Result}; it also with a name and a serch term
+ * The model of {@link Tag}, which contains a collection of {@link Result}
  */
 public class Tag implements IGif {
     private static final long serialVersionUID = 2978652640985303628L;
-    @SerializedName("image")
     private String image;
-    @SerializedName("name")
     private String name;
+
     @SerializedName(value = "path", alternate = {"url"})
     private String path;
     @SerializedName("searchterm")
@@ -37,32 +39,36 @@ public class Tag implements IGif {
     }
 
     /**
-     * @return The image describing this Tag.
+     * @return the media url of a GIF that describes this {@link Tag}{@link Tag}
      */
+    @NonNull
     public String getImage() {
-        return image;
+        return StringConstant.getOrEmpty(image);
     }
 
     /**
-     * @return The name of the Tag.
+     * @return the name of the {@link Tag}
      */
+    @NonNull
     public String getName() {
-        return name;
+        return StringConstant.getOrEmpty(name);
     }
 
+    @NonNull
     public String getPath() {
-        return path;
+        return StringConstant.getOrEmpty(path);
     }
 
     /**
-     * @return String that when used with <b>ApiClient.getApi(Context).search</b> will return the gifs associated with this Tag.
+     * @return the {@link String} to be used to search the GIFs related to this {@link Tag}
      */
     public String getSearchTerm() {
-        return searchTerm;
+        return StringConstant.getOrEmpty(searchTerm);
     }
 
+    @NonNull
     @Override
     public String getId() {
-        return name;
+        return StringConstant.getOrEmpty(name);
     }
 }

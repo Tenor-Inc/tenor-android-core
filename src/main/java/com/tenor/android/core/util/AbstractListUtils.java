@@ -3,16 +3,10 @@ package com.tenor.android.core.util;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
-import com.tenor.android.core.model.ICollection;
-import com.tenor.android.core.model.IGif;
-
-import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
 import java.util.Set;
-import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * Contains helper methods to manipulate {@link List}
@@ -47,7 +41,7 @@ public abstract class AbstractListUtils {
         if (array.length <= 0) {
             return array;
         }
-        Random random = getRandomCompat();
+        Random random = RandomCompat.get();
         int randInt;
         int temp;
         for (int i = array.length - 1; i > 0; i--) {
@@ -57,95 +51,6 @@ public abstract class AbstractListUtils {
             array[i] = temp;
         }
         return array;
-    }
-
-    /**
-     * Get the better perform or backward compatible {@link Random} base on API version
-     */
-    public static Random getRandomCompat() {
-        if (android.os.Build.VERSION.SDK_INT >= 21) {
-            return ThreadLocalRandom.current();
-        } else {
-            return new ThreadLocal<Random>() {
-                @Override
-                protected Random initialValue() {
-                    return new Random();
-                }
-            }.get();
-        }
-    }
-
-    /**
-     * Merge lists while ignoring duplicates
-     *
-     * @param base  the base list
-     * @param items the list that is going to merge into the base list
-     * @return the joined list
-     */
-    @NonNull
-    public static List<String> orJoinString(List<String> base, List<String> items) {
-
-        if (base == null && items == null) {
-            return new ArrayList<>();
-        }
-
-        if (base == null) {
-            return items;
-        }
-
-        if (items == null) {
-            return base;
-        }
-
-        final Set<String> set = new HashSet<>();
-        for (String str : base) {
-            set.add(str);
-        }
-
-        for (String str : items) {
-            if (!set.contains(str)) {
-                set.add(str);
-                base.add(str);
-            }
-        }
-        return base;
-    }
-
-    /**
-     * Merge lists while ignoring duplicates
-     *
-     * @param base  the base list
-     * @param items the list that is going to merge into the base list
-     * @param <T>   the type of list item, which should be a type extending {@link IGif}
-     * @return the joined list
-     */
-    @NonNull
-    public static <T extends IGif> List<T> orJoinGif(List<T> base, List<T> items) {
-
-        if (base == null && items == null) {
-            return new ArrayList<>();
-        }
-
-        if (base == null) {
-            return items;
-        }
-
-        if (items == null) {
-            return base;
-        }
-
-        final Set<String> set = new HashSet<>();
-        for (T t : base) {
-            set.add(t.getId());
-        }
-
-        for (T t : items) {
-            if (!set.contains(t.getId())) {
-                set.add(t.getId());
-                base.add(t);
-            }
-        }
-        return base;
     }
 
     /**
@@ -186,42 +91,5 @@ public abstract class AbstractListUtils {
      */
     public static <T> boolean hasOnlyOneItem(@Nullable final List<T> list) {
         return !isEmpty(list) && list.size() == 1;
-    }
-
-    /**
-     * Merge lists while ignoring duplicates
-     *
-     * @param base  the base list
-     * @param items the list that is going to merge into the base list
-     * @param <T>   the type of list item, which should be a type extending {@link ICollection}
-     * @return the joined list
-     */
-    @NonNull
-    public static <T extends ICollection> List<T> orJoinCollection(List<T> base, List<T> items) {
-
-        if (base == null && items == null) {
-            return new ArrayList<>();
-        }
-
-        if (base == null) {
-            return items;
-        }
-
-        if (items == null) {
-            return base;
-        }
-
-        final Set<String> set = new HashSet<>();
-        for (T t : base) {
-            set.add(t.getName());
-        }
-
-        for (T t : items) {
-            if (!set.contains(t.getName())) {
-                set.add(t.getName());
-                base.add(t);
-            }
-        }
-        return base;
     }
 }

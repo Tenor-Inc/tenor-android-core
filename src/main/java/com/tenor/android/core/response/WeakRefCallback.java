@@ -1,68 +1,83 @@
 package com.tenor.android.core.response;
 
+import android.content.Context;
+import android.os.Handler;
+import android.os.Looper;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
+import com.tenor.android.core.util.AbstractGsonUtils;
 import com.tenor.android.core.util.AbstractWeakReferenceUtils;
-import com.tenor.android.core.view.IBaseView;
 import com.tenor.android.core.weakref.WeakRefRunnable;
 
 import java.lang.ref.WeakReference;
 
 import okhttp3.ResponseBody;
 import retrofit2.Call;
+import retrofit2.Callback;
 import retrofit2.Response;
 
 /**
- * A {@link BaseCallback} with {@link WeakReference} associated with the caller view
- * <p>
- * This class is view safe and it is preferred over A {@link BaseCallback} for classes
- * implement {@link IBaseView} or any of its sub-interfaces.
+ * A {@link Callback} with {@link WeakReference} associated with the caller {@link Context}
  * <p>
  * In case of the view is being recycled, this callback will end gracefully
  */
-public abstract class WeakRefCallback<T, P> extends BaseCallback<T> {
-    private static Gson mGsonParser = new GsonBuilder().create();
-    private final WeakReference<P> mWeakRef;
+public abstract class WeakRefCallback<CTX, T> implements Callback<T> {
+
+    private static final String UNKNOWN_ERROR = "unknown error";
+    private final WeakReference<CTX> mWeakRef;
+    private static Handler sUiThread;
 
     /**
-     * Constructor for a <b>view safe</b> {@link BaseCallback}
+     * Constructor
      * <p>
      * In case of the view is being recycled, this callback will end gracefully
      *
-     * @param view the caller view
+     * @param ctx the caller view
      */
-    public WeakRefCallback(@Nullable final P view) {
-        mWeakRef = new WeakReference<>(view);
+    public WeakRefCallback(@NonNull final CTX ctx) {
+        this(new WeakReference<>(ctx));
     }
 
-    public WeakRefCallback(@Nullable final WeakReference<P> weakRef) {
+    public WeakRefCallback(@NonNull final WeakReference<CTX> weakRef) {
         mWeakRef = weakRef;
     }
 
-    private void runOnUiThread(WeakRefRunnable<P> runnable) {
+    protected static Handler getUiThread() {
+        if (sUiThread == null) {
+            sUiThread = new Handler(Looper.getMainLooper());
+        }
+        return sUiThread;
+    }
+
+    /**
+     * Override this method to conduct general network performance measures
+     */
+    public void measureResponse(@NonNull CTX ctx, @Nullable okhttp3.Response rawResponse) {
+
+    }
+
+    private void runOnUiThread(WeakRefRunnable<CTX> runnable) {
         if (AbstractWeakReferenceUtils.isAlive(mWeakRef)) {
-            getHandler().post(runnable);
+            getUiThread().post(runnable);
         }
     }
 
     @Override
     public void onResponse(final Call<T> call, final Response<T> response) {
-        runOnUiThread(new WeakRefRunnable<P>(mWeakRef) {
+        runOnUiThread(new WeakRefRunnable<CTX>(mWeakRef) {
             @Override
-            public void run(@NonNull P p) {
+            public void run(@NonNull CTX ctx) {
                 if (response == null) {
-                    failure(p, new BaseError(UNKNOWN_ERROR), null);
+                    failure(ctx, new BaseError(UNKNOWN_ERROR), null);
                     return;
                 }
 
                 if (response.isSuccessful() && response.body() != null) {
-                    success(p, response.body(), response.raw());
+                    success(ctx, response.body(), response.raw());
                 } else {
-                    failure(p, processError(response.errorBody()), response.raw());
+                    failure(ctx, processError(response.errorBody()), response.raw());
                 }
             }
         });
@@ -75,7 +90,7 @@ public abstract class WeakRefCallback<T, P> extends BaseCallback<T> {
 
         try {
             if (!TextUtils.isEmpty(errorBody.string())) {
-                return mGsonParser.fromJson(errorBody.string(), BaseError.class);
+                return AbstractGsonUtils.getInstance().fromJson(errorBody.string(), BaseError.class);
             }
         } catch (Throwable ignored) {
         }
@@ -84,57 +99,37 @@ public abstract class WeakRefCallback<T, P> extends BaseCallback<T> {
 
     @Override
     public final void onFailure(Call<T> call, final Throwable throwable) {
-        runOnUiThread(new WeakRefRunnable<P>(mWeakRef) {
+        runOnUiThread(new WeakRefRunnable<CTX>(mWeakRef) {
             @Override
-            public void run(@NonNull P p) {
+            public void run(@NonNull CTX CTX) {
                 if (throwable != null && "canceled".equalsIgnoreCase(throwable.getMessage())) {
                     return;
                 }
 
                 final String errorMessage = throwable != null && !TextUtils.isEmpty(throwable.getMessage())
                         ? throwable.getMessage() : UNKNOWN_ERROR;
-                failure(p, new BaseError(errorMessage), null);
+                failure(CTX, new BaseError(errorMessage), null);
             }
         });
     }
 
-    public abstract void success(@NonNull P view, @Nullable T response);
+    public abstract void success(@NonNull CTX ctx, @Nullable T response);
 
-    public abstract void failure(@NonNull P view, @Nullable BaseError error);
+    public abstract void failure(@NonNull CTX ctx, @Nullable BaseError error);
 
-    public void success(@NonNull P view, @Nullable T response, @NonNull okhttp3.Response rawResponse) {
+    private void success(@NonNull CTX ctx, @Nullable T response, @NonNull okhttp3.Response rawResponse) {
         try {
-            measureResponse(rawResponse);
+            measureResponse(ctx, rawResponse);
         } catch (Throwable ignored) {
         }
-        success(view, response);
+        success(ctx, response);
     }
 
-    public void failure(@NonNull P view, @Nullable BaseError error, @Nullable okhttp3.Response rawResponse) {
+    private void failure(@NonNull CTX ctx, @Nullable BaseError error, @Nullable okhttp3.Response rawResponse) {
         try {
-            measureResponse(rawResponse);
+            measureResponse(ctx, rawResponse);
         } catch (Throwable ignored) {
         }
-        failure(view, error);
-    }
-
-    @Override
-    public final void success(T response) {
-        // block non-view safe implementation
-    }
-
-    @Override
-    public final void failure(BaseError error) {
-        // block non-view safe implementation
-    }
-
-    @Override
-    public final void success(T response, @NonNull okhttp3.Response rawResponse) {
-        // block non-view safe implementation
-    }
-
-    @Override
-    public final void failure(BaseError error, @Nullable okhttp3.Response rawResponse) {
-        // block non-view safe implementation
+        failure(ctx, error);
     }
 }

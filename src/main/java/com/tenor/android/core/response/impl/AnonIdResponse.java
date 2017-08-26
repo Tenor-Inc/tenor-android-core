@@ -1,10 +1,13 @@
 package com.tenor.android.core.response.impl;
 
+import android.support.annotation.NonNull;
+
 import com.google.gson.annotations.SerializedName;
+import com.tenor.android.core.constant.StringConstant;
 import com.tenor.android.core.response.AbstractResponse;
 
 /**
- * The anon id response
+ * The response of anon id
  */
 public class AnonIdResponse extends AbstractResponse {
 
@@ -14,8 +17,9 @@ public class AnonIdResponse extends AbstractResponse {
     @SerializedName("localid")
     private int localId;
 
+    @NonNull
     public String getId() {
-        return id;
+        return StringConstant.getOrEmpty(id);
     }
 
     public int getLocalId() {
