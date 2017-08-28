@@ -8,8 +8,9 @@ import android.text.TextUtils;
 import com.google.gson.annotations.SerializedName;
 import com.tenor.android.core.constant.StringConstant;
 import com.tenor.android.core.model.IGif;
-import com.tenor.android.core.util.AbstractColorUtils;
 import com.tenor.android.core.util.AbstractListUtils;
+import com.tenor.android.core.validator.ColorHex;
+import com.tenor.android.core.validator.FloatString;
 
 import java.util.Collections;
 import java.util.List;
@@ -134,16 +135,16 @@ public class Result implements IGif {
      */
     @NonNull
     public String getPlaceholderColorHex() {
-        return AbstractColorUtils.isColorHex(placeholderColor) ? placeholderColor : "#000000";
+        return ColorHex.parse(placeholderColor, "#000000");
     }
 
     /**
-     * @return aspect ratio of this {@link Result} or the default 1080p aspect ratio, 1.778f
+     * @return aspect ratio of this {@link Result} or the default 1080p aspect ratio, 1.7778f
      */
     @FloatRange(from = 0.01f, to = 5.01f)
     public float getAspectRatio() {
-        float ratio = StringConstant.parse(aspectRatio, 1.778f);
-        return ratio >= 0.01f && ratio <= 5.01f ? ratio : 1.778f;
+        float ratio = FloatString.parse(aspectRatio, 1.7778f);
+        return ratio >= 0.01f && ratio <= 5.01f ? ratio : 1.7778f;
     }
 
     @Nullable

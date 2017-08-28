@@ -232,24 +232,6 @@ public abstract class StringConstant {
     }
 
     /**
-     * Parse the given {@link String} into float
-     *
-     * @param str    the string
-     * @param defVal the default value
-     */
-    public static float parse(@Nullable final String str, final float defVal) {
-        if (TextUtils.isEmpty(str) || !TextUtils.isDigitsOnly(str)) {
-            return defVal;
-        }
-
-        try {
-            return Float.parseFloat(str);
-        } catch (NumberFormatException ignored) {
-            return defVal;
-        }
-    }
-
-    /**
      * Save {@code content} into device clipboard with {@code label}
      */
     public static boolean copy(@NonNull final Context context,

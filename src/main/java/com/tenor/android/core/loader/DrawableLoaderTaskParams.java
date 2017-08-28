@@ -11,7 +11,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 import android.widget.ImageView;
 
-import com.tenor.android.core.util.AbstractColorUtils;
+import com.tenor.android.core.validator.ColorHex;
 
 public class DrawableLoaderTaskParams<T extends ImageView> implements IDrawableLoaderTaskParams<T, Drawable> {
 
@@ -90,7 +90,7 @@ public class DrawableLoaderTaskParams<T extends ImageView> implements IDrawableL
      * @param colorHex hex color code in {@link String}, such as {@code #000000}
      */
     public DrawableLoaderTaskParams<T> setPlaceholder(@Nullable String colorHex) {
-        if (!AbstractColorUtils.isColorHex(colorHex)) {
+        if (!ColorHex.isValid(colorHex)) {
             throw new IllegalArgumentException("color must be in a valid hex color code");
         }
         setPlaceholder(Color.parseColor(colorHex));
