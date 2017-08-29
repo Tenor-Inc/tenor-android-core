@@ -181,17 +181,17 @@ Full documentation of our API, which details out further ways to refine and bols
 ## FAQs
 
 1. Why does my GIF not apear after I call loadGif?
-Check what the height and width are set to in the ImageView, and its parent widgets. If the ImageView or its parent has `WRAP_CONTENT` for both the height and width, the GIF rendering may not succeed (and neither callback of the `WeakRefLoadImageListener` will fire).  When this happens, the ImagView will be interpreted as having both a height and width of 0. Check that bounds have been given in either the xml or in the java code. Depending on your view structure, a `MATCH_PARENT` in either the height or width may be suffcient.
+    * Check what the height and width are set to in the ImageView, and its parent widgets. If the ImageView or its parent has `WRAP_CONTENT` for both the height and width, the GIF rendering may not succeed (and neither callback of the `WeakRefLoadImageListener` will fire).  When this happens, the ImagView will be interpreted as having both a height and width of 0. Check that bounds have been given in either the xml or in the java code. Depending on your view structure, a `MATCH_PARENT` in either the height or width may be suffcient.
 
 2. I get a gradle error message `Error:Failed to resolve: com.android.support:support-v4:26.0.1`.  What is causing this?
-If your app is building to Android API 26 and up, the following lines are required in order for the Tenor Android Core to build.
-Add them to your application's root `build.gradle` file.
-```java
-    allprojects {
-        repositories {
-            maven { url 'https://maven.google.com' }
+    * If your app is building to Android API 26 and up, the following lines are required in order for the Tenor Android Core to build.
+    Add them to your application's root `build.gradle` file.
+    ```java
+        allprojects {
+            repositories {
+                maven { url 'https://maven.google.com' }
+            }
         }
-    }
-```
+    ```
 
 
