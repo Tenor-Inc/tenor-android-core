@@ -2,31 +2,37 @@ Tenor Android Core
 ==================
 
 - [Introduction](#introduction)
-- [Download](#download)
-  * [Gradle Dependency](#gradle-dependency)
-  * [Adding Full Library to Gradle](#adding-full-library-to-gradle)
-  * [Adding Module to Gradle](#adding-module-to-gradle)
+- [Setup](#setup)
+  * [Option 1: Embed as a Module](#option-1-embed-as-a-module)
+  * [Option 2: Embed as a .aar File](#option-2-embed-as-a-aar-file)
+  * [Additional Required Dependencies](#additional-required-dependencies)
 - [Initialize Tenor Core](#initialize-tenor-core)
 - [Retrieving GIFs from Tenor](#retrieving-gifs-from-tenor)
   * [Trending GIFs](#trending-gifs)
-  * [Searching GIFs by Specific Search Term](#searching-gifs-by-specific-search-term)
+  * [Searching GIFs by a Specific Search Term](#searching-gifs-by-a-specific-search-term)
 - [Displaying GIFs](#displaying-gifs)
 - [FAQs](#faqs)
 
 ## Introduction
 Tenor's API delivers the most relevant GIFs for users anywhere in the world. 
-The Tenor Android Core provides Android developers with the code necessary to integrate essential Tenor GIF functionality into android mobile apps. For example, the core provides the all the necessary tools for the following:
+The Tenor Android Core provides Android developers with the code necessary to integrate essential Tenor GIF functionality into android mobile apps. 
 
-1. An easy way to **search for  GIFs** on Tenor's API
-2. All the tools necessary to **display GIFs**, either as one large embeded GIF or a stream of content.
-3. And more!
+For example, the core provides all the requisite tools for an easy way to **search for GIFs** and to **display GIFs** - either as one large embedded GIF or as a stream of content.
 
 To add Tenor GIF content to your app, please follow the steps below.
 
-## Download
-### Gradle Dependency*__NOTE FOR US: Add JCenter gradle step once it is setup__*
-### Adding Full Library to Gradle
-If you wish to add the full libraray, copy `tenor-android-core.aar` into your app's `libs` folder:  
+## Setup 
+
+### Option 1: Embed as a Module
+If you are using a module structure in Android Studio, you can add the Tenor Android Core as a module by right-clicking the project, `New -> Module -> Import .JAR/.AAR` and selecting `tenor-android-core`.  Finally, add this line to your `build.gradle` dependencies:
+```java
+    dependencies {
+        compile project(':tenor-android-core')
+    }
+```
+
+### Option 2: Embed as a `.aar` File
+Alternatively, if you wish to import Tenor Android Core as a `.aar` file, copy `tenor-android-core.aar` into your app's `libs` folder.  Then add the following lines of code to your `build.gradle` file:  
 ```java
     repositories {
         flatDir{
@@ -41,34 +47,18 @@ If you wish to add the full libraray, copy `tenor-android-core.aar` into your ap
     }
 ```
 
-### Adding Module to Gradle
-Alternatively, if you are using a module structure in Android Studio by right-clicking the project, `New -> Module -> Import .JAR/.AAR` and selecting `tenor-android-core`, you can add this single line instead:
-```java
-    dependencies {
-        compile project(':tenor-android-core')
-    }
-```
-
-For any of the import methods used, you will also need to add three additional dependencies used by the core:  
+### Additional Required Dependencies 
+For either of the import options used, you will also need to add three additional dependencies that are used by the core:  
 ```java
   compile 'com.squareup.retrofit2:converter-gson:2.3.0'
   compile 'com.github.bumptech.glide:glide:3.8.0'
   compile "com.android.support:support-annotations:${build_version_number}"
 ```
-Additionally, Tenor Android Core runs on Android version 26.0.1.  Please make sure to add the following lines, if they have not already been added, to the root `build.gradle`
-```java
-    allprojects {
-        repositories {
-            maven { url 'https://maven.google.com' }
-        }
-    }
-```
-
 
 
 ## Initialize Tenor Core
-Create an application class, if you don't already have one.
-Then, add the following lines of code to you `onCreate()` function.
+Create an `Application` class, if you don't already have one.
+Then, add the following lines of code to the application class' `onCreate()` function.
 You will need an `API_KEY` from Tenor.  To request an api key, click [here](https://tenor.com/gifapi#apikey).
 
 ```java
@@ -112,14 +102,14 @@ To access the `trending` API endpoint, add these lines of code to your applicati
         }
     });
 ```
-ApiClient.getServiceIds(getContext()) contains tge necessary info for API authentication and accurate content results.
+`ApiClient.getServiceIds(getContext())` contains the necessary info for API authentication and accurate content results.
 The only additional fields that need to be supplied are `limit` and `pos`:
 
 * `limit` (type `string`) - Fetch up to a specified number of results (max: 50).
 * `pos` (type `integer`) - Get results starting at position "value".  Use "" empty string for the initial pos.  
 
 
-### Searching GIFs by Specific Search Term
+### Searching GIFs by a Specific Search Term
 Search is where Tenor's API particularly excels. Our understanding of what daily users search, share, upload, favorite, and collect allows us to continually return with precision the most relevant and shareable GIFs.
 
 `search` uses the same fields as `trending`, but with an additional `tag` field that takes a single or multiple words, to return the most precise GIFs possible.
@@ -140,7 +130,7 @@ Search is where Tenor's API particularly excels. Our understanding of what daily
     });
 ```
 
-To see a detailed look of the GIF response json object, click [here](https://tenor.com/gifapi#responseobjects).
+To see a detailed look of the **GIF response json object**, click [here](https://tenor.com/gifapi#responseobjects).
 
 ## Displaying GIFs
 Once the GIFs have been retrieved, they can now be loaded into an ImageView.
@@ -160,7 +150,7 @@ If you wish to manually access a url type from the `gif_result_object`, you can 
     gif_result_object.getMedias().get(0).get(type).getUrl(); 
 ```
 
-Next, we need to construct a `GlideTaskParams` so that gif can be loaded into the ImageView.  `GlidePayload` makes use of the [glide library](https://github.com/bumptech/glide), which offers full support for loading GIFs inside an ImageView.
+Next, we need to construct a `GlideTaskParams` so that gif can be loaded into the ImageView.  `GlideTaskParams` makes use of the [glide library](https://github.com/bumptech/glide), which offers full support for loading GIFs inside an ImageView.
 Additionally, you have the option to add a callback for when a GIF has finished loading.
 To access the `search` API endpoint, add these lines of code to your application:
 ```java
@@ -184,7 +174,7 @@ Finally, once the `params` has been constructed, add the following line of code 
 ``` 
 
 This should be enough to get you started and displaying GIFs to your users.
-A working demo - which showcases `search`,`trending`, and GIF image loading as well as other Tenor API features like `tags` and `search suggestions` - can be found in the `Demo` folder above.
+A working demo - which showcases `search`,`trending`, and GIF image loading as well as other Tenor API features like `tags` and `search suggestions` - can be found in our [Demo repository]().
 
 Full documentation of our API, which details out further ways to refine and bolster the GIF experience, can be found [here](https://tenor.com/gifapi).
 
@@ -192,5 +182,16 @@ Full documentation of our API, which details out further ways to refine and bols
 
 1. Why does my GIF not apear after I call loadGif?
 Check what the height and width are set to in the ImageView, and its parent widgets. If the ImageView or its parent has `WRAP_CONTENT` for both the height and width, the GIF rendering may not succeed (and neither callback of the `WeakRefLoadImageListener` will fire).  When this happens, the ImagView will be interpreted as having both a height and width of 0. Check that bounds have been given in either the xml or in the java code. Depending on your view structure, a `MATCH_PARENT` in either the height or width may be suffcient.
+
+2. I get a gradle error message `Error:Failed to resolve: com.android.support:support-v4:26.0.1`.  What is causing this?
+If your app is building to Android API 26 and up, the following lines are required in order for the Tenor Android Core to build.
+Add them to your application's root `build.gradle` file.
+```java
+    allprojects {
+        repositories {
+            maven { url 'https://maven.google.com' }
+        }
+    }
+```
 
 
