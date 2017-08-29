@@ -90,7 +90,7 @@ To access the `trending` API endpoint, add these lines of code to your applicati
     Call<GifsResponse> call = ApiClient.getInstance(getContext()).getTrending(
                     ApiClient.getServiceIds(getContext()),limit, pos);
 
-    call.enqueue(new WeakRefCallback<GifsResponse, Activity>(this) {
+    call.enqueue(new WeakRefCallback<Activity, GifsResponse>(this) {
         @Override
         public void success(@NonNull Activity activity, @Nullable GifsResponse response) {
             // handle success case
@@ -117,7 +117,7 @@ Search is where Tenor's API particularly excels. Our understanding of what daily
     Call<GifsResponse> call = ApiClient.getInstance(getContext()).search(
                     ApiClient.getServiceIds(getContext()), tag, limit, pos);
 
-    call.enqueue(new WeakRefCallback<GifsResponse, Activity>(this) {
+    call.enqueue(new WeakRefCallback<Activity, GifsResponse>(this) {
         @Override
         public void success(@NonNull Activity activity, @Nullable GifsResponse response) {
             // handle success case
