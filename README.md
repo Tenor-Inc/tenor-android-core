@@ -4,7 +4,7 @@ Tenor Android Core
 - [Introduction](#introduction)
 - [Setup](#setup)
   * [Option 1: Embed as a Module](#option-1-embed-as-a-module)
-  * [Option 2: Embed as a .aar File](#option-2-embed-as-a-aar-file)
+  * [Option 2: Embed as a Library File](#option-2-embed-as-a-library-file)
   * [Additional Required Dependencies](#additional-required-dependencies)
 - [Initialize Tenor Core](#initialize-tenor-core)
 - [Retrieving GIFs from Tenor](#retrieving-gifs-from-tenor)
@@ -21,18 +21,23 @@ For example, the core provides all the requisite tools for an easy way to **sear
 
 To add Tenor GIF content to your app, please follow the steps below.
 
-## Setup 
+## Setup
+The following instruction is based on Android Studio.
 
 ### Option 1: Embed as a Module
-If you are using a module structure in Android Studio, you can add the Tenor Android Core as a module by right-clicking the project, `New -> Module -> Import .JAR/.AAR` and selecting `tenor-android-core`.  Finally, add this line to your `build.gradle` dependencies:
+If you prefer to embed our `tenor-android-core.aar` file as a module, you can do so by right-clicking the project, select `New` -> `Module` -> `Import .JAR/.AAR` and choosing `tenor-android-core.arr`.  
+
+Once the importing is done, you can use include the module as a dependency of your other modules by going to their module `build.gradle` file and add the following lines:
 ```java
     dependencies {
         compile project(':tenor-android-core')
     }
 ```
 
-### Option 2: Embed as a `.aar` File
-Alternatively, if you wish to import Tenor Android Core as a `.aar` file, copy `tenor-android-core.aar` into your app's `libs` folder.  Then add the following lines of code to your `build.gradle` file:  
+### Option 2: Embed as a Library File
+Alternatively, you can copy our `tenor-android-core.aar` into the `libs` folder of your `app` module.  
+
+This approach requires some additional setup on the `build.gradle` file of your `app` module:  
 ```java
     repositories {
         flatDir{
@@ -48,19 +53,18 @@ Alternatively, if you wish to import Tenor Android Core as a `.aar` file, copy `
 ```
 
 ### Additional Required Dependencies 
-For either of the import options used, you will also need to add three additional dependencies that are used by the core:  
+For either of the import options used, you will also need to add the following dependencies that are used by the core:  
 ```java
   compile 'com.squareup.retrofit2:converter-gson:2.3.0'
   compile 'com.github.bumptech.glide:glide:3.8.0'
-  compile "com.android.support:support-annotations:${build_version_number}"
+  compile 'com.android.support:support-annotations:26.0.1'
 ```
 
 
 ## Initialize Tenor Core
-Create an `Application` class, if you don't already have one.
-Then, add the following lines of code to the application class' `onCreate()` function.
-You will need an `API_KEY` from Tenor.  To request an api key, click [here](https://tenor.com/gifapi#apikey).
+First of all, you will need an `API_KEY` from Tenor.  To request an api key, click [here](https://tenor.com/gifapi#apikey).
 
+On your subclass of `Application` class, add the following lines of code to under its `onCreate()`:
 ```java
 @Override
 public void onCreate() {
@@ -76,6 +80,7 @@ public void onCreate() {
     ApiClient.init(this, builder);
 }
 ```
+If you don't use subclass of `Application`, then you should add the code in above to your launcher activity.
 
 
 ## Retrieving GIFs from Tenor
@@ -105,8 +110,8 @@ To access the `trending` API endpoint, add these lines of code to your applicati
 `ApiClient.getServiceIds(getContext())` contains the necessary info for API authentication and accurate content results.
 The only additional fields that need to be supplied are `limit` and `pos`:
 
-* `limit` (type `string`) - Fetch up to a specified number of results (max: 50).
-* `pos` (type `integer`) - Get results starting at position "value".  Use "" empty string for the initial pos.  
+* `limit` (type `integer`) - Fetch up to a specified number of results (max: 50).
+* `pos` (type `string`) - Get results starting at position "value".  Use empty string `""` for the initial pos.  
 
 
 ### Searching GIFs by a Specific Search Term
@@ -133,50 +138,52 @@ Search is where Tenor's API particularly excels. Our understanding of what daily
 To see a detailed look of the **GIF response JSON object**, click [here](https://tenor.com/gifapi#responseobjects).
 
 ## Displaying GIFs
-Once the GIFs have been retrieved, they can now be loaded into an ImageView.
-First, use the `AbstractGifUtils` class to fetch the url you wish to display.  For a stream of multiple GIFs being displayed at once,
-as well as creating smaller bundles used for sharing, we reccommend `AbstractGifUtils.getTinyGifUrl(gif_result_object)`.  
-Alternatively, for full size GIFs, you may use `AbstractGifUtils.getGifUrl(gif_result_object)`.
+Once the `search` or `trending` response is received, the GIFs can now be loaded into an ImageView.  There are two steps involved in displaying GIFs.
+
+* [Getting GIF Url](#getting-gif-url)
+* [Load GIF into `ImageView`](#load-gif-into-imageview)
+
+### Getting GIF Url
+For a stream of multiple GIFs being displayed at once, as well as creating smaller bundles used for sharing, we reccommend using `MediaCollectionFormats.GIF_TINY`.  Whereas for full size GIFs, you may use `MediaCollectionFormats.GIF`.
 
 ```java
     // using the response variable from the success callback
-    Result gif_result_object = response.getResults().get(0);
-    String gif_url = AbstractGifUtils.getTinyGifUrl(gif_result_object);
+    Result gif_result_object = response.getResults().get(i); // `i` being the index of the result
+    String gif_url = gif_result_object.getMedias().get(i).get(type).getUrl();
 ```
+A full list of available url types may be found in the `MediaCollectionFormats` class.
 
-A full list of available url types may be found in `MediaCollectionFormats.class`.
-If you wish to manually access a url type from the `gif_result_object`, you can access them this way as well:
-```java
-    gif_result_object.getMedias().get(0).get(type).getUrl(); 
-```
 
-Next, we need to construct a `GlideTaskParams` so that gif can be loaded into the ImageView.  `GlideTaskParams` makes use of the [glide library](https://github.com/bumptech/glide), which offers full support for loading GIFs inside an ImageView.
-Additionally, you have the option to add a callback for when a GIF has finished loading.
-To access the `search` API endpoint, add these lines of code to your application:
+### Load GIF into `ImageView`
+Once we have the url of the GIF, we can load it into a `ImageView`.  There are many content loading library available, and our choice is [Glide](https://github.com/bumptech/glide), since it offers full support for loading GIFs into an `ImageView`.
+
+We start by constructing a `GlideTaskParams`:
 ```java
     GlideTaskParams<ImageView> params = new GlideTaskParams<>(mImageView, gif_url);
-    params.setListener(new WeakRefContentLoaderTaskListener<CTX, ImageView>(getRef()) {
+    params.setListener(new WeakRefContentLoaderTaskListener<Context, ImageView>(getContext()) {
             @Override
-            public void success(@NonNull CTX ctx, @NonNull ImageView imageView, @Nullable Drawable drawable) {
+            public void success(@NonNull Context context, @NonNull ImageView imageView, @Nullable Drawable drawable) {
                 // handle the success case
             }
 
             @Override
-            public void failure(@NonNull CTX ctx, @NonNull ImageView imageView, @Nullable Drawable drawable) {
+            public void failure(@NonNull Context context, @NonNull ImageView imageView, @Nullable Drawable drawable) {
                 // handle the success case
             }
         });
 ```
+`mImageView` is the referenced to the `ImageView` that the GIF will be displayed, and you can also add a callback on the gif loading is completed.  For full list of parameters, take a look at the `GlideTaskParams` class.
 
-Finally, once the `params` has been constructed, add the following line of code to finish the process:
+Once the `params` is constructed, use the `GifLoader` class to load the GIF:
 ```java
     GifLoader.loadGif(getContext(), params);
 ``` 
 
 This should be enough to get you started and displaying GIFs to your users.
-A working demo - which showcases `search`,`trending`, and GIF image loading as well as other Tenor API features like `tags` and `search suggestions` - can be found in our [Demo repository]().
+A working demo - which showcases `search`,`trending`, and GIF image loading as well as other Tenor API features like `tags` and `search suggestions` - can be found in [here]().
 
-Full documentation of our API, which details out further ways to refine and bolster the GIF experience, can be found [here](https://tenor.com/gifapi).
+Full documentation of our API, which details out further ways to refine and bolster the GIF experience, can be found in [here](https://tenor.com/gifapi).
+
 
 ## FAQs
 
