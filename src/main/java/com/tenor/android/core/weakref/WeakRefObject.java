@@ -8,7 +8,7 @@ import com.tenor.android.core.util.AbstractWeakReferenceUtils;
 
 import java.lang.ref.WeakReference;
 
-public abstract class WeakRefObject<CTX> implements IWeakRefObject<CTX> {
+public class WeakRefObject<CTX> implements IWeakRefObject<CTX> {
 
     private final WeakReference<CTX> mWeakRef;
 
