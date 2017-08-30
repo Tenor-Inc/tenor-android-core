@@ -23,12 +23,9 @@ import java.util.concurrent.LinkedBlockingQueue;
 final class AaidClient {
 
     @WorkerThread
-    public static void init(@NonNull Context context, @Nullable IAaidListener listener) {
-        if (context == null) {
-            throw new IllegalStateException("context cannot be null");
-        }
-        final String aaid = getAdvertisingId(context);
-        AbstractSessionUtils.setAndroidAdvertiseId(context, aaid);
+    public static void init(@NonNull Context app, @Nullable IAaidListener listener) {
+        final String aaid = getAdvertisingId(app);
+        AbstractSessionUtils.setAndroidAdvertiseId(app, aaid);
 
         if (listener != null) {
             if (!TextUtils.isEmpty(aaid)) {
@@ -42,7 +39,7 @@ final class AaidClient {
     @WorkerThread
     @NonNull
     private static String getAdvertisingId(Context context) {
-        if (Looper.myLooper() == Looper.getMainLooper()) {
+        if (isOnMainThread()) {
             throw new IllegalStateException("Cannot be called from the main thread");
         }
 
@@ -80,6 +77,13 @@ final class AaidClient {
     }
 
     /**
+     * @return {@code true} if called on the main thread, {@code false} otherwise.
+     */
+    private static boolean isOnMainThread() {
+        return Looper.myLooper() == Looper.getMainLooper();
+    }
+
+    /**
      * Mirror of AdvertisingIdClient#Info
      */
     private static final class Info {
@@ -100,11 +104,6 @@ final class AaidClient {
 
         public boolean isLimitAdTrackingEnabled() {
             return mLimitAdTrackingEnabled;
-        }
-
-        public final String toString() {
-            return (new StringBuilder(7 + String.valueOf(mAdvertisingId).length()))
-                    .append("{").append(mAdvertisingId).append("}").append(mLimitAdTrackingEnabled).toString();
         }
     }
 

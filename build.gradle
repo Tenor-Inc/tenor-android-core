@@ -21,17 +21,17 @@ ext {
 }
 
 android {
-    def versionMajor = 0 // range between [0,+INF)
-    def versionMinor = 2 // range between [0,9]
-    def versionPatch = 0 // range between [0,9]
+    def vMajor = 0 // range between [0,+INF)
+    def vMinor = 5 // range between [0,9]
+    def vPatch = 0 // range between [0,99]
     compileSdkVersion 26
     buildToolsVersion "26.0.1"
 
     defaultConfig {
         minSdkVersion 14
         targetSdkVersion 26
-        versionCode versionMajor * 1000 + versionMinor * 100 + versionPatch
-        versionName "${versionMajor}.${versionMinor}.${versionPatch}"
+        versionCode vMajor * 1000 + vMinor * 100 + vPatch
+        versionName "${vMajor}.${vMinor}.${vPatch}"
     }
     buildTypes {
         release {
