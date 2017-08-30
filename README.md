@@ -130,7 +130,7 @@ Search is where Tenor's API particularly excels. Our understanding of what daily
     });
 ```
 
-To see a detailed look of the **GIF response json object**, click [here](https://tenor.com/gifapi#responseobjects).
+To see a detailed look of the **GIF response JSON object**, click [here](https://tenor.com/gifapi#responseobjects).
 
 ## Displaying GIFs
 Once the GIFs have been retrieved, they can now be loaded into an ImageView.
