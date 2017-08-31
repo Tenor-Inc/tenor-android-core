@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="screen_density_suffix">ldpi</string>
+    <string name="screen_density">0.75</string>
+</resources>
