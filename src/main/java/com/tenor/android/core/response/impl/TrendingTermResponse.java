@@ -2,7 +2,6 @@ package com.tenor.android.core.response.impl;
 
 import android.support.annotation.NonNull;
 
-import com.tenor.android.core.model.impl.Tag;
 import com.tenor.android.core.response.AbstractResponse;
 import com.tenor.android.core.util.AbstractListUtils;
 

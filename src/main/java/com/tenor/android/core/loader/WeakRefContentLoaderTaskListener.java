@@ -22,18 +22,18 @@ public abstract class WeakRefContentLoaderTaskListener<CTX, T extends ImageView>
     }
 
     @Override
-    public void success(@NonNull T target, @NonNull Drawable taskResult) {
+    public void success(@NonNull T target, @NonNull Drawable drawable) {
         if (hasRef()) {
             //noinspection ConstantConditions
-            success(getRef(), target, taskResult);
+            success(getRef(), target, drawable);
         }
     }
 
     @Override
-    public void failure(@NonNull T target, @NonNull Drawable errorResult) {
+    public void failure(@NonNull T target, @NonNull Drawable errorDrawable) {
         if (hasRef()) {
             //noinspection ConstantConditions
-            failure(getRef(), target, errorResult);
+            failure(getRef(), target, errorDrawable);
         }
     }
 
