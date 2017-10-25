@@ -17,19 +17,36 @@ import java.lang.ref.WeakReference;
  */
 public class WeakRefHandler<CTX> extends Handler implements IWeakRefObject<CTX> {
 
-    private static Handler sUiThread;
     private final WeakReference<CTX> mWeakRef;
 
-    public WeakRefHandler(@NonNull final Looper looper,
-                          @NonNull final CTX ctx) {
-        super(looper);
-        mWeakRef = new WeakReference<>(ctx);
+    public WeakRefHandler(@NonNull CTX ctx, @Nullable Looper looper) {
+        this(new WeakReference<>(ctx), looper);
     }
 
-    public WeakRefHandler(@NonNull final Looper looper,
-                          @NonNull final WeakReference<CTX> weakRef) {
-        super(looper);
+    public WeakRefHandler(@NonNull WeakReference<CTX> weakRef, @Nullable Looper looper) {
+        this(weakRef, looper, null);
+    }
+
+    public WeakRefHandler(@NonNull CTX ctx, @Nullable Looper looper, @Nullable Callback callback) {
+        this(new WeakReference<>(ctx), looper, callback);
+    }
+
+    public WeakRefHandler(@NonNull WeakReference<CTX> weakRef, @Nullable Looper looper, @Nullable Callback callback) {
+        super(looper, callback);
         mWeakRef = weakRef;
+        /*
+         * This exception is mirror from Handler(Callback callback, boolean async), and
+         * the reason for having a @Nullable annotated Looper to throw out RuntimeException are:
+         *
+         * (1) the constructor of Handler is not annotated with @NonNull even thought its document states
+         * its Looper input "must not be null".
+         *
+         * (2) methods, such as Looper.myLooper() is annotated with @Nullable
+         */
+        if (looper == null) {
+            throw new RuntimeException(
+                    "Can't create handler inside thread that has not called Looper.prepare()");
+        }
     }
 
     @Nullable
@@ -47,23 +64,5 @@ public class WeakRefHandler<CTX> extends Handler implements IWeakRefObject<CTX> 
     @Override
     public boolean hasRef() {
         return AbstractWeakReferenceUtils.isAlive(mWeakRef);
-    }
-
-    private static Handler getUiThread() {
-        if (sUiThread == null) {
-            sUiThread = new Handler(Looper.getMainLooper());
-        }
-        return sUiThread;
-    }
-
-    /**
-     * Run {@link Runnable} on UI Thread
-     *
-     * @param runnable the {@link Runnable}
-     */
-    protected static void runOnUiThread(@Nullable final Runnable runnable) {
-        if (runnable != null) {
-            getUiThread().post(runnable);
-        }
     }
 }
