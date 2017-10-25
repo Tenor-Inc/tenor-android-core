@@ -2,10 +2,11 @@ package com.tenor.android.core.measurable;
 
 import android.content.Context;
 import android.support.annotation.Nullable;
-import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
 
-public class MeasurableRecyclerView extends RecyclerView implements IMeasurableRecyclerView {
+import com.tenor.android.core.widget.WeakRefRecyclerView;
+
+public class MeasurableRecyclerView extends WeakRefRecyclerView implements IMeasurableRecyclerView {
 
     public MeasurableRecyclerView(Context context) {
         this(context, null);
