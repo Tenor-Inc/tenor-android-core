@@ -7,7 +7,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.util.ArrayMap;
 import android.text.TextUtils;
 
-import com.tenor.android.core.constant.ScreenDensities;
+import com.tenor.android.core.constant.ScreenDensity;
 import com.tenor.android.core.constant.ViewAction;
 import com.tenor.android.core.measurable.MeasurableViewHolderEvent;
 import com.tenor.android.core.model.impl.Result;
@@ -118,7 +118,7 @@ public class ApiClient {
         }
         map.put("aaid", AbstractSessionUtils.getAndroidAdvertiseId(context));
         map.put("locale", AbstractLocaleUtils.getCurrentLocaleName(context));
-        map.put("screen_density", ScreenDensities.get(context));
+        map.put("screen_density", ScreenDensity.get(context));
         return map;
     }
 
@@ -199,7 +199,7 @@ public class ApiClient {
     public static Call<Void> registerAction(@NonNull final Context context,
                                             @NonNull String sourceId,
                                             @NonNull String visualPosition,
-                                            @ViewAction final String action) {
+                                            @ViewAction.Value final String action) {
         return registerAction(context, new MeasurableViewHolderEvent(sourceId, action, AbstractLocaleUtils.getUtcOffset(context), visualPosition));
     }
 

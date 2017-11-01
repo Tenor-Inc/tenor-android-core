@@ -4,7 +4,6 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
 import com.tenor.android.core.constant.MediaCollectionFormat;
-import com.tenor.android.core.constant.MediaCollectionFormats;
 
 import java.io.Serializable;
 
@@ -29,32 +28,32 @@ public class MediaCollection implements Serializable {
     private Media nanowebm;
 
     /**
-     * @param type one of {@link MediaCollectionFormats}
+     * @param type one of {@link MediaCollectionFormat}
      */
     @NonNull
-    public Media get(@MediaCollectionFormat String type) {
+    public Media get(@MediaCollectionFormat.Value String type) {
         switch (type) {
-            case MediaCollectionFormats.GIF:
+            case MediaCollectionFormat.GIF:
                 return getOrEmptyMedia(gif);
-            case MediaCollectionFormats.GIF_TINY:
+            case MediaCollectionFormat.GIF_TINY:
                 return getOrEmptyMedia(tinygif);
-            case MediaCollectionFormats.GIF_MEDIUM:
+            case MediaCollectionFormat.GIF_MEDIUM:
                 return getOrEmptyMedia(mediumgif);
-            case MediaCollectionFormats.GIF_NANO:
+            case MediaCollectionFormat.GIF_NANO:
                 return getOrEmptyMedia(nanogif);
-            case MediaCollectionFormats.MP4:
+            case MediaCollectionFormat.MP4:
                 return getOrEmptyMedia(mp4);
-            case MediaCollectionFormats.MP4_TINY:
+            case MediaCollectionFormat.MP4_TINY:
                 return getOrEmptyMedia(tinymp4);
-            case MediaCollectionFormats.MP4_NANO:
+            case MediaCollectionFormat.MP4_NANO:
                 return getOrEmptyMedia(nanomp4);
-            case MediaCollectionFormats.MP4_LOOPED:
+            case MediaCollectionFormat.MP4_LOOPED:
                 return getOrEmptyMedia(loopedmp4);
-            case MediaCollectionFormats.WEBM:
+            case MediaCollectionFormat.WEBM:
                 return getOrEmptyMedia(webm);
-            case MediaCollectionFormats.WEBM_TINY:
+            case MediaCollectionFormat.WEBM_TINY:
                 return getOrEmptyMedia(tinywebm);
-            case MediaCollectionFormats.WEBM_NANO:
+            case MediaCollectionFormat.WEBM_NANO:
                 return getOrEmptyMedia(nanowebm);
             default:
                 return new Media();

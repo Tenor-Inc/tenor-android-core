@@ -4,22 +4,49 @@ import android.support.annotation.StringDef;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
 
-import static java.lang.annotation.ElementType.ANNOTATION_TYPE;
-import static java.lang.annotation.ElementType.FIELD;
-import static java.lang.annotation.ElementType.METHOD;
-import static java.lang.annotation.ElementType.PACKAGE;
-import static java.lang.annotation.ElementType.PARAMETER;
+/**
+ * The supported media formats
+ */
+public class MediaCollectionFormat {
 
-@Retention(RetentionPolicy.CLASS)
-@StringDef({MediaCollectionFormats.GIF, MediaCollectionFormats.GIF_TINY,
-        MediaCollectionFormats.GIF_MEDIUM, MediaCollectionFormats.GIF_NANO,
-        MediaCollectionFormats.MP4, MediaCollectionFormats.MP4_TINY,
-        MediaCollectionFormats.MP4_NANO, MediaCollectionFormats.MP4_LOOPED,
-        MediaCollectionFormats.WEBM, MediaCollectionFormats.WEBM_TINY,
-        MediaCollectionFormats.WEBM_NANO
-})
-@Target({METHOD, PARAMETER, FIELD, ANNOTATION_TYPE, PACKAGE})
-public @interface MediaCollectionFormat {
+    @Retention(RetentionPolicy.CLASS)
+    @StringDef({GIF, GIF_TINY, GIF_MEDIUM, GIF_NANO,
+            MP4, MP4_TINY, MP4_NANO, MP4_LOOPED,
+            WEBM, WEBM_TINY, WEBM_NANO
+    })
+    public @interface Value {
+    }
+    
+    /**
+     * Standard GIF format
+     */
+    public static final String GIF = "GIF";
+    /**
+     * Compressed gif.  Good for quick loading and sending
+     */
+    public static final String GIF_TINY = "GIF_TINY";
+    public static final String GIF_MEDIUM = "GIF_MEDIUM";
+    public static final String GIF_NANO = "GIF_NANO";
+
+    /**
+     * Standard mp4 format
+     */
+    public static final String MP4 = "MP4";
+    /**
+     * Compressed mp4 format.  Good for quick loading and sending
+     */
+    public static final String MP4_TINY = "MP4_TINY";
+    public static final String MP4_NANO = "MP4_NANO";
+    /**
+     * Looped mp4 format that contains 3 loops built in
+     */
+    public static final String MP4_LOOPED = "MP4_LOOPED";
+
+    /**
+     * Web player url
+     */
+    public static final String WEBM = "WEBM";
+    public static final String WEBM_TINY = "WEBM_TINY";
+    public static final String WEBM_NANO = "WEBM_NANO";
 }

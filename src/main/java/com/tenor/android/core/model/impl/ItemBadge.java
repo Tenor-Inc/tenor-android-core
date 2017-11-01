@@ -3,7 +3,6 @@ package com.tenor.android.core.model.impl;
 import android.support.annotation.NonNull;
 
 import com.tenor.android.core.constant.ItemBadgePosition;
-import com.tenor.android.core.constant.ItemBadgePositions;
 import com.tenor.android.core.constant.StringConstant;
 
 public class ItemBadge extends Image {
@@ -13,9 +12,9 @@ public class ItemBadge extends Image {
     private int position;
     private String provider;
 
-    @ItemBadgePosition
+    @ItemBadgePosition.Value
     public int getPosition() {
-        return ItemBadgePositions.parse(position);
+        return ItemBadgePosition.parse(position);
     }
 
     @NonNull

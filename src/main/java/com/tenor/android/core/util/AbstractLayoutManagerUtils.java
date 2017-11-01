@@ -12,7 +12,6 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.tenor.android.core.constant.ItemVisualPosition;
-import com.tenor.android.core.constant.ItemVisualPositions;
 
 public abstract class AbstractLayoutManagerUtils {
 
@@ -56,13 +55,13 @@ public abstract class AbstractLayoutManagerUtils {
         }
     }
 
-    @ItemVisualPosition
+    @ItemVisualPosition.Value
     public static String getVisualPosition(@NonNull Context context, @Nullable final View view) {
         if (view == null) {
-            return ItemVisualPositions.UNKNOWN;
+            return ItemVisualPosition.UNKNOWN;
         }
         final int spanIndex = getSpanIndex(view.getLayoutParams());
-        return ItemVisualPositions.parse(context, spanIndex);
+        return ItemVisualPosition.parse(context, spanIndex);
     }
 
     /**

@@ -4,16 +4,15 @@ import android.support.annotation.StringDef;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
 
-import static java.lang.annotation.ElementType.ANNOTATION_TYPE;
-import static java.lang.annotation.ElementType.FIELD;
-import static java.lang.annotation.ElementType.METHOD;
-import static java.lang.annotation.ElementType.PACKAGE;
-import static java.lang.annotation.ElementType.PARAMETER;
+public class ViewAction {
 
-@Retention(RetentionPolicy.CLASS)
-@StringDef({ViewActions.VIEW, ViewActions.SHARE, ViewActions.TAP})
-@Target({METHOD, PARAMETER, FIELD, ANNOTATION_TYPE, PACKAGE})
-public @interface ViewAction {
+    @Retention(RetentionPolicy.CLASS)
+    @StringDef({VIEW, SHARE, TAP})
+    public @interface Value {
+    }
+
+    public static final String VIEW = "view";
+    public static final String SHARE = "share";
+    public static final String TAP = "tap";
 }
