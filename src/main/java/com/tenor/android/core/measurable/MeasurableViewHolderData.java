@@ -8,7 +8,6 @@ import android.support.v7.widget.RecyclerView;
 import android.view.View;
 
 import com.tenor.android.core.constant.ItemVisualPosition;
-import com.tenor.android.core.constant.ItemVisualPositions;
 import com.tenor.android.core.constant.StringConstant;
 import com.tenor.android.core.model.impl.Result;
 import com.tenor.android.core.util.AbstractLogUtils;
@@ -33,8 +32,8 @@ public class MeasurableViewHolderData<VH extends IMeasurableViewHolder> extends 
     @FloatRange(from = 0f, to = 1f)
     private float mVisibleFraction = 0f;
 
-    @ItemVisualPosition
-    private String mVisualPosition = ItemVisualPositions.UNKNOWN;
+    @ItemVisualPosition.Value
+    private String mVisualPosition = ItemVisualPosition.UNKNOWN;
 
     private String mId = StringConstant.EMPTY;
 
@@ -86,15 +85,15 @@ public class MeasurableViewHolderData<VH extends IMeasurableViewHolder> extends 
     }
 
     public boolean isVisualPositionUnknown() {
-        return ItemVisualPositions.UNKNOWN.equals(getVisualPosition());
+        return ItemVisualPosition.UNKNOWN.equals(getVisualPosition());
     }
 
-    @ItemVisualPosition
+    @ItemVisualPosition.Value
     public String getVisualPosition() {
         return mVisualPosition;
     }
 
-    public void setVisualPosition(@ItemVisualPosition String visualPosition) {
+    public void setVisualPosition(@ItemVisualPosition.Value String visualPosition) {
         mVisualPosition = visualPosition;
     }
 
