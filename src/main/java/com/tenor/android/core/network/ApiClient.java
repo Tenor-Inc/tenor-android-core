@@ -7,6 +7,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.util.ArrayMap;
 import android.text.TextUtils;
 
+import com.tenor.android.core.constant.StringConstant;
 import com.tenor.android.core.constant.ScreenDensity;
 import com.tenor.android.core.constant.ViewAction;
 import com.tenor.android.core.measurable.MeasurableViewHolderEvent;
@@ -176,16 +177,18 @@ public class ApiClient {
 
 
     /**
-     * Report shared gif id for better search experience in the future
+     * Report shared GIF id for better search experience in the future
      *
      * @param context the application context
      * @param id      the gif id
+     * @param query   the search query that led to this GIF, or {@code null} for trending GIFs
      * @return {@link Call}<{@link Void}>
      */
-    public static Call<Void> registerShare(@NonNull final Context context,
-                                           @NonNull final String id) {
+    public static Call<Void> registerShare(@NonNull Context context,
+                                           @NonNull String id,
+                                           @Nullable String query) {
         Call<Void> call = ApiClient.getInstance(context)
-                .registerShare(getServiceIds(context), Integer.valueOf(id));
+                .registerShare(getServiceIds(context), Integer.valueOf(id), StringConstant.getOrEmpty(query));
         call.enqueue(new VoidCallBack());
         return call;
     }

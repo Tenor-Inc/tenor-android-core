@@ -159,10 +159,27 @@ public interface IApiClient {
                                      @Query("timezone") String utcOffset,
                                      @Query("allterms") boolean isAllTerms);
 
+    /**
+     * Report shared GIF id for better search experience in the future
+     *
+     * @param serviceIds a {@link Map} of a collection of ids for better content delivery experience
+     * @param id         the gif id
+     * @param query      the search query that led to this GIF, or {@code null} for trending GIFs
+     * @return {@link Call}<{@link Void}>
+     */
     @GET("registershare")
     Call<Void> registerShare(@QueryMap Map<String, String> serviceIds,
-                             @Query("id") Integer id);
+                             @Query("id") Integer id,
+                             @Query("q") String query);
 
+    /**
+     * Report search for better search experience in the future
+     *
+     * @param serviceIds a {@link Map} of a collection of ids for better content delivery experience
+     * @param query      the search query that led to this GIF, or {@code null} for trending GIFs
+     * @param pos        either {@link GifsResponse#getNext()} or {@code null}
+     * @return {@link Call}<{@link Void}>
+     */
     @GET("registersearch")
     Call<Void> registerSearch(@QueryMap Map<String, String> serviceIds,
                               @Query("q") String query,
