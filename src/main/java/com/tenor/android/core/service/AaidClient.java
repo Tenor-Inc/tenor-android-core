@@ -13,9 +13,9 @@ import android.os.RemoteException;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.WorkerThread;
-import android.text.TextUtils;
 
 import com.tenor.android.core.constant.StringConstant;
+import com.tenor.android.core.util.AbstractLogUtils;
 import com.tenor.android.core.util.AbstractSessionUtils;
 
 import java.util.concurrent.LinkedBlockingQueue;
@@ -24,30 +24,47 @@ final class AaidClient {
 
     @WorkerThread
     public static void init(@NonNull Context app, @Nullable IAaidListener listener) {
-        final String aaid = getAdvertisingId(app);
-        AbstractSessionUtils.setAndroidAdvertiseId(app, aaid);
+        if (isOnMainThread()) {
+            throw new IllegalStateException("Cannot be called from the main thread");
+        }
+
+        final AaidInfo info = getAdvertisingId(app);
+        switch (info.getState()) {
+            case AaidInfo.AAID_GRANTED:
+                AbstractSessionUtils.setAndroidAdvertiseId(app, info.getId());
+                break;
+            case AaidInfo.AAID_DENIED:
+                // remove the stored AAID if user explicitly chose to opt out of ad personalization
+                AbstractSessionUtils.setAndroidAdvertiseId(app, StringConstant.EMPTY);
+                break;
+            default:
+                // do nothing
+                break;
+        }
+
+        AbstractLogUtils.e(app, "AAID: " + info.getId()
+                + ", Opt out: " + info.isLimitAdTrackingEnabled()
+                + ", state: " + info.getState());
 
         if (listener != null) {
-            if (!TextUtils.isEmpty(aaid)) {
-                listener.success(aaid);
+            if (info.getState() == AaidInfo.AAID_GRANTED) {
+                listener.success(info.getId());
             } else {
-                listener.failure();
+                listener.failure(info.getState());
             }
         }
     }
 
     @WorkerThread
     @NonNull
-    private static String getAdvertisingId(Context context) {
-        if (isOnMainThread()) {
-            throw new IllegalStateException("Cannot be called from the main thread");
-        }
+    private static AaidInfo getAdvertisingId(Context context) {
 
         try {
             PackageManager pm = context.getPackageManager();
             pm.getPackageInfo("com.android.vending", 0);
         } catch (Throwable throwable) {
-            return StringConstant.EMPTY;
+            // Google Play is not installed
+            return new AaidInfo(AaidInfo.AAID_FAILURE_NO_GOOGLE_PLAY);
         }
 
         AdvertisingConnection connection = new AdvertisingConnection();
@@ -58,22 +75,21 @@ final class AaidClient {
         try {
             googleServiceBinded = context.bindService(intent, connection, Context.BIND_AUTO_CREATE);
         } catch (Throwable ignored) {
-            // Google Play connection failed, or it is not installed
-            return StringConstant.EMPTY;
+            // Cannot connect to Google Play advertising identifier service
+            return new AaidInfo(AaidInfo.AAID_FAILURE_NO_AAID_LIBRARY);
         }
 
         try {
             if (googleServiceBinded) {
                 AdvertisingInterface adInterface = new AdvertisingInterface(connection.getBinder());
-                Info info = new Info(adInterface.getId(), adInterface.isLimitAdTrackingEnabled(true));
-                return !info.isLimitAdTrackingEnabled() ? info.getId() : StringConstant.EMPTY;
+                return new AaidInfo(adInterface.getId(), adInterface.isLimitAdTrackingEnabled(true));
             }
         } catch (Throwable ignored) {
-            return StringConstant.EMPTY;
+            return new AaidInfo(AaidInfo.AAID_FAILURE);
         } finally {
             context.unbindService(connection);
         }
-        return StringConstant.EMPTY;
+        return new AaidInfo(AaidInfo.AAID_FAILURE);
     }
 
     /**
@@ -81,30 +97,6 @@ final class AaidClient {
      */
     private static boolean isOnMainThread() {
         return Looper.myLooper() == Looper.getMainLooper();
-    }
-
-    /**
-     * Mirror of AdvertisingIdClient#Info
-     */
-    private static final class Info {
-
-        @NonNull
-        private final String mAdvertisingId;
-        private final boolean mLimitAdTrackingEnabled;
-
-        public Info(@Nullable String advertisingId, boolean limitAdTrackingEnabled) {
-            mAdvertisingId = StringConstant.getOrEmpty(advertisingId);
-            mLimitAdTrackingEnabled = limitAdTrackingEnabled;
-        }
-
-        @NonNull
-        public String getId() {
-            return mAdvertisingId;
-        }
-
-        public boolean isLimitAdTrackingEnabled() {
-            return mLimitAdTrackingEnabled;
-        }
     }
 
     private static final class AdvertisingConnection implements ServiceConnection {
