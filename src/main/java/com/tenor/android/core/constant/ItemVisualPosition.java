@@ -12,7 +12,7 @@ import java.lang.annotation.RetentionPolicy;
 
 public class ItemVisualPosition {
 
-    @Retention(RetentionPolicy.SOURCE)
+    @Retention(RetentionPolicy.CLASS)
     @StringDef({UNKNOWN, LEFT, RIGHT})
     public @interface Value {
     }

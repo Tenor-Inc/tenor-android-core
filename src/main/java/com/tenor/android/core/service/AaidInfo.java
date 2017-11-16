@@ -17,7 +17,7 @@ import java.lang.annotation.RetentionPolicy;
 public final class AaidInfo {
 
     @IntDef({AAID_GRANTED, AAID_DENIED, AAID_FAILURE_NO_GOOGLE_PLAY, AAID_FAILURE_NO_AAID_LIBRARY})
-    @Retention(RetentionPolicy.SOURCE)
+    @Retention(RetentionPolicy.CLASS)
     public @interface State {
     }
 

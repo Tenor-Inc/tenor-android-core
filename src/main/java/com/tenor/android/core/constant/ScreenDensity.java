@@ -14,7 +14,7 @@ import java.util.Locale;
 
 public class ScreenDensity {
 
-    @Retention(RetentionPolicy.SOURCE)
+    @Retention(RetentionPolicy.CLASS)
     @StringDef({UNKNOWN, SD_075, SD_100, SD_150, SD_200, SD_300, SD_400})
     public @interface Value {
     }
