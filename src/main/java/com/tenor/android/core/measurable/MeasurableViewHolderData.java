@@ -136,10 +136,6 @@ public class MeasurableViewHolderData<VH extends IMeasurableViewHolder> extends 
         return mAdapterPosition;
     }
 
-    public boolean isVisible() {
-        return mVisibility == View.VISIBLE;
-    }
-
     public synchronized int getAccumulatedVisibleDuration() {
         return mAccumulatedVisibleDuration;
     }
@@ -180,20 +176,16 @@ public class MeasurableViewHolderData<VH extends IMeasurableViewHolder> extends 
     }
 
     public synchronized void setVisibleFraction(@FloatRange(from = 0f, to = 1f) float visibleFraction) {
-        mVisibleFraction = visibleFraction;
 
-        final boolean wasVisible = isVisible();
-        final int nextVisibility = visibleFraction >= mThreshold ? View.VISIBLE : View.INVISIBLE;
-        final boolean isVisible = nextVisibility == View.VISIBLE;
+        final boolean wasVisible = mVisibleFraction >= mThreshold;
+        final boolean isVisible = visibleFraction >= mThreshold;
+        mVisibleFraction = visibleFraction;
 
         final boolean visibilityChanged = wasVisible ^ isVisible;
         if (!visibilityChanged) {
             // visibility hasn't changed, do nothing
             return;
         }
-
-        // update visibility
-        mVisibility = nextVisibility;
 
         // visibility has changed
         if (isVisible) {
