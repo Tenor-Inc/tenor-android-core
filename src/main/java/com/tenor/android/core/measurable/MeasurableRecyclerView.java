@@ -18,7 +18,7 @@ public class MeasurableRecyclerView extends WeakRefRecyclerView implements IMeas
 
     public MeasurableRecyclerView(Context context, @Nullable AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
-        MeasurableRecyclerViewHelper.onConstruct(context, this);
+        MeasurableRecyclerViewHelper.onConstruct(this);
     }
 
     @Override

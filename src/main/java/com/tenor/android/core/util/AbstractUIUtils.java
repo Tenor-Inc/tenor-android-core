@@ -16,6 +16,7 @@ import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 
 import com.tenor.android.core.R;
+import com.tenor.android.core.checker.ScriptDirectionChecker;
 
 import java.lang.reflect.Method;
 
@@ -254,6 +255,6 @@ public abstract class AbstractUIUtils {
      * @return true if the device is on right to left mode
      */
     public static boolean isRightToLeft(@Nullable final Context context) {
-        return context != null && context.getResources().getBoolean(R.bool.right_to_left);
+        return ScriptDirectionChecker.checkSelfScriptDirection(context) == ScriptDirectionChecker.RIGHT_TO_LEFT;
     }
 }

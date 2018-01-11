@@ -22,7 +22,7 @@ public class BasePresenter<CTX extends IBaseView> extends WeakRefObject<CTX> imp
     @Nullable
     @Override
     public CTX getView() {
-        return getRef();
+        return getWeakRef().get();
     }
 
     public boolean hasView() {

@@ -18,7 +18,6 @@ import java.util.Locale;
 public abstract class AbstractLocaleUtils {
 
     public static final String ISO_US = "us";
-    private static Locale sEnUsLocale;
 
     /**
      * Get the {@link Locale} that is currently used by the device
@@ -26,7 +25,7 @@ public abstract class AbstractLocaleUtils {
      * @return the {@link Locale} that is currently used by the device
      */
     @NonNull
-    public static Locale getCurrentLocale(@Nullable final Context context) {
+    public static Locale getCurrentLocale(@Nullable Context context) {
         if (context == null) {
             return Locale.getDefault();
         }
@@ -60,7 +59,7 @@ public abstract class AbstractLocaleUtils {
      * @return the current UTC offset, such as "-0700"
      */
     @NonNull
-    public static String getUtcOffset(@Nullable final Context context) {
+    public static String getUtcOffset(@Nullable Context context) {
         return getUtcOffset(context, Locale.US);
     }
 
@@ -72,7 +71,7 @@ public abstract class AbstractLocaleUtils {
      * @return the current UTC offset, such as "-0700"
      */
     @NonNull
-    public static String getUtcOffset(@Nullable final Context context, @Nullable final Locale locale) {
+    public static String getUtcOffset(@Nullable Context context, @Nullable Locale locale) {
         if (context == null) {
             return StringConstant.EMPTY;
         }
@@ -81,24 +80,6 @@ public abstract class AbstractLocaleUtils {
             return getUtcOffset(context, Locale.US);
         }
         return new SimpleDateFormat("ZZZ", locale).format(System.currentTimeMillis());
-    }
-
-    /**
-     * Get the "en_US" {@link Locale}
-     *
-     * @return the "en_US" {@link Locale}
-     */
-    @NonNull
-    public static Locale getEnUsLocale() {
-        if (sEnUsLocale == null) {
-            /*
-             * Use constructor instead of builder pattern to keep compatibility with API 21 and below
-             *
-             * See AbstractStringUtilsUT#test_locale_supports() for test cases
-             */
-            sEnUsLocale = new Locale("en", "US");
-        }
-        return sEnUsLocale;
     }
 
     /**

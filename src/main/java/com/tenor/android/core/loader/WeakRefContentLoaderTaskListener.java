@@ -25,7 +25,7 @@ public abstract class WeakRefContentLoaderTaskListener<CTX, T extends ImageView>
     public void success(@NonNull T target, @NonNull Drawable drawable) {
         if (hasRef()) {
             //noinspection ConstantConditions
-            success(getRef(), target, drawable);
+            success(getWeakRef().get(), target, drawable);
         }
     }
 
@@ -33,7 +33,7 @@ public abstract class WeakRefContentLoaderTaskListener<CTX, T extends ImageView>
     public void failure(@NonNull T target, @NonNull Drawable errorDrawable) {
         if (hasRef()) {
             //noinspection ConstantConditions
-            failure(getRef(), target, errorDrawable);
+            failure(getWeakRef().get(), target, errorDrawable);
         }
     }
 

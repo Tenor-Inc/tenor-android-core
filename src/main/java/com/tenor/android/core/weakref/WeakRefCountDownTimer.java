@@ -24,12 +24,6 @@ public abstract class WeakRefCountDownTimer<CTX> extends CountDownTimer implemen
         mWeakRef = weakRef;
     }
 
-    @Nullable
-    @Override
-    public CTX getRef() {
-        return mWeakRef.get();
-    }
-
     @NonNull
     @Override
     public WeakReference<CTX> getWeakRef() {

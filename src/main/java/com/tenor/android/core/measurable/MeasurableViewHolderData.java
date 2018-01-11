@@ -119,19 +119,19 @@ public class MeasurableViewHolderData<VH extends IMeasurableViewHolder> extends 
 
     public int getAdapterPosition() {
         // reference GCed
-        if (getRef() == null) {
+        if (!hasRef()) {
             return mAdapterPosition;
         }
 
         // adapter position is not initialized
         if (mAdapterPosition == RecyclerView.NO_POSITION) {
-            mAdapterPosition = getRef().getAdapterPosition();
+            mAdapterPosition = getWeakRef().get().getAdapterPosition();
         }
 
         // adapter position changed to a non NO_POSITION position
-        if (getRef().getAdapterPosition() != RecyclerView.NO_POSITION
-                && mAdapterPosition != getRef().getAdapterPosition()) {
-            mAdapterPosition = getRef().getAdapterPosition();
+        if (getWeakRef().get().getAdapterPosition() != RecyclerView.NO_POSITION
+                && mAdapterPosition != getWeakRef().get().getAdapterPosition()) {
+            mAdapterPosition = getWeakRef().get().getAdapterPosition();
         }
         return mAdapterPosition;
     }

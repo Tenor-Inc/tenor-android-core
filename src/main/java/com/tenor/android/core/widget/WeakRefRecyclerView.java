@@ -45,12 +45,6 @@ public class WeakRefRecyclerView extends RecyclerView implements IRecyclerView, 
         return mHandler;
     }
 
-    @Nullable
-    @Override
-    public Context getRef() {
-        return mWeakRef.get();
-    }
-
     @NonNull
     @Override
     public WeakReference<Context> getWeakRef() {

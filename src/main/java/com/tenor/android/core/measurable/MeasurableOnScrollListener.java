@@ -1,34 +1,27 @@
 package com.tenor.android.core.measurable;
 
-import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.OrientationHelper;
 import android.support.v7.widget.RecyclerView;
 
+import com.tenor.android.core.checker.ScriptDirectionChecker;
 import com.tenor.android.core.util.AbstractLayoutManagerUtils;
 import com.tenor.android.core.util.AbstractLogUtils;
-import com.tenor.android.core.util.AbstractUIUtils;
-import com.tenor.android.core.weakref.WeakRefOnScrollListener;
 
 import java.util.List;
 
-public class MeasurableOnScrollListener<CTX extends Context> extends WeakRefOnScrollListener<CTX> {
+public class MeasurableOnScrollListener extends RecyclerView.OnScrollListener {
 
     private int mDraggingStart = RecyclerView.NO_POSITION;
     private int mDraggingEnd = RecyclerView.NO_POSITION;
-    private boolean mRtl = false;
     private boolean mDragging;
 
     private static final int TYPE_UNMEASURABLE = -1;
     private static final int TYPE_UNKNOWN = 0;
     private static final int TYPE_MEASURABLE = 1;
     private int mMeasurable = TYPE_UNKNOWN;
-
-    public MeasurableOnScrollListener(@NonNull CTX ctx) {
-        super(ctx);
-        mRtl = AbstractUIUtils.isRightToLeft(ctx);
-    }
+    private int mScriptDirectionState = ScriptDirectionChecker.UNSPECIFIED;
 
     private boolean validateMeasurable(@Nullable RecyclerView recyclerView) {
         if (mMeasurable != TYPE_UNKNOWN) {
@@ -53,8 +46,16 @@ public class MeasurableOnScrollListener<CTX extends Context> extends WeakRefOnSc
         }
     }
 
+    private void initScriptDirection(RecyclerView recyclerView) {
+        if (mScriptDirectionState == ScriptDirectionChecker.UNSPECIFIED) {
+            mScriptDirectionState = ScriptDirectionChecker.checkSelfScriptDirection(recyclerView.getContext());
+        }
+    }
+
     @Override
     public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+        initScriptDirection(recyclerView);
+
         switch (newState) {
             case RecyclerView.SCROLL_STATE_DRAGGING:
                 // distinct drag to improve accuracy, init mDraggingStart and mDraggingEnd here
@@ -78,8 +79,10 @@ public class MeasurableOnScrollListener<CTX extends Context> extends WeakRefOnSc
                 mDraggingStart = RecyclerView.NO_POSITION;
                 mDraggingEnd = RecyclerView.NO_POSITION;
 
-                final boolean rtl = AbstractUIUtils.isRightToLeft(getRef());
-                if (mRtl ^ rtl) {
+                final int state = ScriptDirectionChecker.checkSelfScriptDirection(recyclerView.getContext());
+                if (mScriptDirectionState != ScriptDirectionChecker.UNSPECIFIED
+                        && state != ScriptDirectionChecker.UNSPECIFIED
+                        && mScriptDirectionState != state) {
                     /*
                      * [ANDROID-1778]
                      *
@@ -94,8 +97,10 @@ public class MeasurableOnScrollListener<CTX extends Context> extends WeakRefOnSc
 
                     if (AbstractLayoutManagerUtils.getOrientation(recyclerView.getLayoutManager())
                             == OrientationHelper.HORIZONTAL) {
-                        AbstractLayoutManagerUtils.setReverseLayout(recyclerView.getLayoutManager(), mRtl);
+                        AbstractLayoutManagerUtils.setReverseLayout(recyclerView.getLayoutManager(),
+                                state == ScriptDirectionChecker.RIGHT_TO_LEFT);
                     }
+                    mScriptDirectionState = state;
                 }
                 break;
             default:
