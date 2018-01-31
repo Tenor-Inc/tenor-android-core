@@ -7,12 +7,11 @@ import android.support.annotation.Nullable;
 import android.support.v4.util.ArrayMap;
 import android.text.TextUtils;
 
-import com.tenor.android.core.constant.StringConstant;
 import com.tenor.android.core.constant.ScreenDensity;
+import com.tenor.android.core.constant.StringConstant;
 import com.tenor.android.core.constant.ViewAction;
 import com.tenor.android.core.measurable.MeasurableViewHolderEvent;
 import com.tenor.android.core.model.impl.Result;
-import com.tenor.android.core.response.BaseError;
 import com.tenor.android.core.response.WeakRefCallback;
 import com.tenor.android.core.response.impl.AnonIdResponse;
 import com.tenor.android.core.service.AaidService;
@@ -153,18 +152,19 @@ public class ApiClient {
                         return;
                     }
 
-                    if (TextUtils.isEmpty(response.getId())) {
-                        listener.onReceiveAnonIdFailed(
-                                new BaseError("keyboard id cannot be " + response.getId()));
+                    final String id = response.getId();
+                    if (TextUtils.isEmpty(id)) {
+                        listener.onReceiveAnonIdFailed(new IllegalStateException("keyboard id cannot be empty"));
+                        return;
                     }
-                    listener.onReceiveAnonIdSucceeded(response.getId());
+                    listener.onReceiveAnonIdSucceeded(id);
                 }
             }
 
             @Override
-            public void failure(@NonNull Context app, @Nullable BaseError error) {
+            public void failure(@NonNull Context app, @Nullable Throwable throwable) {
                 if (listener != null) {
-                    listener.onReceiveAnonIdFailed(error);
+                    listener.onReceiveAnonIdFailed(throwable);
                 }
             }
         });

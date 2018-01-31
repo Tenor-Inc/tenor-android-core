@@ -32,9 +32,9 @@ public abstract class ServiceReceiverWeakRefCallback<CTX, T> extends WeakRefCall
     }
 
     @Override
-    public final void failure(@NonNull CTX service, BaseError error) {
+    public final void failure(@NonNull CTX service, Throwable throwable) {
         if (AbstractWeakReferenceUtils.isAlive(mWeakRefReceiver)) {
-            failure(mWeakRefReceiver.get(), service, error);
+            failure(mWeakRefReceiver.get(), service, throwable);
         }
     }
 
@@ -42,5 +42,5 @@ public abstract class ServiceReceiverWeakRefCallback<CTX, T> extends WeakRefCall
                                  @NonNull CTX service, @Nullable T response);
 
     public abstract void failure(@NonNull ResultReceiver receiver,
-                                 @NonNull CTX service, @Nullable BaseError error);
+                                 @NonNull CTX service, @Nullable Throwable throwable);
 }
