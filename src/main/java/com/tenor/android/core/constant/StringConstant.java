@@ -13,7 +13,8 @@ import com.tenor.android.core.util.AbstractListUtils;
 
 import java.net.URLDecoder;
 import java.net.URLEncoder;
-import java.util.List;
+import java.util.Collection;
+import java.util.Iterator;
 
 /**
  * The frequently used {@link String} constants
@@ -167,9 +168,9 @@ public abstract class StringConstant {
         String getJoinableString(T t);
     }
 
-    public static <T> String join(@Nullable final List<T> words,
-                                  @Nullable final String separator,
-                                  @Nullable final IJoinable<T> joinable) {
+    public static <T> String join(@Nullable Collection<T> words,
+                                  @Nullable String separator,
+                                  @Nullable IJoinable<T> joinable) {
 
         if (AbstractListUtils.isEmpty(words) || joinable == null) {
             return EMPTY;
@@ -179,19 +180,26 @@ public abstract class StringConstant {
             join(words, EMPTY, joinable);
         }
 
-        String word = joinable.getJoinableString(words.get(0));
-        StringBuilder sb = new StringBuilder(word);
-        final int count = words.size();
-        for (int i = 1; i < count; i++) {
-            word = joinable.getJoinableString(words.get(i));
-            sb.append(separator);
+        Iterator<T> it = words.iterator();
+        String word;
+        StringBuilder sb = new StringBuilder();
+        boolean firstWord = true;
+        while (it.hasNext()) {
+            word = joinable.getJoinableString(it.next());
+
+            if (firstWord) {
+                firstWord = false;
+            } else {
+                sb.append(separator);
+            }
+
             sb.append(word);
         }
         return sb.toString();
     }
 
-    public static String join(@Nullable final List<String> words,
-                              @Nullable final String separator) {
+    public static String join(@Nullable Collection<String> words,
+                              @Nullable String separator) {
 
         return join(words, separator, new IJoinable<String>() {
             @Override
