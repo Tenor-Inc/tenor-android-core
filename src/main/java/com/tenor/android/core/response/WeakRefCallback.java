@@ -1,16 +1,15 @@
 package com.tenor.android.core.response;
 
 import android.content.Context;
-import android.os.Handler;
-import android.os.Looper;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
 
 import com.tenor.android.core.constant.StringConstant;
 import com.tenor.android.core.util.AbstractIOUtils;
-import com.tenor.android.core.util.AbstractWeakReferenceUtils;
+import com.tenor.android.core.weakref.WeakRefObject;
 import com.tenor.android.core.weakref.WeakRefRunnable;
+import com.tenor.android.core.weakref.WeakRefUiHandler;
 
 import java.io.BufferedReader;
 import java.io.InputStream;
@@ -28,13 +27,12 @@ import retrofit2.Response;
  * <p>
  * In case of the view is being recycled, this callback will end gracefully
  */
-public abstract class WeakRefCallback<CTX, T> implements Callback<T> {
+public abstract class WeakRefCallback<CTX, T> extends WeakRefObject<CTX> implements Callback<T> {
 
     public static final String ERROR_UNKNOWN = "unknown error";
     public static final String ERROR_NULL_RESPONSE = "response is null";
 
-    private final WeakReference<CTX> mWeakRef;
-    private static Handler sUiThread;
+    private final WeakRefUiHandler<CTX> mUiThread;
     private boolean mReportNetworkDropAsException;
 
     /**
@@ -44,19 +42,17 @@ public abstract class WeakRefCallback<CTX, T> implements Callback<T> {
      *
      * @param ctx the caller view
      */
-    public WeakRefCallback(@NonNull final CTX ctx) {
+    public WeakRefCallback(@NonNull CTX ctx) {
         this(new WeakReference<>(ctx));
     }
 
-    public WeakRefCallback(@NonNull final WeakReference<CTX> weakRef) {
-        mWeakRef = weakRef;
+    public WeakRefCallback(@NonNull WeakReference<CTX> weakRef) {
+        super(weakRef);
+        mUiThread = new WeakRefUiHandler<>(weakRef);
     }
 
-    protected static Handler getUiThread() {
-        if (sUiThread == null) {
-            sUiThread = new Handler(Looper.getMainLooper());
-        }
-        return sUiThread;
+    protected WeakRefUiHandler<CTX> getUiThread() {
+        return mUiThread;
     }
 
     public void setReportNetworkDropAsException(boolean report) {
@@ -74,15 +70,13 @@ public abstract class WeakRefCallback<CTX, T> implements Callback<T> {
 
     }
 
-    private void runOnUiThread(WeakRefRunnable<CTX> runnable) {
-        if (AbstractWeakReferenceUtils.isAlive(mWeakRef)) {
-            getUiThread().post(runnable);
-        }
-    }
-
     @Override
-    public void onResponse(final Call<T> call, final Response<T> response) {
-        runOnUiThread(new WeakRefRunnable<CTX>(mWeakRef) {
+    public void onResponse(Call<T> call, @Nullable final Response<T> response) {
+        if (!hasRef()) {
+            return;
+        }
+
+        getUiThread().post(new WeakRefRunnable<CTX>(getWeakRef()) {
             @Override
             public void run(@NonNull CTX ctx) {
                 if (response == null) {
@@ -117,7 +111,7 @@ public abstract class WeakRefCallback<CTX, T> implements Callback<T> {
     }
 
     @NonNull
-    private Throwable createThrowable(@Nullable ResponseBody errorBody) {
+    private static Throwable createThrowable(@Nullable ResponseBody errorBody) {
         if (errorBody == null) {
             return new Throwable(ERROR_UNKNOWN);
         }
@@ -144,33 +138,37 @@ public abstract class WeakRefCallback<CTX, T> implements Callback<T> {
     }
 
     @Override
-    public final void onFailure(Call<T> call, final Throwable throwable) {
-        runOnUiThread(new WeakRefRunnable<CTX>(mWeakRef) {
+    public final void onFailure(Call<T> call, @Nullable final Throwable throwable) {
+        if (!hasRef()) {
+            return;
+        }
+
+        getUiThread().post(new WeakRefRunnable<CTX>(getWeakRef()) {
             @Override
-            public void run(@NonNull CTX CTX) {
+            public void run(@NonNull CTX ctx) {
 
                 if (throwable == null) {
-                    failure(CTX, new Throwable(ERROR_UNKNOWN), null);
+                    failure(ctx, new Throwable(ERROR_UNKNOWN), null);
                     return;
                 }
 
                 if (isReportNetworkDropAsException()) {
-                    failure(CTX, throwable, null);
+                    failure(ctx, throwable, null);
                     return;
                 }
 
                 final boolean isNetworkDrop = "canceled".equalsIgnoreCase(throwable.getMessage())
                         || throwable instanceof UnknownHostException;
                 if (isNetworkDrop) {
-                    onNetworkDropCatched(throwable);
+                    onNetworkDropCaught(throwable);
                     return;
                 }
-                failure(CTX, throwable, null);
+                failure(ctx, throwable, null);
             }
         });
     }
 
-    public void onNetworkDropCatched(@NonNull Throwable throwable) {
+    public void onNetworkDropCaught(@NonNull Throwable throwable) {
 
     }
 

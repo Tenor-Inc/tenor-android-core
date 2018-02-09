@@ -2,7 +2,6 @@ package com.tenor.android.core.weakref;
 
 import android.os.CountDownTimer;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 
 import com.tenor.android.core.util.AbstractWeakReferenceUtils;
 
