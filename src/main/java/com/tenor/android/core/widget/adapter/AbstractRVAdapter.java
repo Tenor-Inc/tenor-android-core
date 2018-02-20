@@ -35,21 +35,11 @@ public abstract class AbstractRVAdapter<CTX extends IBaseView, VH extends Recycl
      */
     @Nullable
     protected Context getContext() {
-        return getRef().getContext();
+        return hasRef() ? getWeakRef().get().getContext() : null;
     }
 
     protected boolean hasContext() {
         return hasRef() && getContext() != null;
-    }
-
-    /**
-     * Get {@link <CTX>}, the the generic type of  referenced context;
-     * use hasWeakRef() to check its existence first
-     */
-    @Nullable
-    @Override
-    public CTX getRef() {
-        return mWeakRef.get();
     }
 
     @NonNull

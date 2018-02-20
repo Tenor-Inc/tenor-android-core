@@ -20,12 +20,6 @@ public abstract class WeakRefOnClickListener<CTX> implements IWeakRefObject<CTX>
         mWeakRef = weakRef;
     }
 
-    @Nullable
-    @Override
-    public CTX getRef() {
-        return mWeakRef.get();
-    }
-
     @NonNull
     @Override
     public WeakReference<CTX> getWeakRef() {

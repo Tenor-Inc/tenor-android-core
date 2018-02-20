@@ -25,7 +25,7 @@ public abstract class MeasurableViewHolder<CTX extends IBaseView> extends WeakRe
 
     @NonNull
     private final MeasurableViewHolderData<MeasurableViewHolder<CTX>> mMeasurableViewHolderData;
-    private RecyclerView mRecyclerView;
+    private MeasurableRecyclerView mRecyclerView;
     private boolean mAttached;
     private boolean mDetached;
     private boolean mInitialized;
@@ -98,11 +98,13 @@ public abstract class MeasurableViewHolder<CTX extends IBaseView> extends WeakRe
 
     @Override
     public synchronized float measure(@Nullable RecyclerView recyclerView) {
-        if (!isAttached() || isDetached() || !mInitialized) {
+        if (!isAttached() || isDetached() || !mInitialized || getAdapterPosition() == -1) {
+            mMeasurableViewHolderData.setVisibleFraction(0f);
             return 0f;
         }
 
         if (recyclerView == null) {
+            mMeasurableViewHolderData.setVisibleFraction(0f);
             throw new IllegalStateException("ViewHolder must be attached to a non-null RecyclerView");
         }
 
@@ -119,7 +121,10 @@ public abstract class MeasurableViewHolder<CTX extends IBaseView> extends WeakRe
     @CallSuper
     @Override
     public synchronized void attachMeasurer(@NonNull RecyclerView recyclerView) {
-        mRecyclerView = recyclerView;
+        if (!(recyclerView instanceof MeasurableRecyclerView)) {
+            throw new IllegalStateException("Measurer can only be attached to a MeasurableRecyclerView");
+        }
+        mRecyclerView = (MeasurableRecyclerView) recyclerView;
         mAttached = true;
         mDetached = false;
         mMeasurableViewHolderData.clear();

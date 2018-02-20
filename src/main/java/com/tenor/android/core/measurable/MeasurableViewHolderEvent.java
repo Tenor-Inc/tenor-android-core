@@ -5,7 +5,6 @@ import android.support.annotation.NonNull;
 import com.google.gson.annotations.SerializedName;
 import com.tenor.android.core.constant.ItemVisualPosition;
 import com.tenor.android.core.constant.ViewAction;
-import com.tenor.android.core.constant.ViewActions;
 
 import java.io.Serializable;
 import java.util.Locale;
@@ -26,7 +25,7 @@ public class MeasurableViewHolderEvent implements Serializable {
     @SerializedName("timezone")
     private final String mUtcOffset;
 
-    @ItemVisualPosition
+    @ItemVisualPosition.Value
     @SerializedName("visual_pos")
     private final String mVisualPosition;
 
@@ -38,15 +37,15 @@ public class MeasurableViewHolderEvent implements Serializable {
 
     public MeasurableViewHolderEvent(@NonNull MeasurableViewHolderData data,
                                      @NonNull String utcOffset) {
-        this(data.getId(), ViewActions.VIEW, utcOffset, data.getVisualPosition());
+        this(data.getId(), ViewAction.VIEW, utcOffset, data.getVisualPosition());
         mDuration = String.format(Locale.US, "%d", data.getAccumulatedVisibleDuration());
         mVisibleFraction = String.format(Locale.US, "%f", data.getVisibleFraction());
     }
 
     public MeasurableViewHolderEvent(@NonNull String sourceId,
-                                     @ViewAction String action,
+                                     @ViewAction.Value String action,
                                      @NonNull String utcOffset,
-                                     @ItemVisualPosition String visualPosition) {
+                                     @ItemVisualPosition.Value String visualPosition) {
         mSourceId = sourceId;
         mTimestamp = String.format(Locale.US, "%d", System.currentTimeMillis());
         mAction = action;

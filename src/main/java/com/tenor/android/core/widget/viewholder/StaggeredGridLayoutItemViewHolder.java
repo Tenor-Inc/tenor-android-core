@@ -1,10 +1,8 @@
 package com.tenor.android.core.widget.viewholder;
 
-import android.app.Activity;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.view.View;
 import android.view.ViewGroup;
@@ -39,15 +37,7 @@ public class StaggeredGridLayoutItemViewHolder<CTX extends IBaseView> extends Me
      */
     @Nullable
     public Context getContext() {
-        if (getRef() instanceof Activity) {
-            return (Activity) getRef();
-        }
-
-        if (getRef() instanceof Fragment) {
-            return ((Fragment) getRef()).getActivity();
-        }
-        //noinspection ConstantConditions
-        return hasRef() ? getRef().getContext() : null;
+        return hasRef() ? getWeakRef().get().getContext() : null;
     }
 
     public boolean hasContext() {

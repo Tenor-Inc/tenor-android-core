@@ -79,12 +79,6 @@ public abstract class WeakRefHandlerThread<CTX, H extends Handler> extends Handl
      */
     public abstract H initHandler(@NonNull Looper looper, @NonNull WeakReference<CTX> weakRef);
 
-    @Nullable
-    @Override
-    public CTX getRef() {
-        return mWeakRef.get();
-    }
-
     @NonNull
     @Override
     public WeakReference<CTX> getWeakRef() {

@@ -6,7 +6,12 @@
 
     <application>
         <service
-            android:name="com.tenor.android.core.service.AaidService"
+            android:name="com.tenor.android.core.service.AaidServiceApi26"
+            android:exported="true"
+            android:permission="android.permission.BIND_JOB_SERVICE" />
+
+        <service
+            android:name="com.tenor.android.core.service.AaidServiceCompat"
             android:exported="true"
             android:permission="android.permission.BIND_JOB_SERVICE" />
     </application>

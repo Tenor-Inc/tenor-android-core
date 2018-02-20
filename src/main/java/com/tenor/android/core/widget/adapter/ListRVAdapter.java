@@ -51,14 +51,20 @@ public abstract class ListRVAdapter<CTX extends IBaseView, T, VH extends Recycle
         insert(list, isAppend);
     }
 
-    public void insert(@Nullable final List<T> list) {
+    public void insert(@NonNull List<T> list) {
         insert(list, false);
     }
 
-    public abstract void insert(@Nullable final List<T> list, boolean isAppend);
+    public abstract void insert(@NonNull List<T> list, boolean isAppend);
 
-    public void insert(@Nullable final List<T> list, int position) {
+    public void insert(int position, @NonNull List<T> list) {
         getList().addAll(position, list);
+        notifyItemRangeInserted(position, list.size());
+    }
+
+    public void insert(int position, @NonNull T item) {
+        getList().add(position, item);
+        notifyItemInserted(position);
     }
 
     public void clearList() {

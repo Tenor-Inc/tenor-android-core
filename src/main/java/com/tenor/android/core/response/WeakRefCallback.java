@@ -1,17 +1,21 @@
 package com.tenor.android.core.response;
 
 import android.content.Context;
-import android.os.Handler;
-import android.os.Looper;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
 
-import com.tenor.android.core.util.AbstractGsonUtils;
-import com.tenor.android.core.util.AbstractWeakReferenceUtils;
+import com.tenor.android.core.constant.StringConstant;
+import com.tenor.android.core.util.AbstractIOUtils;
+import com.tenor.android.core.weakref.WeakRefObject;
 import com.tenor.android.core.weakref.WeakRefRunnable;
+import com.tenor.android.core.weakref.WeakRefUiHandler;
 
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.lang.ref.WeakReference;
+import java.net.UnknownHostException;
 
 import okhttp3.ResponseBody;
 import retrofit2.Call;
@@ -23,11 +27,13 @@ import retrofit2.Response;
  * <p>
  * In case of the view is being recycled, this callback will end gracefully
  */
-public abstract class WeakRefCallback<CTX, T> implements Callback<T> {
+public abstract class WeakRefCallback<CTX, T> extends WeakRefObject<CTX> implements Callback<T> {
 
-    private static final String UNKNOWN_ERROR = "unknown error";
-    private final WeakReference<CTX> mWeakRef;
-    private static Handler sUiThread;
+    public static final String ERROR_UNKNOWN = "unknown error";
+    public static final String ERROR_NULL_RESPONSE = "response is null";
+
+    private final WeakRefUiHandler<CTX> mUiThread;
+    private boolean mReportNetworkDropAsException;
 
     /**
      * Constructor
@@ -36,19 +42,25 @@ public abstract class WeakRefCallback<CTX, T> implements Callback<T> {
      *
      * @param ctx the caller view
      */
-    public WeakRefCallback(@NonNull final CTX ctx) {
+    public WeakRefCallback(@NonNull CTX ctx) {
         this(new WeakReference<>(ctx));
     }
 
-    public WeakRefCallback(@NonNull final WeakReference<CTX> weakRef) {
-        mWeakRef = weakRef;
+    public WeakRefCallback(@NonNull WeakReference<CTX> weakRef) {
+        super(weakRef);
+        mUiThread = new WeakRefUiHandler<>(weakRef);
     }
 
-    protected static Handler getUiThread() {
-        if (sUiThread == null) {
-            sUiThread = new Handler(Looper.getMainLooper());
-        }
-        return sUiThread;
+    protected WeakRefUiHandler<CTX> getUiThread() {
+        return mUiThread;
+    }
+
+    public void setReportNetworkDropAsException(boolean report) {
+        mReportNetworkDropAsException = report;
+    }
+
+    public boolean isReportNetworkDropAsException() {
+        return mReportNetworkDropAsException;
     }
 
     /**
@@ -58,64 +70,111 @@ public abstract class WeakRefCallback<CTX, T> implements Callback<T> {
 
     }
 
-    private void runOnUiThread(WeakRefRunnable<CTX> runnable) {
-        if (AbstractWeakReferenceUtils.isAlive(mWeakRef)) {
-            getUiThread().post(runnable);
-        }
-    }
-
     @Override
-    public void onResponse(final Call<T> call, final Response<T> response) {
-        runOnUiThread(new WeakRefRunnable<CTX>(mWeakRef) {
+    public void onResponse(Call<T> call, @Nullable final Response<T> response) {
+        if (!hasRef()) {
+            return;
+        }
+
+        getUiThread().post(new WeakRefRunnable<CTX>(getWeakRef()) {
             @Override
             public void run(@NonNull CTX ctx) {
                 if (response == null) {
-                    failure(ctx, new BaseError(UNKNOWN_ERROR), null);
+                    failure(ctx, new NullPointerException(ERROR_NULL_RESPONSE), null);
                     return;
                 }
 
                 if (response.isSuccessful() && response.body() != null) {
                     success(ctx, response.body(), response.raw());
                 } else {
-                    failure(ctx, processError(response.errorBody()), response.raw());
+                    failure(ctx, createThrowable(response.errorBody()), response.raw());
                 }
             }
         });
     }
 
-    private BaseError processError(ResponseBody errorBody) {
+    @NonNull
+    private static String parseError(@NonNull InputStream is) {
+        BufferedReader bufferedReader = null;
+        StringBuilder sb = new StringBuilder();
+        try {
+            bufferedReader = new BufferedReader(new InputStreamReader(is));
+            String line;
+            while ((line = bufferedReader.readLine()) != null) {
+                sb.append(line);
+            }
+        } catch (Exception ignored) {
+        } finally {
+            AbstractIOUtils.close(bufferedReader);
+        }
+        return sb.toString();
+    }
+
+    @NonNull
+    private static Throwable createThrowable(@Nullable ResponseBody errorBody) {
         if (errorBody == null) {
-            return new BaseError(UNKNOWN_ERROR);
+            return new Throwable(ERROR_UNKNOWN);
+        }
+
+        String message = StringConstant.EMPTY;
+        try {
+            message = errorBody.string();
+        } catch (Throwable ignored) {
+        }
+
+        if (!TextUtils.isEmpty(message)) {
+            return new Throwable(message);
         }
 
         try {
-            if (!TextUtils.isEmpty(errorBody.string())) {
-                return AbstractGsonUtils.getInstance().fromJson(errorBody.string(), BaseError.class);
-            }
+            message = parseError(errorBody.byteStream());
         } catch (Throwable ignored) {
         }
-        return new BaseError(UNKNOWN_ERROR);
+
+        if (!TextUtils.isEmpty(message)) {
+            return new Throwable(message);
+        }
+        return new Throwable(ERROR_UNKNOWN);
     }
 
     @Override
-    public final void onFailure(Call<T> call, final Throwable throwable) {
-        runOnUiThread(new WeakRefRunnable<CTX>(mWeakRef) {
+    public final void onFailure(Call<T> call, @Nullable final Throwable throwable) {
+        if (!hasRef()) {
+            return;
+        }
+
+        getUiThread().post(new WeakRefRunnable<CTX>(getWeakRef()) {
             @Override
-            public void run(@NonNull CTX CTX) {
-                if (throwable != null && "canceled".equalsIgnoreCase(throwable.getMessage())) {
+            public void run(@NonNull CTX ctx) {
+
+                if (throwable == null) {
+                    failure(ctx, new Throwable(ERROR_UNKNOWN), null);
                     return;
                 }
 
-                final String errorMessage = throwable != null && !TextUtils.isEmpty(throwable.getMessage())
-                        ? throwable.getMessage() : UNKNOWN_ERROR;
-                failure(CTX, new BaseError(errorMessage), null);
+                if (isReportNetworkDropAsException()) {
+                    failure(ctx, throwable, null);
+                    return;
+                }
+
+                final boolean isNetworkDrop = "canceled".equalsIgnoreCase(throwable.getMessage())
+                        || throwable instanceof UnknownHostException;
+                if (isNetworkDrop) {
+                    onNetworkDropCaught(throwable);
+                    return;
+                }
+                failure(ctx, throwable, null);
             }
         });
+    }
+
+    public void onNetworkDropCaught(@NonNull Throwable throwable) {
+
     }
 
     public abstract void success(@NonNull CTX ctx, @Nullable T response);
 
-    public abstract void failure(@NonNull CTX ctx, @Nullable BaseError error);
+    public abstract void failure(@NonNull CTX ctx, @Nullable Throwable throwable);
 
     private void success(@NonNull CTX ctx, @Nullable T response, @NonNull okhttp3.Response rawResponse) {
         try {
@@ -125,11 +184,11 @@ public abstract class WeakRefCallback<CTX, T> implements Callback<T> {
         success(ctx, response);
     }
 
-    private void failure(@NonNull CTX ctx, @Nullable BaseError error, @Nullable okhttp3.Response rawResponse) {
+    private void failure(@NonNull CTX ctx, @Nullable Throwable throwable, @Nullable okhttp3.Response rawResponse) {
         try {
             measureResponse(ctx, rawResponse);
         } catch (Throwable ignored) {
         }
-        failure(ctx, error);
+        failure(ctx, throwable);
     }
 }

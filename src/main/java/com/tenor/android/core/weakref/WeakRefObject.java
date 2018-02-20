@@ -2,7 +2,6 @@ package com.tenor.android.core.weakref;
 
 
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 
 import com.tenor.android.core.util.AbstractWeakReferenceUtils;
 
@@ -18,12 +17,6 @@ public class WeakRefObject<CTX> implements IWeakRefObject<CTX> {
 
     public WeakRefObject(@NonNull final WeakReference<CTX> weakRef) {
         mWeakRef = weakRef;
-    }
-
-    @Nullable
-    @Override
-    public CTX getRef() {
-        return mWeakRef.get();
     }
 
     @NonNull

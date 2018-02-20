@@ -31,7 +31,7 @@ public abstract class WeakRefRunnable<T> extends WeakRefObject<T> implements Run
     public void run() {
         if (hasRef()) {
             //noinspection ConstantConditions
-            run(getRef());
+            run(getWeakRef().get());
             onRunCompleted();
         }
     }

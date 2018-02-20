@@ -4,17 +4,34 @@ import android.support.annotation.StringDef;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
 
-import static java.lang.annotation.ElementType.ANNOTATION_TYPE;
-import static java.lang.annotation.ElementType.FIELD;
-import static java.lang.annotation.ElementType.METHOD;
-import static java.lang.annotation.ElementType.PACKAGE;
-import static java.lang.annotation.ElementType.PARAMETER;
+/**
+ * The supported content formats
+ */
+public class ContentFormat {
 
-@Retention(RetentionPolicy.CLASS)
-@StringDef({ContentFormats.IMAGE_GIF, ContentFormats.IMAGE_MP4,
-        ContentFormats.IMAGE_JPEG, ContentFormats.IMAGE_PNG})
-@Target({METHOD, PARAMETER, FIELD, ANNOTATION_TYPE, PACKAGE})
-public @interface ContentFormat {
+    @Retention(RetentionPolicy.CLASS)
+    @StringDef({IMAGE_GIF, IMAGE_MP4, IMAGE_JPEG, IMAGE_PNG})
+    public @interface Value {
+    }
+
+    /**
+     * "image/gif"
+     */
+    public static final String IMAGE_GIF = "image/" + MediaFormat.GIF;
+
+    /**
+     * "image/jpeg"
+     */
+    public static final String IMAGE_JPEG = "image/" + MediaFormat.JPEG;
+
+    /**
+     * "image/png"
+     */
+    public static final String IMAGE_PNG = "image/" + MediaFormat.PNG;
+
+    /**
+     * "image/mp4"
+     */
+    public static final String IMAGE_MP4 = "video/" + MediaFormat.MP4;
 }

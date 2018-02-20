@@ -2,7 +2,6 @@ package com.tenor.android.core.weakref;
 
 import android.os.CountDownTimer;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 
 import com.tenor.android.core.util.AbstractWeakReferenceUtils;
 
@@ -22,12 +21,6 @@ public abstract class WeakRefCountDownTimer<CTX> extends CountDownTimer implemen
                                  long millisInFuture, long countDownInterval) {
         super(millisInFuture, countDownInterval);
         mWeakRef = weakRef;
-    }
-
-    @Nullable
-    @Override
-    public CTX getRef() {
-        return mWeakRef.get();
     }
 
     @NonNull

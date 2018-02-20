@@ -8,7 +8,6 @@ import android.support.v7.widget.RecyclerView;
 import android.view.View;
 
 import com.tenor.android.core.constant.ItemVisualPosition;
-import com.tenor.android.core.constant.ItemVisualPositions;
 import com.tenor.android.core.constant.StringConstant;
 import com.tenor.android.core.model.impl.Result;
 import com.tenor.android.core.util.AbstractLogUtils;
@@ -33,8 +32,8 @@ public class MeasurableViewHolderData<VH extends IMeasurableViewHolder> extends 
     @FloatRange(from = 0f, to = 1f)
     private float mVisibleFraction = 0f;
 
-    @ItemVisualPosition
-    private String mVisualPosition = ItemVisualPositions.UNKNOWN;
+    @ItemVisualPosition.Value
+    private String mVisualPosition = ItemVisualPosition.UNKNOWN;
 
     private String mId = StringConstant.EMPTY;
 
@@ -86,15 +85,15 @@ public class MeasurableViewHolderData<VH extends IMeasurableViewHolder> extends 
     }
 
     public boolean isVisualPositionUnknown() {
-        return ItemVisualPositions.UNKNOWN.equals(getVisualPosition());
+        return ItemVisualPosition.UNKNOWN.equals(getVisualPosition());
     }
 
-    @ItemVisualPosition
+    @ItemVisualPosition.Value
     public String getVisualPosition() {
         return mVisualPosition;
     }
 
-    public void setVisualPosition(@ItemVisualPosition String visualPosition) {
+    public void setVisualPosition(@ItemVisualPosition.Value String visualPosition) {
         mVisualPosition = visualPosition;
     }
 
@@ -120,25 +119,21 @@ public class MeasurableViewHolderData<VH extends IMeasurableViewHolder> extends 
 
     public int getAdapterPosition() {
         // reference GCed
-        if (getRef() == null) {
+        if (!hasRef()) {
             return mAdapterPosition;
         }
 
         // adapter position is not initialized
         if (mAdapterPosition == RecyclerView.NO_POSITION) {
-            mAdapterPosition = getRef().getAdapterPosition();
+            mAdapterPosition = getWeakRef().get().getAdapterPosition();
         }
 
         // adapter position changed to a non NO_POSITION position
-        if (getRef().getAdapterPosition() != RecyclerView.NO_POSITION
-                && mAdapterPosition != getRef().getAdapterPosition()) {
-            mAdapterPosition = getRef().getAdapterPosition();
+        if (getWeakRef().get().getAdapterPosition() != RecyclerView.NO_POSITION
+                && mAdapterPosition != getWeakRef().get().getAdapterPosition()) {
+            mAdapterPosition = getWeakRef().get().getAdapterPosition();
         }
         return mAdapterPosition;
-    }
-
-    public boolean isVisible() {
-        return mVisibility == View.VISIBLE;
     }
 
     public synchronized int getAccumulatedVisibleDuration() {
@@ -181,20 +176,16 @@ public class MeasurableViewHolderData<VH extends IMeasurableViewHolder> extends 
     }
 
     public synchronized void setVisibleFraction(@FloatRange(from = 0f, to = 1f) float visibleFraction) {
-        mVisibleFraction = visibleFraction;
 
-        final boolean wasVisible = isVisible();
-        final int nextVisibility = visibleFraction >= mThreshold ? View.VISIBLE : View.INVISIBLE;
-        final boolean isVisible = nextVisibility == View.VISIBLE;
+        final boolean wasVisible = mVisibleFraction >= mThreshold;
+        final boolean isVisible = visibleFraction >= mThreshold;
+        mVisibleFraction = visibleFraction;
 
         final boolean visibilityChanged = wasVisible ^ isVisible;
         if (!visibilityChanged) {
             // visibility hasn't changed, do nothing
             return;
         }
-
-        // update visibility
-        mVisibility = nextVisibility;
 
         // visibility has changed
         if (isVisible) {

@@ -4,8 +4,6 @@ package com.tenor.android.core.network;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
-import com.tenor.android.core.response.BaseError;
-
 /**
  * Callback for asynchronous anon id API request is done
  */
@@ -17,7 +15,7 @@ public interface IAnonIdListener {
     void onReceiveAnonIdSucceeded(@NonNull String anonId);
 
     /**
-     * @param error the error
+     * @param throwable the {@link Throwable}
      */
-    void onReceiveAnonIdFailed(@Nullable BaseError error);
+    void onReceiveAnonIdFailed(@Nullable Throwable throwable);
 }

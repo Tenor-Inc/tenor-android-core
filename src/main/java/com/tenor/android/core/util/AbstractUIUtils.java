@@ -5,6 +5,7 @@ import android.content.Context;
 import android.os.Build;
 import android.support.annotation.DimenRes;
 import android.support.annotation.FloatRange;
+import android.support.annotation.IntRange;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.DisplayMetrics;
@@ -15,6 +16,7 @@ import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 
 import com.tenor.android.core.R;
+import com.tenor.android.core.checker.ScriptDirectionChecker;
 
 import java.lang.reflect.Method;
 
@@ -142,24 +144,49 @@ public abstract class AbstractUIUtils {
      * @param context the context
      * @return the height of status bar
      */
-    public static int getStatusBarHeight(@Nullable final Context context) {
-        if (context == null) {
-            return 0;
-        }
+    public static int getStatusBarHeight(@NonNull Context context) {
+        return getStatusBarHeight(context, 0);
+    }
 
-        if (!hasOnScreenSystemBar(context)) {
-            return 0;
-        }
-
-        int result = 0;
+    /**
+     * Get status bar height
+     *
+     * @param context the context
+     * @param defVal  the default value if the height is not found
+     * @return the height of status bar
+     */
+    public static int getStatusBarHeight(@NonNull Context context,
+                                         @IntRange(from = 0) int defVal) {
         try {
-            final int resourceId = context.getResources().getIdentifier("status_bar_height", "dimen", "android");
+            final int resourceId = context.getResources()
+                    .getIdentifier("status_bar_height", "dimen", "android");
             if (resourceId > 0) {
-                result = context.getResources().getDimensionPixelSize(resourceId);
+                return context.getResources().getDimensionPixelSize(resourceId);
             }
-        } catch (Exception ignored) {
+        } catch (Throwable ignored) {
         }
-        return result;
+        return defVal;
+    }
+
+    /**
+     * Get status bar height
+     *
+     * @param view the view
+     * @return the height of status bar
+     */
+    public static int getStatusBarHeight(@NonNull View view) {
+        if (Build.VERSION.SDK_INT < 21) {
+            return getStatusBarHeight(view.getContext(), dpToPx(view.getContext(), 24));
+        }
+
+        // this approach only works for API 21+
+        final View v = view.getRootView().findViewById(android.R.id.statusBarBackground);
+        if (v != null) {
+            return v.getHeight();
+        } else {
+            // default status bar height in most cases is 24dp
+            return dpToPx(view.getContext(), 24);
+        }
     }
 
     /**
@@ -228,6 +255,6 @@ public abstract class AbstractUIUtils {
      * @return true if the device is on right to left mode
      */
     public static boolean isRightToLeft(@Nullable final Context context) {
-        return context != null && context.getResources().getBoolean(R.bool.right_to_left);
+        return ScriptDirectionChecker.checkSelfScriptDirection(context) == ScriptDirectionChecker.RIGHT_TO_LEFT;
     }
 }

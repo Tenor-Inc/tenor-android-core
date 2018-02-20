@@ -17,15 +17,15 @@ allprojects {
 apply plugin: 'com.android.library'
 
 ext {
-    mSptLibVer = "26.0.1"
+    mSptLibVer = "26.1.0"
 }
 
 android {
     def vMajor = 0 // range between [0,+INF)
     def vMinor = 5 // range between [0,9]
-    def vPatch = 0 // range between [0,99]
+    def vPatch = 1 // range between [0,99]
     compileSdkVersion 26
-    buildToolsVersion "26.0.1"
+    buildToolsVersion "26.0.3"
 
     defaultConfig {
         minSdkVersion 14

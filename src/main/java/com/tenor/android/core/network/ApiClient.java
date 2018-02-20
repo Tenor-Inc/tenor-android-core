@@ -7,11 +7,11 @@ import android.support.annotation.Nullable;
 import android.support.v4.util.ArrayMap;
 import android.text.TextUtils;
 
-import com.tenor.android.core.constant.ScreenDensities;
+import com.tenor.android.core.constant.ScreenDensity;
+import com.tenor.android.core.constant.StringConstant;
 import com.tenor.android.core.constant.ViewAction;
 import com.tenor.android.core.measurable.MeasurableViewHolderEvent;
 import com.tenor.android.core.model.impl.Result;
-import com.tenor.android.core.response.BaseError;
 import com.tenor.android.core.response.WeakRefCallback;
 import com.tenor.android.core.response.impl.AnonIdResponse;
 import com.tenor.android.core.service.AaidService;
@@ -118,7 +118,7 @@ public class ApiClient {
         }
         map.put("aaid", AbstractSessionUtils.getAndroidAdvertiseId(context));
         map.put("locale", AbstractLocaleUtils.getCurrentLocaleName(context));
-        map.put("screen_density", ScreenDensities.get(context));
+        map.put("screen_density", ScreenDensity.get(context));
         return map;
     }
 
@@ -152,18 +152,19 @@ public class ApiClient {
                         return;
                     }
 
-                    if (TextUtils.isEmpty(response.getId())) {
-                        listener.onReceiveAnonIdFailed(
-                                new BaseError("keyboard id cannot be " + response.getId()));
+                    final String id = response.getId();
+                    if (TextUtils.isEmpty(id)) {
+                        listener.onReceiveAnonIdFailed(new IllegalStateException("keyboard id cannot be empty"));
+                        return;
                     }
-                    listener.onReceiveAnonIdSucceeded(response.getId());
+                    listener.onReceiveAnonIdSucceeded(id);
                 }
             }
 
             @Override
-            public void failure(@NonNull Context app, @Nullable BaseError error) {
+            public void failure(@NonNull Context app, @Nullable Throwable throwable) {
                 if (listener != null) {
-                    listener.onReceiveAnonIdFailed(error);
+                    listener.onReceiveAnonIdFailed(throwable);
                 }
             }
         });
@@ -176,16 +177,18 @@ public class ApiClient {
 
 
     /**
-     * Report shared gif id for better search experience in the future
+     * Report shared GIF id for better search experience in the future
      *
      * @param context the application context
      * @param id      the gif id
+     * @param query   the search query that led to this GIF, or {@code null} for trending GIFs
      * @return {@link Call}<{@link Void}>
      */
-    public static Call<Void> registerShare(@NonNull final Context context,
-                                           @NonNull final String id) {
+    public static Call<Void> registerShare(@NonNull Context context,
+                                           @NonNull String id,
+                                           @Nullable String query) {
         Call<Void> call = ApiClient.getInstance(context)
-                .registerShare(getServiceIds(context), Integer.valueOf(id));
+                .registerShare(getServiceIds(context), Integer.valueOf(id), StringConstant.getOrEmpty(query));
         call.enqueue(new VoidCallBack());
         return call;
     }
@@ -199,7 +202,7 @@ public class ApiClient {
     public static Call<Void> registerAction(@NonNull final Context context,
                                             @NonNull String sourceId,
                                             @NonNull String visualPosition,
-                                            @ViewAction final String action) {
+                                            @ViewAction.Value final String action) {
         return registerAction(context, new MeasurableViewHolderEvent(sourceId, action, AbstractLocaleUtils.getUtcOffset(context), visualPosition));
     }
 

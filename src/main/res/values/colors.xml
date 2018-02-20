@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="transparent">@android:color/transparent</color>
-    <color name="tenor_sdk_primary_color">#007ADD</color>
+    <color name="tenor_sdk_primary_color">#2B90E6</color>
     <color name="tenor_sdk_primary_dark_color">#0062B1</color>
 
     <color name="white">@android:color/white</color>

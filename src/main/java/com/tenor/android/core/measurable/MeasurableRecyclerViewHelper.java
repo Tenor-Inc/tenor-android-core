@@ -1,7 +1,5 @@
 package com.tenor.android.core.measurable;
 
-
-import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
@@ -12,8 +10,8 @@ import java.util.List;
 
 public class MeasurableRecyclerViewHelper {
 
-    public static void onConstruct(@NonNull Context context, @NonNull final RecyclerView recyclerView) {
-        recyclerView.addOnScrollListener(new MeasurableOnScrollListener<>(context));
+    public static void onConstruct(@NonNull final RecyclerView recyclerView) {
+        recyclerView.addOnScrollListener(new MeasurableOnScrollListener());
 
         recyclerView.addOnChildAttachStateChangeListener(new RecyclerView.OnChildAttachStateChangeListener() {
 

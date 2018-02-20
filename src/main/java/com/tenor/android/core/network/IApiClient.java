@@ -4,6 +4,8 @@ package com.tenor.android.core.network;
 import android.support.annotation.IntRange;
 import android.support.annotation.NonNull;
 
+import com.tenor.android.core.constant.AspectRatioRange;
+import com.tenor.android.core.constant.MediaFilter;
 import com.tenor.android.core.measurable.MeasurableViewHolderEvent;
 import com.tenor.android.core.model.impl.Result;
 import com.tenor.android.core.model.impl.Suggestions;
@@ -36,10 +38,12 @@ public interface IApiClient {
     /**
      * Search for gifs based on a query tag
      *
-     * @param serviceIds a {@link Map} of a collection of ids for better content delivery experience
-     * @param query      <b>term</b> being searched for
-     * @param limit      <b>bucket</b> size of each response
-     * @param pos        <b>index</b> for where the first result should come from.  If <b>empty</b>, start at the first result
+     * @param serviceIds       a {@link Map} of a collection of ids for better content delivery experience
+     * @param query            <b>term</b> being searched for
+     * @param limit            <b>bucket</b> size of each response
+     * @param pos              <b>index</b> for where the first result should come from.  If <b>empty</b>, start at the first result
+     * @param mediaFilter      one of the options from {@link MediaFilter}
+     * @param aspectRatioRange one of the options from {@link AspectRatioRange}
      * @return {@link Call}<{@link GifsResponse}>
      */
     @GET("search")
@@ -47,7 +51,9 @@ public interface IApiClient {
     Call<GifsResponse> search(@QueryMap Map<String, String> serviceIds,
                               @Query("q") @NonNull String query,
                               @Query("limit") int limit,
-                              @Query("pos") @NonNull String pos);
+                              @Query("pos") @NonNull String pos,
+                              @Query("media_filter") @MediaFilter.Value String mediaFilter,
+                              @Query("ar_range") String aspectRatioRange);
 
     /**
      * Retrieves a set of tags to be displayed as gif categories,
@@ -75,15 +81,19 @@ public interface IApiClient {
     /**
      * Retrieves a set of <b>GIFs</b> a.k.a {@link Result} representing those that are currently trending
      *
-     * @param serviceIds a {@link Map} of a collection of ids for better content delivery experience
-     * @param limit      <b>bucket</b> size of each response
-     * @param pos        <b>index</b> for where the first result should come from.  If <b>empty</b>, start at the first result
+     * @param serviceIds       a {@link Map} of a collection of ids for better content delivery experience
+     * @param limit            <b>bucket</b> size of each response
+     * @param pos              <b>index</b> for where the first result should come from.  If <b>empty</b>, start at the first result
+     * @param mediaFilter      one of the options from {@link MediaFilter}
+     * @param aspectRatioRange one of the options from {@link AspectRatioRange}
      * @return {@link Call}<{@link TrendingGifResponse}>
      */
     @GET("trending")
     Call<TrendingGifResponse> getTrending(@QueryMap Map<String, String> serviceIds,
                                           @Query("limit") Integer limit,
-                                          @Query("pos") String pos);
+                                          @Query("pos") String pos,
+                                          @Query("media_filter") @MediaFilter.Value String mediaFilter,
+                                          @Query("ar_range") String aspectRatioRange);
 
     /**
      * Retrieves a set of <b>terms</b> a.k.a {@link String} representing those that are currently trending
@@ -99,13 +109,17 @@ public interface IApiClient {
     /**
      * Retrieve gifs with specific ids
      *
-     * @param serviceIds a {@link Map} of a collection of ids for better content delivery experience
-     * @param ids        a comma separated string containing a list of unique ids of the desired gifs
+     * @param serviceIds       a {@link Map} of a collection of ids for better content delivery experience
+     * @param ids              a comma separated string containing a list of unique ids of the desired gifs
+     * @param mediaFilter      one of the options from {@link MediaFilter}
+     * @param aspectRatioRange one of the options from {@link AspectRatioRange}
      * @return {@link Call}<{@link GifsResponse}>
      */
     @GET("gifs")
     Call<GifsResponse> getGifs(@QueryMap Map<String, String> serviceIds,
-                               @Query("ids") String ids);
+                               @Query("ids") String ids,
+                               @Query("media_filter") @MediaFilter.Value String mediaFilter,
+                               @Query("ar_range") String aspectRatioRange);
 
     /**
      * Search
@@ -145,9 +159,31 @@ public interface IApiClient {
                                      @Query("timezone") String utcOffset,
                                      @Query("allterms") boolean isAllTerms);
 
+    /**
+     * Report shared GIF id for better search experience in the future
+     *
+     * @param serviceIds a {@link Map} of a collection of ids for better content delivery experience
+     * @param id         the gif id
+     * @param query      the search query that led to this GIF, or {@code null} for trending GIFs
+     * @return {@link Call}<{@link Void}>
+     */
     @GET("registershare")
     Call<Void> registerShare(@QueryMap Map<String, String> serviceIds,
-                             @Query("id") Integer id);
+                             @Query("id") Integer id,
+                             @Query("q") String query);
+
+    /**
+     * Report search for better search experience in the future
+     *
+     * @param serviceIds a {@link Map} of a collection of ids for better content delivery experience
+     * @param query      the search query that led to this GIF, or {@code null} for trending GIFs
+     * @param pos        either {@link GifsResponse#getNext()} or {@code null}
+     * @return {@link Call}<{@link Void}>
+     */
+    @GET("registersearch")
+    Call<Void> registerSearch(@QueryMap Map<String, String> serviceIds,
+                              @Query("q") String query,
+                              @Query("pos") String pos);
 
     /**
      * Get keyboard id
