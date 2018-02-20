@@ -57,7 +57,7 @@ For either of the import options used, you will also need to add the following d
 ```java
   compile 'com.squareup.retrofit2:converter-gson:2.3.0'
   compile 'com.github.bumptech.glide:glide:3.8.0'
-  compile 'com.android.support:support-annotations:26.0.1'
+  compile 'com.android.support:support-annotations:26.1.0'
 ```
 
 
