@@ -9,6 +9,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
 
+import com.tenor.android.core.helper.ObjectHelper;
 import com.tenor.android.core.util.AbstractListUtils;
 
 import java.net.URLDecoder;
@@ -209,16 +210,12 @@ public abstract class StringConstant {
         });
     }
 
-    public static <T> T getOrDef(@Nullable T t, @NonNull T def) {
-        return t != null ? t : def;
-    }
-
     public static String getOrEmpty(@Nullable String str) {
-        return getOrDef(str, EMPTY);
+        return ObjectHelper.getOrDef(str, EMPTY);
     }
 
     public static CharSequence getOrEmpty(@Nullable CharSequence str) {
-        return getOrDef(str, EMPTY);
+        return ObjectHelper.getOrDef(str, EMPTY);
     }
 
     /**
