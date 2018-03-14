@@ -16,16 +16,20 @@ import java.lang.ref.WeakReference;
  * <p/>
  * This is intended to avoid unintentional leakage on {@link Activity} and {@link android.app.Fragment}
  */
-public abstract class WeakRefHandlerThread<CTX, H extends Handler> extends HandlerThread
+public abstract class WeakRefHandlerThread<CTX, H extends WeakRefHandler<CTX>> extends HandlerThread
         implements IWeakRefObject<CTX> {
 
     private H mHandler;
     private final WeakReference<CTX> mWeakRef;
     private boolean mHandlerPrepared;
 
-    public WeakRefHandlerThread(@NonNull final CTX activity, @NonNull final String id) {
+    public WeakRefHandlerThread(@NonNull CTX ctx, @NonNull String id) {
+        this(new WeakReference<>(ctx), id);
+    }
+
+    public WeakRefHandlerThread(@NonNull WeakReference<CTX> weakRef, @NonNull String id) {
         super(id);
-        mWeakRef = new WeakReference<>(activity);
+        mWeakRef = weakRef;
     }
 
     /**
