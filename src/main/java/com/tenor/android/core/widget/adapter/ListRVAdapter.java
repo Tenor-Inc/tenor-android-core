@@ -35,6 +35,11 @@ public abstract class ListRVAdapter<CTX extends IBaseView, T, VH extends Recycle
         mList = new ArrayList<>();
     }
 
+    @Override
+    public int getItemCount() {
+        return getList().size();
+    }
+
     @CallSuper
     @NonNull
     public List<T> getList() {
