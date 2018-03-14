@@ -9,7 +9,6 @@ import android.text.TextUtils;
 import com.google.gson.Gson;
 import com.tenor.android.core.constant.StringConstant;
 import com.tenor.android.core.network.constant.Protocol;
-import com.tenor.android.core.network.constant.Protocols;
 import com.tenor.android.core.util.AbstractGsonUtils;
 import com.tenor.android.core.util.AbstractListUtils;
 
@@ -98,9 +97,9 @@ public class ApiService<T> implements IApiService<T> {
          * <p>
          * Call this on the onCreate() of your Application
          *
-         * @param protocol {@link Protocol}
+         * @param protocol {@link Protocol.Value}
          */
-        IBuilder<T> protocol(@Protocol String protocol);
+        IBuilder<T> protocol(@Protocol.Value String protocol);
 
         /**
          * Set API server
@@ -148,8 +147,8 @@ public class ApiService<T> implements IApiService<T> {
         protected static final String API_ENDPOINT_FORMATTER = "%1$s://%2$s.tenor.com/v1/";
         protected static final String SERVER_NAME = "api";
 
-        @Protocol
-        private String protocol = Protocols.HTTPS;
+        @Protocol.Value
+        private String protocol = Protocol.HTTPS;
         @NonNull
         private String serverName = SERVER_NAME;
         @NonNull
@@ -194,11 +193,11 @@ public class ApiService<T> implements IApiService<T> {
          * <p>
          * Call this on the onCreate() of your Application
          *
-         * @param protocol {@link Protocols}
+         * @param protocol {@link Protocol}
          */
         @Override
-        public IBuilder<T> protocol(@Protocol String protocol) {
-            this.protocol = Protocols.getOrHttps(protocol);
+        public IBuilder<T> protocol(@Protocol.Value String protocol) {
+            this.protocol = protocol;
             this.endpoint = String.format(API_ENDPOINT_FORMATTER, this.protocol, this.serverName);
             return this;
         }
