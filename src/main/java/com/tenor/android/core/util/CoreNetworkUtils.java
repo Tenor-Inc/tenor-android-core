@@ -7,14 +7,8 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.RequiresPermission;
 import android.telephony.TelephonyManager;
-import android.text.TextUtils;
 
 import com.tenor.android.core.constant.StringConstant;
-
-import java.net.InetAddress;
-import java.net.NetworkInterface;
-import java.net.SocketException;
-import java.util.Enumeration;
 
 /**
  * Contains methods to access the network status
@@ -143,7 +137,7 @@ public class CoreNetworkUtils {
      */
     @NonNull
     @RequiresPermission(android.Manifest.permission.ACCESS_NETWORK_STATE)
-    public static String getNetworkTypeName(@Nullable final Context context) {
+    public static String getNetworkTypeName(@Nullable Context context) {
         if (context == null) {
             return StringConstant.EMPTY;
         }
@@ -159,7 +153,7 @@ public class CoreNetworkUtils {
      */
     @NonNull
     @RequiresPermission(android.Manifest.permission.ACCESS_NETWORK_STATE)
-    public static String getNetworkTypeNameCompat(@Nullable final Context context) {
+    public static String getNetworkTypeNameCompat(@Nullable Context context) {
         if (context == null) {
             return StringConstant.EMPTY;
         }
@@ -175,7 +169,7 @@ public class CoreNetworkUtils {
      */
     @NonNull
     @RequiresPermission(android.Manifest.permission.ACCESS_NETWORK_STATE)
-    public static String getNetworkSubtypeName(@Nullable final Context context) {
+    public static String getNetworkSubtypeName(@Nullable Context context) {
         if (context == null) {
             return StringConstant.EMPTY;
         }
@@ -195,6 +189,12 @@ public class CoreNetworkUtils {
         return (info != null && info.isConnected());
     }
 
+    @RequiresPermission(android.Manifest.permission.ACCESS_NETWORK_STATE)
+    public static boolean isNetworkConnected(@NonNull Context context, int type) {
+        NetworkInfo info = getNetworkInfo(context);
+        return (info != null && info.isConnected() && info.getType() == type);
+    }
+
     /**
      * Checks if device is connected to a wifi network
      *
@@ -203,8 +203,7 @@ public class CoreNetworkUtils {
      */
     @RequiresPermission(android.Manifest.permission.ACCESS_NETWORK_STATE)
     public static boolean isWifiConnected(@NonNull Context context) {
-        NetworkInfo info = getNetworkInfo(context);
-        return (info != null && info.isConnected() && info.getType() == ConnectivityManager.TYPE_WIFI);
+        return isNetworkConnected(context, ConnectivityManager.TYPE_WIFI);
     }
 
     /**
@@ -215,8 +214,7 @@ public class CoreNetworkUtils {
      */
     @RequiresPermission(android.Manifest.permission.ACCESS_NETWORK_STATE)
     public static boolean isCellularConnected(@NonNull Context context) {
-        NetworkInfo info = getNetworkInfo(context);
-        return (info != null && info.isConnected() && info.getType() == ConnectivityManager.TYPE_MOBILE);
+        return isNetworkConnected(context, ConnectivityManager.TYPE_MOBILE);
     }
 
     /**
@@ -407,51 +405,5 @@ public class CoreNetworkUtils {
                 break;
         }
         return t + StringConstant.DASH + st;
-    }
-
-    public static String parseIpAddress(@Nullable final String ip) {
-        if (TextUtils.isEmpty(ip)) {
-            throw new IllegalArgumentException("input: " + ip + " is neither IPv4, nor IPv6");
-        }
-
-        if (ip.indexOf(':') < 0) {
-            // it is already a IPv4
-            return ip;
-        }
-
-        int mark = ip.indexOf('%'); // drop ip6 zone suffix
-        return mark < 0 ? ip.toUpperCase() : ip.substring(0, mark).toUpperCase();
-    }
-
-    public static String getIpAddress() {
-        final Enumeration<NetworkInterface> nis;
-        try {
-            nis = NetworkInterface.getNetworkInterfaces();
-        } catch (SocketException e) {
-            return StringConstant.EMPTY;
-        }
-
-        NetworkInterface ni;
-        Enumeration<InetAddress> eia;
-        InetAddress ia;
-        String ip;
-
-        while (nis.hasMoreElements()) {
-            ni = nis.nextElement();
-            eia = ni.getInetAddresses();
-
-            while (eia.hasMoreElements()) {
-                ia = eia.nextElement();
-
-                if (!ia.isLoopbackAddress()) {
-                    ip = ia.getHostAddress();
-
-                    if (!TextUtils.isEmpty(ip)) {
-                        return parseIpAddress(ip);
-                    }
-                }
-            }
-        }
-        return StringConstant.EMPTY;
     }
 }
