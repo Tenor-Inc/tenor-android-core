@@ -3,7 +3,7 @@ package com.tenor.android.core.model.impl;
 import android.support.annotation.NonNull;
 
 import com.google.gson.annotations.SerializedName;
-import com.tenor.android.core.util.AbstractListUtils;
+import com.tenor.android.core.util.CoreListUtils;
 
 import java.io.Serializable;
 import java.util.Collections;
@@ -20,6 +20,6 @@ public class Suggestions implements Serializable {
 
     @NonNull
     public List<String> getSuggestions() {
-        return !AbstractListUtils.isEmpty(suggestions) ? suggestions : Collections.<String>emptyList();
+        return !CoreListUtils.isEmpty(suggestions) ? suggestions : Collections.<String>emptyList();
     }
 }

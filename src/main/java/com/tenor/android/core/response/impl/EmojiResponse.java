@@ -4,7 +4,7 @@ import android.support.annotation.NonNull;
 
 import com.tenor.android.core.model.impl.EmojiTag;
 import com.tenor.android.core.response.AbstractResponse;
-import com.tenor.android.core.util.AbstractListUtils;
+import com.tenor.android.core.util.CoreListUtils;
 
 import java.util.Collections;
 import java.util.List;
@@ -18,6 +18,6 @@ public class EmojiResponse extends AbstractResponse {
 
     @NonNull
     public List<EmojiTag> getTags() {
-        return !AbstractListUtils.isEmpty(tags) ? tags : Collections.<EmojiTag>emptyList();
+        return !CoreListUtils.isEmpty(tags) ? tags : Collections.<EmojiTag>emptyList();
     }
 }

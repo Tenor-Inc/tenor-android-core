@@ -6,7 +6,7 @@ import android.support.annotation.Nullable;
 import android.text.TextUtils;
 
 import com.tenor.android.core.constant.StringConstant;
-import com.tenor.android.core.util.AbstractIOUtils;
+import com.tenor.android.core.util.CoreIOUtils;
 import com.tenor.android.core.weakref.WeakRefObject;
 import com.tenor.android.core.weakref.WeakRefRunnable;
 import com.tenor.android.core.weakref.WeakRefUiHandler;
@@ -105,7 +105,7 @@ public abstract class WeakRefCallback<CTX, T> extends WeakRefObject<CTX> impleme
             }
         } catch (Exception ignored) {
         } finally {
-            AbstractIOUtils.close(bufferedReader);
+            CoreIOUtils.close(bufferedReader);
         }
         return sb.toString();
     }

@@ -15,8 +15,8 @@ import android.support.annotation.Nullable;
 import android.support.annotation.WorkerThread;
 
 import com.tenor.android.core.constant.StringConstant;
-import com.tenor.android.core.util.AbstractLogUtils;
-import com.tenor.android.core.util.AbstractSessionUtils;
+import com.tenor.android.core.util.CoreLogUtils;
+import com.tenor.android.core.util.CoreSessionUtils;
 
 import java.util.concurrent.LinkedBlockingQueue;
 
@@ -31,18 +31,18 @@ final class AaidClient {
         final AaidInfo info = getAdvertisingId(app);
         switch (info.getState()) {
             case AaidInfo.AAID_GRANTED:
-                AbstractSessionUtils.setAndroidAdvertiseId(app, info.getId());
+                CoreSessionUtils.setAndroidAdvertiseId(app, info.getId());
                 break;
             case AaidInfo.AAID_DENIED:
                 // remove the stored AAID if user explicitly chose to opt out of ad personalization
-                AbstractSessionUtils.setAndroidAdvertiseId(app, StringConstant.EMPTY);
+                CoreSessionUtils.setAndroidAdvertiseId(app, StringConstant.EMPTY);
                 break;
             default:
                 // do nothing
                 break;
         }
 
-        AbstractLogUtils.e(app, "AAID: " + info.getId()
+        CoreLogUtils.e(app, "AAID: " + info.getId()
                 + ", Opt out: " + info.isLimitAdTrackingEnabled()
                 + ", state: " + info.getState());
 

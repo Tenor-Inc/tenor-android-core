@@ -9,8 +9,8 @@ import android.text.TextUtils;
 import com.google.gson.Gson;
 import com.tenor.android.core.constant.StringConstant;
 import com.tenor.android.core.network.constant.Protocol;
-import com.tenor.android.core.util.AbstractGsonUtils;
-import com.tenor.android.core.util.AbstractListUtils;
+import com.tenor.android.core.helper.GsonHelper;
+import com.tenor.android.core.util.CoreListUtils;
 
 import java.io.File;
 import java.io.Serializable;
@@ -160,7 +160,7 @@ public class ApiService<T> implements IApiService<T> {
         @NonNull
         private String apiKey = StringConstant.EMPTY;
         @NonNull
-        private Gson gson = AbstractGsonUtils.getInstance();
+        private Gson gson = GsonHelper.get();
 
         private final Context context;
         private final Class<T> cls;
@@ -234,7 +234,7 @@ public class ApiService<T> implements IApiService<T> {
          */
         @Override
         public IBuilder<T> interceptors(@NonNull List<Interceptor> interceptors) {
-            if (!AbstractListUtils.isEmpty(interceptors)) {
+            if (!CoreListUtils.isEmpty(interceptors)) {
                 this.interceptors.addAll(interceptors);
             }
             return this;

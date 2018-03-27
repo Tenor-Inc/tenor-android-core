@@ -15,9 +15,9 @@ import com.tenor.android.core.model.impl.Result;
 import com.tenor.android.core.response.WeakRefCallback;
 import com.tenor.android.core.response.impl.AnonIdResponse;
 import com.tenor.android.core.service.AaidService;
-import com.tenor.android.core.util.AbstractGsonUtils;
-import com.tenor.android.core.util.AbstractLocaleUtils;
-import com.tenor.android.core.util.AbstractSessionUtils;
+import com.tenor.android.core.helper.GsonHelper;
+import com.tenor.android.core.util.CoreLocaleUtils;
+import com.tenor.android.core.util.CoreSessionUtils;
 
 import java.util.Collections;
 import java.util.List;
@@ -54,7 +54,7 @@ public class ApiClient {
             sApiService = builder.build();
         }
 
-        if (!AbstractSessionUtils.hasAnonId(context)) {
+        if (!CoreSessionUtils.hasAnonId(context)) {
             getAnonId(context, listener);
         }
     }
@@ -111,13 +111,13 @@ public class ApiClient {
          * 3. `locale` is used to deliver curated language/regional specific contents to users
          * 4. `screen_density` is used to optimize the content size to the device
          */
-        final String id = AbstractSessionUtils.getAnonId(context);
+        final String id = CoreSessionUtils.getAnonId(context);
         map.put(id.length() <= 20 ? "keyboardid" : "anon_id", id);
-        if (TextUtils.isEmpty(AbstractSessionUtils.getAndroidAdvertiseId(context))) {
+        if (TextUtils.isEmpty(CoreSessionUtils.getAndroidAdvertiseId(context))) {
             AaidService.requestAaid(context);
         }
-        map.put("aaid", AbstractSessionUtils.getAndroidAdvertiseId(context));
-        map.put("locale", AbstractLocaleUtils.getCurrentLocaleName(context));
+        map.put("aaid", CoreSessionUtils.getAndroidAdvertiseId(context));
+        map.put("locale", CoreLocaleUtils.getCurrentLocaleName(context));
         map.put("screen_density", ScreenDensity.get(context));
         return map;
     }
@@ -140,13 +140,13 @@ public class ApiClient {
 
         // request for new keyboard id
         Call<AnonIdResponse> call = ApiClient.getInstance(app)
-                .getAnonId(sApiService.getApiKey(), AbstractLocaleUtils.getCurrentLocaleName(context));
+                .getAnonId(sApiService.getApiKey(), CoreLocaleUtils.getCurrentLocaleName(context));
 
         call.enqueue(new WeakRefCallback<Context, AnonIdResponse>(app) {
             @Override
             public void success(@NonNull Context app, @Nullable AnonIdResponse response) {
                 if (response != null && !TextUtils.isEmpty(response.getId())) {
-                    AbstractSessionUtils.setAnonId(app, response.getId());
+                    CoreSessionUtils.setAnonId(app, response.getId());
 
                     if (listener == null) {
                         return;
@@ -203,7 +203,7 @@ public class ApiClient {
                                             @NonNull String sourceId,
                                             @NonNull String visualPosition,
                                             @ViewAction.Value final String action) {
-        return registerAction(context, new MeasurableViewHolderEvent(sourceId, action, AbstractLocaleUtils.getUtcOffset(context), visualPosition));
+        return registerAction(context, new MeasurableViewHolderEvent(sourceId, action, CoreLocaleUtils.getUtcOffset(context), visualPosition));
     }
 
     /**
@@ -224,7 +224,7 @@ public class ApiClient {
      */
     public static Call<Void> registerActions(@NonNull final Context context,
                                              @NonNull List<MeasurableViewHolderEvent> events) {
-        final String data = AbstractGsonUtils.getInstance().toJson(events);
+        final String data = GsonHelper.get().toJson(events);
         Call<Void> call = ApiClient.getInstance().registerActions(getServiceIds(context), data);
         call.enqueue(new VoidCallBack());
         return call;

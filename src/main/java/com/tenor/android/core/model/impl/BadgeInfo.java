@@ -5,7 +5,7 @@ import android.support.annotation.FloatRange;
 import android.support.annotation.NonNull;
 
 import com.google.gson.annotations.SerializedName;
-import com.tenor.android.core.util.AbstractListUtils;
+import com.tenor.android.core.util.CoreListUtils;
 
 import java.io.Serializable;
 import java.util.Collections;
@@ -25,7 +25,7 @@ public class BadgeInfo implements Serializable {
     }
 
     public boolean hasBadges() {
-        return !AbstractListUtils.isEmpty(badges);
+        return !CoreListUtils.isEmpty(badges);
     }
 
     @NonNull

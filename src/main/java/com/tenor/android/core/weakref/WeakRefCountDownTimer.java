@@ -3,7 +3,7 @@ package com.tenor.android.core.weakref;
 import android.os.CountDownTimer;
 import android.support.annotation.NonNull;
 
-import com.tenor.android.core.util.AbstractWeakReferenceUtils;
+import com.tenor.android.core.util.CoreWeakReferenceUtils;
 
 import java.lang.ref.WeakReference;
 
@@ -31,7 +31,7 @@ public abstract class WeakRefCountDownTimer<CTX> extends CountDownTimer implemen
 
     @Override
     public boolean hasRef() {
-        return AbstractWeakReferenceUtils.isAlive(mWeakRef);
+        return CoreWeakReferenceUtils.isAlive(mWeakRef);
     }
 
     @Override

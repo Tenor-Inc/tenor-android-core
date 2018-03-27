@@ -10,7 +10,7 @@ import android.support.annotation.Nullable;
 import android.text.TextUtils;
 
 import com.tenor.android.core.helper.ObjectHelper;
-import com.tenor.android.core.util.AbstractListUtils;
+import com.tenor.android.core.util.CoreListUtils;
 
 import java.net.URLDecoder;
 import java.net.URLEncoder;
@@ -173,7 +173,7 @@ public abstract class StringConstant {
                                   @Nullable String separator,
                                   @Nullable IJoinable<T> joinable) {
 
-        if (AbstractListUtils.isEmpty(words) || joinable == null) {
+        if (CoreListUtils.isEmpty(words) || joinable == null) {
             return EMPTY;
         }
 

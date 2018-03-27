@@ -6,8 +6,8 @@ import android.support.v7.widget.OrientationHelper;
 import android.support.v7.widget.RecyclerView;
 
 import com.tenor.android.core.checker.ScriptDirectionChecker;
-import com.tenor.android.core.util.AbstractLayoutManagerUtils;
-import com.tenor.android.core.util.AbstractLogUtils;
+import com.tenor.android.core.util.CoreLayoutManagerUtils;
+import com.tenor.android.core.util.CoreLogUtils;
 
 import java.util.List;
 
@@ -60,7 +60,7 @@ public class MeasurableOnScrollListener extends RecyclerView.OnScrollListener {
             case RecyclerView.SCROLL_STATE_DRAGGING:
                 // distinct drag to improve accuracy, init mDraggingStart and mDraggingEnd here
                 mDragging = true;
-                final int[] range = AbstractLayoutManagerUtils.getVisibleRange(recyclerView);
+                final int[] range = CoreLayoutManagerUtils.getVisibleRange(recyclerView);
                 mDraggingStart = range[0];
                 mDraggingEnd = range[1];
                 break;
@@ -72,7 +72,7 @@ public class MeasurableOnScrollListener extends RecyclerView.OnScrollListener {
 
                 // perform final update on the range we have ever visited
                 updateVisibleRange(recyclerView);
-                AbstractLogUtils.e(this, "==>  visible range: [" + mDraggingStart + ", " + mDraggingEnd + "]");
+                CoreLogUtils.e(this, "==>  visible range: [" + mDraggingStart + ", " + mDraggingEnd + "]");
                 MeasurableRecyclerViewHelper.notifyMeasurableViewHolderDataRangeChanged(recyclerView, mDraggingStart, mDraggingEnd);
 
                 // reset mDraggingStart and mDraggingEnd here
@@ -95,9 +95,9 @@ public class MeasurableOnScrollListener extends RecyclerView.OnScrollListener {
                         holder.flush();
                     }
 
-                    if (AbstractLayoutManagerUtils.getOrientation(recyclerView.getLayoutManager())
+                    if (CoreLayoutManagerUtils.getOrientation(recyclerView.getLayoutManager())
                             == OrientationHelper.HORIZONTAL) {
-                        AbstractLayoutManagerUtils.setReverseLayout(recyclerView.getLayoutManager(),
+                        CoreLayoutManagerUtils.setReverseLayout(recyclerView.getLayoutManager(),
                                 state == ScriptDirectionChecker.RIGHT_TO_LEFT);
                     }
                     mScriptDirectionState = state;
@@ -131,7 +131,7 @@ public class MeasurableOnScrollListener extends RecyclerView.OnScrollListener {
          * this just a rough range, each start/end item on each span may not be completely
          * visible
          */
-        final int[] range = AbstractLayoutManagerUtils.getVisibleRange(recyclerView);
+        final int[] range = CoreLayoutManagerUtils.getVisibleRange(recyclerView);
         if (range[0] > RecyclerView.NO_POSITION && range[0] < mDraggingStart) {
             mDraggingStart = range[0];
         }

@@ -5,7 +5,7 @@ import android.support.annotation.NonNull;
 
 import com.tenor.android.core.concurrent.ConcurrentFifoQueue;
 import com.tenor.android.core.network.ApiClient;
-import com.tenor.android.core.util.AbstractLocaleUtils;
+import com.tenor.android.core.util.CoreLocaleUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -87,7 +87,7 @@ public class ViewHolderDataManager extends ConcurrentFifoQueue<MeasurableViewHol
      */
     public synchronized static void push(@NonNull final Context context,
                                          @NonNull final MeasurableViewHolderData data) {
-        final String utcOffset = AbstractLocaleUtils.getUtcOffset(context);
+        final String utcOffset = CoreLocaleUtils.getUtcOffset(context);
         get().push(context, new MeasurableViewHolderEvent(data, utcOffset));
     }
 }

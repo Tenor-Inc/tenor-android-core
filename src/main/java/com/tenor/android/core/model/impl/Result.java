@@ -8,7 +8,7 @@ import android.text.TextUtils;
 import com.google.gson.annotations.SerializedName;
 import com.tenor.android.core.constant.StringConstant;
 import com.tenor.android.core.model.IGif;
-import com.tenor.android.core.util.AbstractListUtils;
+import com.tenor.android.core.util.CoreListUtils;
 import com.tenor.android.core.validator.ColorHex;
 import com.tenor.android.core.validator.FloatString;
 
@@ -91,7 +91,7 @@ public class Result implements IGif {
      */
     @NonNull
     public List<MediaCollection> getMedias() {
-        return !AbstractListUtils.isEmpty(medias) ? medias : Collections.<MediaCollection>emptyList();
+        return !CoreListUtils.isEmpty(medias) ? medias : Collections.<MediaCollection>emptyList();
     }
 
     /**
@@ -99,7 +99,7 @@ public class Result implements IGif {
      */
     @NonNull
     public List<String> getTags() {
-        return !AbstractListUtils.isEmpty(tags) ? tags : Collections.<String>emptyList();
+        return !CoreListUtils.isEmpty(tags) ? tags : Collections.<String>emptyList();
     }
 
     /**

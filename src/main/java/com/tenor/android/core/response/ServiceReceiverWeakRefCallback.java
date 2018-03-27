@@ -4,7 +4,7 @@ import android.os.ResultReceiver;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
-import com.tenor.android.core.util.AbstractWeakReferenceUtils;
+import com.tenor.android.core.util.CoreWeakReferenceUtils;
 
 import java.lang.ref.WeakReference;
 
@@ -26,14 +26,14 @@ public abstract class ServiceReceiverWeakRefCallback<CTX, T> extends WeakRefCall
 
     @Override
     public final void success(@NonNull CTX service, T response) {
-        if (AbstractWeakReferenceUtils.isAlive(mWeakRefReceiver)) {
+        if (CoreWeakReferenceUtils.isAlive(mWeakRefReceiver)) {
             success(mWeakRefReceiver.get(), service, response);
         }
     }
 
     @Override
     public final void failure(@NonNull CTX service, Throwable throwable) {
-        if (AbstractWeakReferenceUtils.isAlive(mWeakRefReceiver)) {
+        if (CoreWeakReferenceUtils.isAlive(mWeakRefReceiver)) {
             failure(mWeakRefReceiver.get(), service, throwable);
         }
     }

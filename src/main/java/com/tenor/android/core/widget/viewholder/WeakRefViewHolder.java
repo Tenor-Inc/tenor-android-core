@@ -5,7 +5,7 @@ import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 
-import com.tenor.android.core.util.AbstractWeakReferenceUtils;
+import com.tenor.android.core.util.CoreWeakReferenceUtils;
 import com.tenor.android.core.weakref.IWeakRefObject;
 
 import java.lang.ref.WeakReference;
@@ -33,7 +33,7 @@ public abstract class WeakRefViewHolder<CTX> extends RecyclerView.ViewHolder
 
     @Override
     public boolean hasRef() {
-        return AbstractWeakReferenceUtils.isAlive(mWeakRef);
+        return CoreWeakReferenceUtils.isAlive(mWeakRef);
     }
 
     public abstract Context getContext();

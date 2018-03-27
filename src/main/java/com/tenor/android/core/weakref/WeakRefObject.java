@@ -3,7 +3,7 @@ package com.tenor.android.core.weakref;
 
 import android.support.annotation.NonNull;
 
-import com.tenor.android.core.util.AbstractWeakReferenceUtils;
+import com.tenor.android.core.util.CoreWeakReferenceUtils;
 
 import java.lang.ref.WeakReference;
 
@@ -27,6 +27,6 @@ public class WeakRefObject<CTX> implements IWeakRefObject<CTX> {
 
     @Override
     public boolean hasRef() {
-        return AbstractWeakReferenceUtils.isAlive(mWeakRef);
+        return CoreWeakReferenceUtils.isAlive(mWeakRef);
     }
 }

@@ -10,7 +10,7 @@ import android.view.View;
 import com.tenor.android.core.constant.ItemVisualPosition;
 import com.tenor.android.core.constant.StringConstant;
 import com.tenor.android.core.model.impl.Result;
-import com.tenor.android.core.util.AbstractLogUtils;
+import com.tenor.android.core.util.CoreLogUtils;
 import com.tenor.android.core.weakref.WeakRefObject;
 
 import java.io.Serializable;
@@ -168,7 +168,7 @@ public class MeasurableViewHolderData<VH extends IMeasurableViewHolder> extends 
 
         final boolean useful = mEnhancedContent
                 && getAccumulatedVisibleDuration() > 0 && getAccumulatedVisibleCount() > 0;
-        AbstractLogUtils.e(this, "==> flushed\n" + (useful ? toString() : StringConstant.EMPTY));
+        CoreLogUtils.e(this, "==> flushed\n" + (useful ? toString() : StringConstant.EMPTY));
         if (useful) {
             ViewHolderDataManager.push(context, this);
         }
@@ -198,7 +198,7 @@ public class MeasurableViewHolderData<VH extends IMeasurableViewHolder> extends 
     private void becomesVisible() {
         updateTimestamp();
         mAccumulatedVisibleCount++;
-        AbstractLogUtils.e(this, "==> item[" + getAdapterPosition() + "] becomes Visible");
+        CoreLogUtils.e(this, "==> item[" + getAdapterPosition() + "] becomes Visible");
     }
 
     private void becomesInvisible() {
@@ -208,7 +208,7 @@ public class MeasurableViewHolderData<VH extends IMeasurableViewHolder> extends 
         final long duration = System.currentTimeMillis() - mTimestampOnVisible;
         mAccumulatedVisibleDuration += duration;
         resetTimestamp();
-        AbstractLogUtils.e(this, "==> item[" + getAdapterPosition() + "] becomes Invisible");
+        CoreLogUtils.e(this, "==> item[" + getAdapterPosition() + "] becomes Invisible");
     }
 
     public String toString() {

@@ -9,7 +9,7 @@ import android.view.ViewGroup;
 
 import com.tenor.android.core.model.impl.BadgeInfo;
 import com.tenor.android.core.model.impl.Result;
-import com.tenor.android.core.util.AbstractLayoutManagerUtils;
+import com.tenor.android.core.util.CoreLayoutManagerUtils;
 import com.tenor.android.core.view.IBaseView;
 import com.tenor.android.core.widget.viewholder.WeakRefViewHolder;
 
@@ -112,7 +112,7 @@ public abstract class MeasurableViewHolder<CTX extends IBaseView> extends WeakRe
         mMeasurableViewHolderData.setVisibleFraction(visibleFraction);
 
         if (mMeasurableViewHolderData.isVisualPositionUnknown()) {
-            final String visualPosition = AbstractLayoutManagerUtils.getVisualPosition(getContext(), itemView);
+            final String visualPosition = CoreLayoutManagerUtils.getVisualPosition(getContext(), itemView);
             mMeasurableViewHolderData.setVisualPosition(visualPosition);
         }
         return visibleFraction;

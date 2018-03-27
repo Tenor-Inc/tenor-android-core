@@ -7,7 +7,7 @@ import java.lang.ref.WeakReference;
 /**
  * The weak reference utility class
  */
-public abstract class AbstractWeakReferenceUtils {
+public class CoreWeakReferenceUtils {
 
     public static <T> boolean isAlive(@Nullable final WeakReference<T> weakReference) {
         return weakReference != null && weakReference.get() != null;

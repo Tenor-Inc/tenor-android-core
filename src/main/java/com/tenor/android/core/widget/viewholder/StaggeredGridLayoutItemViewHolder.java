@@ -8,7 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.tenor.android.core.measurable.MeasurableViewHolder;
-import com.tenor.android.core.util.AbstractUIUtils;
+import com.tenor.android.core.util.CoreUIUtils;
 import com.tenor.android.core.view.IBaseView;
 
 /**
@@ -72,7 +72,7 @@ public class StaggeredGridLayoutItemViewHolder<CTX extends IBaseView> extends Me
         if (!hasContext()) {
             return;
         }
-        final int h = height >= 0 ? AbstractUIUtils.dpToPx(getContext(), height) : height;
+        final int h = height >= 0 ? CoreUIUtils.dpToPx(getContext(), height) : height;
         setFullWidthWithHeightInPixel(h);
     }
 
@@ -83,7 +83,7 @@ public class StaggeredGridLayoutItemViewHolder<CTX extends IBaseView> extends Me
         if (!hasContext()) {
             return;
         }
-        final int w = width >= 0 ? AbstractUIUtils.dpToPx(getContext(), width) : width;
+        final int w = width >= 0 ? CoreUIUtils.dpToPx(getContext(), width) : width;
         StaggeredGridLayoutManager.LayoutParams params =
                 new StaggeredGridLayoutManager.LayoutParams(w, ViewGroup.LayoutParams.MATCH_PARENT);
         params.setFullSpan(true);
@@ -97,7 +97,7 @@ public class StaggeredGridLayoutItemViewHolder<CTX extends IBaseView> extends Me
         if (!hasContext()) {
             return;
         }
-        setHeightInPixel(AbstractUIUtils.dpToPx(getContext(), height));
+        setHeightInPixel(CoreUIUtils.dpToPx(getContext(), height));
     }
 
     /**

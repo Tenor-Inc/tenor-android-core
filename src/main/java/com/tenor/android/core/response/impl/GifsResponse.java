@@ -6,7 +6,7 @@ import android.text.TextUtils;
 import com.tenor.android.core.constant.StringConstant;
 import com.tenor.android.core.model.impl.Result;
 import com.tenor.android.core.response.AbstractResponse;
-import com.tenor.android.core.util.AbstractListUtils;
+import com.tenor.android.core.util.CoreListUtils;
 
 import java.util.Collections;
 import java.util.List;
@@ -30,6 +30,6 @@ public class GifsResponse extends AbstractResponse {
 
     @NonNull
     public List<Result> getResults() {
-        return !AbstractListUtils.isEmpty(results) ? results : Collections.<Result>emptyList();
+        return !CoreListUtils.isEmpty(results) ? results : Collections.<Result>emptyList();
     }
 }

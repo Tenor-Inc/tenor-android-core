@@ -5,7 +5,7 @@ import android.support.annotation.IntRange;
 import android.support.annotation.Nullable;
 import android.support.annotation.StringDef;
 
-import com.tenor.android.core.util.AbstractUIUtils;
+import com.tenor.android.core.util.CoreUIUtils;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -27,7 +27,7 @@ public class ItemVisualPosition {
         if (context == null) {
             return UNKNOWN;
         }
-        return parse(spanIndex, AbstractUIUtils.isRightToLeft(context));
+        return parse(spanIndex, CoreUIUtils.isRightToLeft(context));
     }
 
     @Value

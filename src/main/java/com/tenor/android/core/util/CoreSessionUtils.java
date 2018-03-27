@@ -11,7 +11,8 @@ import com.tenor.android.core.constant.StringConstant;
 /**
  * The session utility class
  */
-public abstract class AbstractSessionUtils {
+public class CoreSessionUtils {
+    
     private static final String DEVICE_PREF = "device_preferences";
 
     /**

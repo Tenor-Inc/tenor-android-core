@@ -8,7 +8,7 @@ import java.util.List;
 /**
  * Contains helper methods to manipulate {@link List}
  */
-public abstract class AbstractListUtils {
+public class CoreListUtils {
 
     /**
      * Check if the given array is null or with no item in it

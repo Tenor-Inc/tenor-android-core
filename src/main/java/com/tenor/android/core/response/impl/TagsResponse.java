@@ -4,7 +4,7 @@ import android.support.annotation.NonNull;
 
 import com.tenor.android.core.model.impl.Tag;
 import com.tenor.android.core.response.AbstractResponse;
-import com.tenor.android.core.util.AbstractListUtils;
+import com.tenor.android.core.util.CoreListUtils;
 
 import java.util.Collections;
 import java.util.List;
@@ -19,6 +19,6 @@ public class TagsResponse extends AbstractResponse {
 
     @NonNull
     public List<Tag> getTags() {
-        return !AbstractListUtils.isEmpty(tags) ? tags : Collections.<Tag>emptyList();
+        return !CoreListUtils.isEmpty(tags) ? tags : Collections.<Tag>emptyList();
     }
 }

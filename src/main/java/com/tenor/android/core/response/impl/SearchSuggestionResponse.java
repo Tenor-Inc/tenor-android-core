@@ -3,7 +3,7 @@ package com.tenor.android.core.response.impl;
 import android.support.annotation.NonNull;
 
 import com.tenor.android.core.response.AbstractResponse;
-import com.tenor.android.core.util.AbstractListUtils;
+import com.tenor.android.core.util.CoreListUtils;
 
 import java.util.Collections;
 import java.util.List;
@@ -18,6 +18,6 @@ public class SearchSuggestionResponse extends AbstractResponse {
 
     @NonNull
     public List<String> getResults() {
-        return !AbstractListUtils.isEmpty(results) ? results : Collections.<String>emptyList();
+        return !CoreListUtils.isEmpty(results) ? results : Collections.<String>emptyList();
     }
 }

@@ -5,6 +5,7 @@ import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.annotation.RequiresPermission;
 import android.telephony.TelephonyManager;
 
 import com.tenor.android.core.constant.StringConstant;
@@ -15,7 +16,7 @@ import java.util.Locale;
 /**
  * The locale utility class
  */
-public abstract class AbstractLocaleUtils {
+public class CoreLocaleUtils {
 
     public static final String ISO_US = "us";
 
@@ -88,6 +89,7 @@ public abstract class AbstractLocaleUtils {
      * @param context the given context
      * @return true if the phone is currently within the U.S.
      */
+    @RequiresPermission(android.Manifest.permission.ACCESS_NETWORK_STATE)
     public static boolean isUSRegion(@Nullable final Context context) {
         if (context == null) {
             return false;
@@ -108,7 +110,7 @@ public abstract class AbstractLocaleUtils {
             return false;
         }
 
-        if (AbstractNetworkUtils.isWifiConnected(context)
+        if (CoreNetworkUtils.isWifiConnected(context)
                 && telephonyManager.getPhoneType() != TelephonyManager.NETWORK_TYPE_CDMA) {
             return ISO_US.equals(telephonyManager.getNetworkCountryIso());
         }

@@ -23,13 +23,13 @@ import java.lang.reflect.Method;
 /**
  * The UI utility class
  */
-public abstract class AbstractUIUtils {
+public class CoreUIUtils {
 
-    public static void hideInputMethod(@Nullable final Activity activity) {
+    public static void hideInputMethod(@Nullable Activity activity) {
         hideInputMethod(activity, 0);
     }
 
-    public static void hideInputMethod(@Nullable final View view) {
+    public static void hideInputMethod(@Nullable View view) {
         hideInputMethod(view, 0);
     }
 
@@ -52,7 +52,7 @@ public abstract class AbstractUIUtils {
     /**
      * @param flags Provides additional operating flags.  Set to 0 if there are no additional flags.
      */
-    public static void hideInputMethod(@Nullable final Activity activity, int flags) {
+    public static void hideInputMethod(@Nullable Activity activity, int flags) {
         if (activity == null || activity.getCurrentFocus() == null) {
             return;
         }
@@ -65,7 +65,7 @@ public abstract class AbstractUIUtils {
     /**
      * @param flags Provides additional operating flags.  Set to 0 if there are no additional flags.
      */
-    public static void showInputMethod(@Nullable final Activity activity, int flags) {
+    public static void showInputMethod(@Nullable Activity activity, int flags) {
         if (activity == null || activity.getCurrentFocus() == null) {
             return;
         }
@@ -99,7 +99,8 @@ public abstract class AbstractUIUtils {
      * @param activity the activity
      * @return true if destroyed.  False if still alive, or call performed on device of API 16 and below
      * <p>
-     * @targetApi 17
+     * TargetApi 17
+     * <p>
      * Calls Activity method isDestroyed() on supplied activity.
      */
     public static boolean isActivityDestroyed(@Nullable Activity activity) {
@@ -112,8 +113,8 @@ public abstract class AbstractUIUtils {
      * @param dp      the density-independent pixels
      * @return the given value in pixels
      */
-    public static int dpToPx(@NonNull final Context context,
-                             @FloatRange(from = 0f, to = Float.MAX_VALUE) final float dp) {
+    public static int dpToPx(@NonNull Context context,
+                             @FloatRange(from = 0f, to = Float.MAX_VALUE) float dp) {
         return Math.round(TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp, context.getResources().getDisplayMetrics()));
     }
 
@@ -134,7 +135,7 @@ public abstract class AbstractUIUtils {
      * @param dimensionResId <b>"dimen"</b> resource id name
      * @return conversion of the resource's value into pixel length
      */
-    public static int getDimension(@NonNull final Context context, @DimenRes final int dimensionResId) {
+    public static int getDimension(@NonNull Context context, @DimenRes int dimensionResId) {
         return Math.round(context.getResources().getDimension(dimensionResId));
     }
 
@@ -195,7 +196,7 @@ public abstract class AbstractUIUtils {
      * @param context the context
      * @return the screen width in pixels
      */
-    public static int getScreenWidth(@Nullable final Context context) {
+    public static int getScreenWidth(@Nullable Context context) {
         if (context == null) {
             return 0;
         }
@@ -209,7 +210,7 @@ public abstract class AbstractUIUtils {
      * @param context the context
      * @return the screen height in pixels
      */
-    public static int getScreenHeight(@Nullable final Context context) {
+    public static int getScreenHeight(@Nullable Context context) {
         if (context == null) {
             return 0;
         }
@@ -223,7 +224,7 @@ public abstract class AbstractUIUtils {
      * @param context the context
      * @return true if there is system bar on screen
      */
-    public static boolean hasOnScreenSystemBar(@NonNull final Context context) {
+    public static boolean hasOnScreenSystemBar(@NonNull Context context) {
         final WindowManager wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
         final Display display = wm.getDefaultDisplay();
         int displayHeight = 0;
@@ -244,7 +245,7 @@ public abstract class AbstractUIUtils {
      * @param context the context
      * @return true if the device is on landscape mode
      */
-    public static boolean isLandscape(@Nullable final Context context) {
+    public static boolean isLandscape(@Nullable Context context) {
         return context != null && context.getResources().getBoolean(R.bool.landscape);
     }
 
@@ -254,7 +255,7 @@ public abstract class AbstractUIUtils {
      * @param context the context
      * @return true if the device is on right to left mode
      */
-    public static boolean isRightToLeft(@Nullable final Context context) {
+    public static boolean isRightToLeft(@Nullable Context context) {
         return ScriptDirectionChecker.checkSelfScriptDirection(context) == ScriptDirectionChecker.RIGHT_TO_LEFT;
     }
 }

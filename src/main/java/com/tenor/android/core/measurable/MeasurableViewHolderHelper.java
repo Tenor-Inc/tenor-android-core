@@ -7,7 +7,7 @@ import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 
-import com.tenor.android.core.util.AbstractUIUtils;
+import com.tenor.android.core.util.CoreUIUtils;
 
 /**
  * Helper of {@link MeasurableViewHolder}
@@ -53,7 +53,7 @@ public class MeasurableViewHolderHelper {
         int[] location = new int[2];
         itemView.getLocationInWindow(location);
 
-        final boolean rtl = AbstractUIUtils.isRightToLeft(recyclerView.getContext());
+        final boolean rtl = CoreUIUtils.isRightToLeft(recyclerView.getContext());
         final int width = itemView.getMeasuredWidth();
         final int height = itemView.getMeasuredHeight();
 

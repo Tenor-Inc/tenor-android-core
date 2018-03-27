@@ -7,7 +7,7 @@ import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
 
 import com.tenor.android.core.measurable.IRecyclerView;
-import com.tenor.android.core.util.AbstractWeakReferenceUtils;
+import com.tenor.android.core.util.CoreWeakReferenceUtils;
 import com.tenor.android.core.weakref.IWeakRefHandler;
 import com.tenor.android.core.weakref.IWeakRefObject;
 import com.tenor.android.core.weakref.WeakRefCurrentHandler;
@@ -53,6 +53,6 @@ public class WeakRefRecyclerView extends RecyclerView implements IRecyclerView, 
 
     @Override
     public boolean hasRef() {
-        return AbstractWeakReferenceUtils.isAlive(mWeakRef);
+        return CoreWeakReferenceUtils.isAlive(mWeakRef);
     }
 }

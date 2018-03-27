@@ -7,7 +7,7 @@ import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.tenor.android.core.util.AbstractWeakReferenceUtils;
+import com.tenor.android.core.util.CoreWeakReferenceUtils;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -43,7 +43,7 @@ public class AssetLoader {
                                                        @NonNull ImageView imageView,
                                                        @NonNull String assetPath) {
 
-        if (!AbstractWeakReferenceUtils.isAlive(weakRef)) {
+        if (!CoreWeakReferenceUtils.isAlive(weakRef)) {
             return;
         }
 

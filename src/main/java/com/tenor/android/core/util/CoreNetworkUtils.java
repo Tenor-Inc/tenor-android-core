@@ -5,6 +5,7 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.annotation.RequiresPermission;
 import android.telephony.TelephonyManager;
 import android.text.TextUtils;
 
@@ -18,13 +19,14 @@ import java.util.Enumeration;
 /**
  * Contains methods to access the network status
  */
-public abstract class AbstractNetworkUtils {
+public class CoreNetworkUtils {
 
     private static int sBatchSize = -1;
 
     /**
      * Get the batch size
      */
+    @RequiresPermission(android.Manifest.permission.ACCESS_NETWORK_STATE)
     public static int getBatchSize(@Nullable final Context context) {
         // Use the cached sBatchSize
         return sBatchSize > 0 ? sBatchSize : updateBatchSize(context);
@@ -35,6 +37,7 @@ public abstract class AbstractNetworkUtils {
      *
      * @param context the context, usually the application context
      */
+    @RequiresPermission(android.Manifest.permission.ACCESS_NETWORK_STATE)
     public static int updateBatchSize(@Nullable final Context context) {
         if (context == null) {
             sBatchSize = 6;
@@ -112,6 +115,7 @@ public abstract class AbstractNetworkUtils {
      * @return current network info
      */
     @Nullable
+    @RequiresPermission(android.Manifest.permission.ACCESS_NETWORK_STATE)
     public static NetworkInfo getNetworkInfo(@Nullable final Context context) {
         if (context == null) {
             return null;
@@ -138,6 +142,7 @@ public abstract class AbstractNetworkUtils {
      * @return the current network type name
      */
     @NonNull
+    @RequiresPermission(android.Manifest.permission.ACCESS_NETWORK_STATE)
     public static String getNetworkTypeName(@Nullable final Context context) {
         if (context == null) {
             return StringConstant.EMPTY;
@@ -153,6 +158,7 @@ public abstract class AbstractNetworkUtils {
      * @return the current network type name
      */
     @NonNull
+    @RequiresPermission(android.Manifest.permission.ACCESS_NETWORK_STATE)
     public static String getNetworkTypeNameCompat(@Nullable final Context context) {
         if (context == null) {
             return StringConstant.EMPTY;
@@ -168,6 +174,7 @@ public abstract class AbstractNetworkUtils {
      * @return the current network subtype name
      */
     @NonNull
+    @RequiresPermission(android.Manifest.permission.ACCESS_NETWORK_STATE)
     public static String getNetworkSubtypeName(@Nullable final Context context) {
         if (context == null) {
             return StringConstant.EMPTY;
@@ -182,6 +189,7 @@ public abstract class AbstractNetworkUtils {
      * @param context the context
      * @return true if connected
      */
+    @RequiresPermission(android.Manifest.permission.ACCESS_NETWORK_STATE)
     public static boolean isNetworkConnected(@NonNull Context context) {
         NetworkInfo info = getNetworkInfo(context);
         return (info != null && info.isConnected());
@@ -193,6 +201,7 @@ public abstract class AbstractNetworkUtils {
      * @param context the context
      * @return true if device is connected to Wifi
      */
+    @RequiresPermission(android.Manifest.permission.ACCESS_NETWORK_STATE)
     public static boolean isWifiConnected(@NonNull Context context) {
         NetworkInfo info = getNetworkInfo(context);
         return (info != null && info.isConnected() && info.getType() == ConnectivityManager.TYPE_WIFI);
@@ -204,6 +213,7 @@ public abstract class AbstractNetworkUtils {
      * @param context the context
      * @return true if connected
      */
+    @RequiresPermission(android.Manifest.permission.ACCESS_NETWORK_STATE)
     public static boolean isCellularConnected(@NonNull Context context) {
         NetworkInfo info = getNetworkInfo(context);
         return (info != null && info.isConnected() && info.getType() == ConnectivityManager.TYPE_MOBILE);
@@ -215,6 +225,7 @@ public abstract class AbstractNetworkUtils {
      * @param context the context
      * @return true if device is connected to a fast network connection
      */
+    @RequiresPermission(android.Manifest.permission.ACCESS_NETWORK_STATE)
     public static boolean isFastNetworkConnected(@NonNull Context context) {
         NetworkInfo info = getNetworkInfo(context);
         return (info != null && info.isConnected() && isNetworkConnected(info.getType(), info.getSubtype()));

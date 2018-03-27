@@ -13,7 +13,7 @@ import android.view.ViewGroup;
 
 import com.tenor.android.core.constant.ItemVisualPosition;
 
-public abstract class AbstractLayoutManagerUtils {
+public abstract class CoreLayoutManagerUtils {
 
     /**
      * @param layoutManager the given subclass of {@link RecyclerView.LayoutManager}
@@ -220,7 +220,7 @@ public abstract class AbstractLayoutManagerUtils {
      * @return true if the device is on right to left mode
      */
     public static boolean isRightToLeft(@NonNull RecyclerView recyclerView) {
-        return AbstractUIUtils.isRightToLeft(recyclerView.getContext())
+        return CoreUIUtils.isRightToLeft(recyclerView.getContext())
                 && getOrientation(recyclerView.getLayoutManager()) == OrientationHelper.HORIZONTAL;
     }
 
