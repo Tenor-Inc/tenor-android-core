@@ -117,7 +117,7 @@ public class DrawableLoaderTaskParams<T extends ImageView> implements IDrawableL
                     }
 
                     @Override
-                    public void failure(@NonNull T target, @NonNull Drawable errorResult) {
+                    public void failure(@NonNull T target, @Nullable Drawable errorResult) {
 
                     }
                 };

@@ -65,6 +65,11 @@ public class ItemBadgePosition {
             case EXTERIOR_BOTTOM_RIGHT:
             case EXTERIOR_BOTTOM_LEFT:
                 return true;
+            case INTERIOR_BOTTOM_LEFT:
+            case INTERIOR_BOTTOM_RIGHT:
+            case INTERIOR_TOP_LEFT:
+            case INTERIOR_TOP_RIGHT:
+            case NONE:
             default:
                 return false;
         }
@@ -81,6 +86,11 @@ public class ItemBadgePosition {
             case INTERIOR_BOTTOM_RIGHT:
             case INTERIOR_BOTTOM_LEFT:
                 return true;
+            case EXTERIOR_BOTTOM_LEFT:
+            case EXTERIOR_BOTTOM_RIGHT:
+            case EXTERIOR_TOP_LEFT:
+            case EXTERIOR_TOP_RIGHT:
+            case NONE:
             default:
                 return false;
         }
@@ -97,6 +107,11 @@ public class ItemBadgePosition {
             case EXTERIOR_TOP_LEFT:
             case EXTERIOR_BOTTOM_LEFT:
                 return true;
+            case EXTERIOR_BOTTOM_RIGHT:
+            case EXTERIOR_TOP_RIGHT:
+            case INTERIOR_BOTTOM_RIGHT:
+            case INTERIOR_TOP_RIGHT:
+            case NONE:
             default:
                 return false;
         }
@@ -113,6 +128,11 @@ public class ItemBadgePosition {
             case EXTERIOR_TOP_RIGHT:
             case EXTERIOR_BOTTOM_RIGHT:
                 return true;
+            case EXTERIOR_BOTTOM_LEFT:
+            case EXTERIOR_TOP_LEFT:
+            case INTERIOR_BOTTOM_LEFT:
+            case INTERIOR_TOP_LEFT:
+            case NONE:
             default:
                 return false;
         }

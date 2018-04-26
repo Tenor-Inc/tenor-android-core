@@ -61,7 +61,7 @@ public class ViewHolderDataManager extends ConcurrentFifoQueue<MeasurableViewHol
             }
             // TODO: make this a schedule task in the future
             ApiClient.registerActions(context, list);
-        } catch (Throwable throwable) {
+        } catch (Throwable ignored) {
         }
     }
 

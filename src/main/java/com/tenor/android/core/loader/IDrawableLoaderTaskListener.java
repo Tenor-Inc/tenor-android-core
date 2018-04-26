@@ -2,6 +2,7 @@ package com.tenor.android.core.loader;
 
 import android.graphics.drawable.Drawable;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.widget.ImageView;
 
 /**
@@ -16,5 +17,5 @@ public interface IDrawableLoaderTaskListener<T extends ImageView, R extends Draw
     /**
      * Load task fail case
      */
-    void failure(@NonNull T target, @NonNull R errorResult);
+    void failure(@NonNull T target, @Nullable R errorResult);
 }

@@ -208,8 +208,6 @@ public abstract class AbstractLayoutManagerUtils {
             ((StaggeredGridLayoutManager) layoutManager).setReverseLayout(rtl);
         } else if (layoutManager instanceof LinearLayoutManager) {
             ((LinearLayoutManager) layoutManager).setReverseLayout(rtl);
-        } else {
-            // do nothing
         }
     }
 

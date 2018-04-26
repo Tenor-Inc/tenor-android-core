@@ -37,6 +37,8 @@ final class AaidClient {
                 // remove the stored AAID if user explicitly chose to opt out of ad personalization
                 AbstractSessionUtils.setAndroidAdvertiseId(app, StringConstant.EMPTY);
                 break;
+            case AaidInfo.AAID_FAILURE_NO_GOOGLE_PLAY:
+            case AaidInfo.AAID_FAILURE_NO_AAID_LIBRARY:
             default:
                 // do nothing
                 break;

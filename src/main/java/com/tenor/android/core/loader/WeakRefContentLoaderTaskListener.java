@@ -30,7 +30,7 @@ public abstract class WeakRefContentLoaderTaskListener<CTX, T extends ImageView>
     }
 
     @Override
-    public void failure(@NonNull T target, @NonNull Drawable errorDrawable) {
+    public void failure(@NonNull T target, @Nullable Drawable errorDrawable) {
         if (hasRef()) {
             //noinspection ConstantConditions
             failure(getWeakRef().get(), target, errorDrawable);
